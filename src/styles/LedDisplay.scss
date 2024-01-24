@@ -1,0 +1,23 @@
+.led-scrolling-container {
+    overflow: hidden;
+    width: 100%;
+    height: 50px; /* Adjust the height as needed */
+    background-color: black; /* Background color of the LED display */
+
+    .led-text {
+        display: inline-block;
+        white-space: nowrap;
+        animation: scrollText 20s linear infinite; /* Adjust the animation duration as needed */
+        color: red; /* Color of the LED text */
+        font-size: 20px; /* Adjust the font size as needed */
+    }
+
+    @keyframes scrollText {
+        from {
+            transform: translateX(100%);
+        }
+        to {
+            transform: translateX(-100%);
+        }
+    }
+}
