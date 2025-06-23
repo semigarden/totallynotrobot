@@ -28,15 +28,15 @@ const CyberDescHud = (props) => {
       <g id="CyberEl54_svg__Vrstva_x0020_1">
         <g id="CyberEl54_svg___2649180488864">
           <path
-            className="CyberEl54_svg__fil0"
+            className="CyberEl54_svg__fil0 path1"
             d="M195 167c-4 0-7-3-7-7s3-7 7-7 7 3 7 7-3 7-7 7zm0-11c-2 0-4 2-4 4 0 3 2 4 4 4s4-1 4-4c0-2-2-4-4-4zM12 135 0 117 67 0h63l-2 3H69L3 117l11 15h189l-2 3z"
           />
           <path
-            className="CyberEl54_svg__fil0"
+            className="CyberEl54_svg__fil0 path2"
             d="m199 155-3-1 12-22h70l45-91-25-38H170l2-3h128l27 41-47 94h-71l-10 20z"
           />
           <path
-            className="CyberEl54_svg__fil0"
+            className="CyberEl54_svg__fil0 path3"
             d="m208 14-5 5h14l4-5zM230 14l-5 5h14l4-5z"
           />
           <motion.path

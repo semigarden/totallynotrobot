@@ -274,7 +274,7 @@
                 grid-template-rows: repeat(2, 8vw);
                 gap: 10px;
                 width: 90%;
-                padding: 2vh 0;
+                margin: 2vh 0;
                 color: white;
                 
                 .character-skill-wrapper {
@@ -453,7 +453,7 @@
                         font-size: 8px;
                         text-wrap: nowrap;
                         top: 15px;
-                        left: 51px;
+                        left: 57px;
                         color: #F6F7F8;
                         text-shadow: rebeccapurple 0 0 10px;
                     }
@@ -523,7 +523,7 @@
                         letter-spacing: 1px;
                         font-size: 18px;
                         top: 31px;
-                        left: 82px;
+                        left: 94px;
                     }
                 }
             }
@@ -557,6 +557,16 @@
                         .character-skill-label-hud {
                             width: 120px;
                             height: 64px;
+
+                            .path1 {
+                                stroke: #f0265e;
+                                fill: #f0265e;
+                            }
+
+                            .path2 {
+                                stroke: #f0265e;
+                                fill: #f0265e;
+                            }
                         }
 
                         .character-skill-label-text {

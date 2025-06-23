@@ -2,10 +2,10 @@ import { faVuejs, faReact, faHtml5, faJs, faCss3Alt, faBootstrap, faFigma,
     faNode, faLaravel, faSymfony, faPhp, faPython } from "@fortawesome/free-brands-svg-icons";
 
 const data = {
-    firstName: "Giorgi",
-    lastName: "Khetaguri",
-    fullName: "Giorgi Khetaguri",
-    bio: "Hello, I'm Giorgi, a results-driven versatile developer skilled in crafting seamless front-end experiences and robust back-end solutions. Bridging the gap between design aesthetics and seamless functionality.",
+    firstName: "Faulty",
+    lastName: "Circuit",
+    fullName: "Faulty Circuit",
+    bio: "Hello, I'm web developer",
     skillTabs: [
         {code: "front-end", label: "Front-End", color: "#9ca3af"},
         {code: "back-end", label: "Back-End", color: "#9ca3af"}
