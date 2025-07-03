@@ -1,7 +1,9 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const CyberSkillHud = (props) => {
+  const [path0Ref, path2Ref, path3Ref, path4Ref] = useAutoAnimate();
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -27,37 +29,29 @@ const CyberSkillHud = (props) => {
       </defs>
       <g id="CyberEl48_svg__Vrstva_x0020_1">
         <g id="CyberEl48_svg___2646644359968">
-          <motion.path
-            className="CyberEl48_svg__fil0 path0"
+          <path
+            ref={path0Ref}
+            className="CyberEl48_svg__fil0 path0 animate-skill-path-0"
             d="m127 20 2-2V7l-2-2zM21 6c0 1-1 1-2 1 0 0-1 0-1-1s1-2 1-2c1 0 2 1 2 2zM25 6c0 1 0 1-1 1s-1 0-1-1 0-2 1-2 1 1 1 2zM30 6c0 1-1 1-1 1-1 0-2 0-2-1s1-2 2-2c0 0 1 1 1 2zM35 6c0 1-1 1-2 1s-1 0-1-1 0-2 1-2 2 1 2 2zM39 6c0 1 0 1-1 1s-2 0-2-1 1-2 2-2 1 1 1 2zM44 6c0 1-1 1-2 1 0 0-1 0-1-1s1-2 1-2c1 0 2 1 2 2zM48 6c0 1 0 1-1 1s-1 0-1-1 0-2 1-2 1 1 1 2zM53 6c0 1 0 1-1 1s-2 0-2-1 1-2 2-2 1 1 1 2zM58 6c0 1-1 1-2 1 0 0-1 0-1-1s1-2 1-2c1 0 2 1 2 2zM21 13s-1 1-2 1l-1-1c0-1 1-2 1-2 1 0 2 1 2 2zM25 13s0 1-1 1-1-1-1-1c0-1 0-2 1-2s1 1 1 2zM30 13l-1 1c-1 0-2-1-2-1 0-1 1-2 2-2 0 0 1 1 1 2zM35 13s-1 1-2 1-1-1-1-1c0-1 0-2 1-2s2 1 2 2zM39 13s0 1-1 1-2-1-2-1c0-1 1-2 2-2s1 1 1 2zM44 13s-1 1-2 1l-1-1c0-1 1-2 1-2 1 0 2 1 2 2zM48 13s0 1-1 1-1-1-1-1c0-1 0-2 1-2s1 1 1 2zM53 13s0 1-1 1-2-1-2-1c0-1 1-2 2-2s1 1 1 2zM58 13s-1 1-2 1l-1-1c0-1 1-2 1-2 1 0 2 1 2 2zM62 13s0 1-1 1-1-1-1-1c0-1 0-2 1-2s1 1 1 2zM67 13l-1 1c-1 0-2-1-2-1 0-1 1-2 2-2 0 0 1 1 1 2zM72 13s-1 1-2 1l-1-1c0-1 1-2 1-2 1 0 2 1 2 2zM76 13s0 1-1 1-1-1-1-1c0-1 0-2 1-2s1 1 1 2zM21 19c0 1-1 2-2 2 0 0-1-1-1-2l1-1c1 0 2 1 2 1zM25 19c0 1 0 2-1 2s-1-1-1-2c0 0 0-1 1-1s1 1 1 1zM30 19c0 1-1 2-1 2-1 0-2-1-2-2 0 0 1-1 2-1l1 1zM35 19c0 1-1 2-2 2s-1-1-1-2c0 0 0-1 1-1s2 1 2 1z"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: [1, 0], scale: 1 }}
-            transition={{ delay: 0.75, duration: 2 }}
           />
           <path
             className="CyberEl48_svg__fil1 path1"
             d="M13 0v8l1-1V1h112v23H53l-1 1h75V0z"
           />
-          <motion.path
-            className="CyberEl48_svg__fil1 path2"
+          <path
+            ref={path2Ref}
+            className="CyberEl48_svg__fil1 path2 animate-skill-path-2"
             d="M62 6c0 1 0 1-1 1s-1 0-1-1 0-2 1-2 1 1 1 2zM67 6c0 1-1 1-1 1-1 0-2 0-2-1s1-2 2-2c0 0 1 1 1 2zM72 6c0 1-1 1-2 1 0 0-1 0-1-1s1-2 1-2c1 0 2 1 2 2zM76 6c0 1 0 1-1 1s-1 0-1-1 0-2 1-2 1 1 1 2zM81 6c0 1-1 1-1 1-1 0-2 0-2-1s1-2 2-2c0 0 1 1 1 2zM86 6c0 1-1 1-2 1s-1 0-1-1 0-2 1-2 2 1 2 2zM90 6c0 1 0 1-1 1s-2 0-2-1 1-2 2-2 1 1 1 2zM95 6c0 1-1 1-2 1 0 0-1 0-1-1s1-2 1-2c1 0 2 1 2 2zM99 6c0 1 0 1-1 1s-1 0-1-1 0-2 1-2 1 1 1 2zM104 6c0 1-1 1-1 1-1 0-2 0-2-1s1-2 2-2c0 0 1 1 1 2zM109 6c0 1-1 1-2 1 0 0-1 0-1-1s1-2 1-2c1 0 2 1 2 2z"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: [1, 0], scale: 1 }}
-            transition={{ delay: 0.5, duration: 2 }}
           />
-          <motion.path
-            className="CyberEl48_svg__fil1 path3"
+          <path
+            ref={path3Ref}
+            className="CyberEl48_svg__fil1 path3 animate-skill-path-3"
             d="M109 6c0 1-1 1-2 1 0 0-1 0-1-1s1-2 1-2c1 0 2 1 2 2zM113 6c0 1 0 1-1 1s-1 0-1-1 0-2 1-2 1 1 1 2zM118 6c0 1-1 1-1 1-1 0-2 0-2-1s1-2 2-2c0 0 1 1 1 2zM123 6c0 1-1 1-2 1s-1 0-1-1 0-2 1-2 2 1 2 2zM81 13l-1 1c-1 0-2-1-2-1 0-1 1-2 2-2 0 0 1 1 1 2zM86 13s-1 1-2 1-1-1-1-1c0-1 0-2 1-2s2 1 2 2zM90 13s0 1-1 1-2-1-2-1c0-1 1-2 2-2s1 1 1 2zM95 13s-1 1-2 1l-1-1c0-1 1-2 1-2 1 0 2 1 2 2zM99 13s0 1-1 1-1-1-1-1c0-1 0-2 1-2s1 1 1 2zM104 13l-1 1c-1 0-2-1-2-1 0-1 1-2 2-2 0 0 1 1 1 2zM109 13s-1 1-2 1l-1-1c0-1 1-2 1-2 1 0 2 1 2 2z"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: [1, 0], scale: 1 }}
-            transition={{ delay: 1, duration: 2 }}
           />
-          <motion.path
-            className="CyberEl48_svg__fil1 path4"
+          <path
+            ref={path4Ref}
+            className="CyberEl48_svg__fil1 path4 animate-skill-path-4"
             d="M109 13s-1 1-2 1l-1-1c0-1 1-2 1-2 1 0 2 1 2 2zM113 13s0 1-1 1-1-1-1-1c0-1 0-2 1-2s1 1 1 2zM118 13l-1 1c-1 0-2-1-2-1 0-1 1-2 2-2 0 0 1 1 1 2zM123 13s-1 1-2 1-1-1-1-1c0-1 0-2 1-2s2 1 2 2zM39 19c0 1 0 2-1 2s-2-1-2-2c0 0 1-1 2-1s1 1 1 1zM44 19c0 1-1 2-2 2 0 0-1-1-1-2l1-1c1 0 2 1 2 1zM48 19c0 1 0 2-1 2s-1-1-1-2c0 0 0-1 1-1s1 1 1 1zM53 19c0 1 0 2-1 2s-2-1-2-2c0 0 1-1 2-1s1 1 1 1zM58 19c0 1-1 2-2 2 0 0-1-1-1-2l1-1c1 0 2 1 2 1zM62 19c0 1 0 2-1 2s-1-1-1-2c0 0 0-1 1-1s1 1 1 1zM67 19c0 1-1 2-1 2-1 0-2-1-2-2 0 0 1-1 2-1l1 1zM72 19c0 1-1 2-2 2 0 0-1-1-1-2l1-1c1 0 2 1 2 1zM76 19c0 1 0 2-1 2s-1-1-1-2c0 0 0-1 1-1s1 1 1 1zM81 19c0 1-1 2-1 2-1 0-2-1-2-2 0 0 1-1 2-1l1 1zM86 19c0 1-1 2-2 2s-1-1-1-2c0 0 0-1 1-1s2 1 2 1zM90 19c0 1 0 2-1 2s-2-1-2-2c0 0 1-1 2-1s1 1 1 1zM95 19c0 1-1 2-2 2 0 0-1-1-1-2l1-1c1 0 2 1 2 1zM99 19c0 1 0 2-1 2s-1-1-1-2c0 0 0-1 1-1s1 1 1 1zM104 19c0 1-1 2-1 2-1 0-2-1-2-2 0 0 1-1 2-1l1 1zM109 19c0 1-1 2-2 2 0 0-1-1-1-2l1-1c1 0 2 1 2 1z"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: [1, 0], scale: 1 }}
-            transition={{ duration: 2 }}
           />
           <path
             className="CyberEl48_svg__fil1 path5"

@@ -63,7 +63,8 @@ export function Skill({ skill, moveRow, index }) {
       className="character-skill-wrapper"
       ref={ref}
       style={{
-          opacity: trans
+          opacity: trans,
+          willChange: collectedDragProps.isDragging ? 'transform' : 'auto'
       }}
       data-handler-id={collectedProps.handlerId}
     >

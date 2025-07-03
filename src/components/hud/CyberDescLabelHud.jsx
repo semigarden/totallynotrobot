@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 
 const CyberDescHud = (props) => {
   return (
@@ -21,7 +20,7 @@ const CyberDescHud = (props) => {
       <defs>
         <style>
           {
-            ".CyberEl54_svg__fil0{fill:#ff6f7a!important;},.CyberEl54_svg__fil1{fill:#252626;fill-rule:nonzero}.CyberEl54_svg__fil0{fill:#767676}"
+            ".CyberEl54_svg__fil0{fill:#f0265e!important;},.CyberEl54_svg__fil1{fill:#252626;fill-rule:nonzero}.CyberEl54_svg__fil0{fill:#767676}"
           }
         </style>
       </defs>
@@ -39,11 +38,9 @@ const CyberDescHud = (props) => {
             className="CyberEl54_svg__fil0 path3"
             d="m208 14-5 5h14l4-5zM230 14l-5 5h14l4-5z"
           />
-          <motion.path
-            className="CyberEl54_svg__fil1 path0"
+          <path
+            className="CyberEl54_svg__fil1 path0 animate-cyber-desc-path"
             d="m252 14-5 5h14l4-5zM275 96H35l-7 11h240zM285 76H47l-7 11h239zM296 56H57l-7 11h239z"
-            animate={{ opacity: [1, 0], scale: 1 }}
-            transition={{ delay: 1, duration: 2 }}
           />
         </g>
       </g>

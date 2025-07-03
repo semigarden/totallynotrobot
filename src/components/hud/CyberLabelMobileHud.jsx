@@ -1,7 +1,9 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const CyberLabelMobileHud = (props) => {
+  const [path0Ref, path2Ref] = useAutoAnimate();
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -27,21 +29,19 @@ const CyberLabelMobileHud = (props) => {
       </defs>
       <g id="CyberEl49_svg__Vrstva_x0020_1">
         <g id="CyberEl49_svg___2649180555456">
-          <motion.path
-            className="CyberEl49_svg__fil0 path0"
+          <path
+            ref={path0Ref}
+            className="CyberEl49_svg__fil0 path0 animate-mobile-path"
             d="M24 20h-3v6zM90 26h6l4-6h-7zM82 26h7l3-6h-6zM75 26h6l3-6h-6zM67 26h6l4-6h-6zM60 26h6l3-6h-6zM52 26h6l4-6h-6zM45 26h6l3-6h-6zM37 26h6l4-6h-7zM29 26h7l3-6h-6zM22 26h6l4-6h-7z"
-            animate={{ opacity: [1, 0]}}
-            transition={{ delay: 0.5, duration: 2 }}
           />
           <path
             className="CyberEl49_svg__fil1 path1"
             d="M20 27h77l4-8H20v8zm77 1H18V17h85l-6 11z"
           />
-          <motion.path
-            className="CyberEl49_svg__fil0 path2"
+          <path
+            ref={path2Ref}
+            className="CyberEl49_svg__fil0 path2 animate-mobile-path"
             d="M33 4h-4v6zM99 10h6l3-6h-6zM91 10h6l4-6h-6zM84 10h6l3-6h-6zM76 10h6l4-6h-7zM68 10h7l3-6h-6zM61 10h6l4-6h-7zM53 10h6l4-6h-6zM46 10h6l3-6h-6zM38 10h6l4-6h-6zM31 10h6l3-6h-6z"
-            animate={{ opacity: [1, 0] }}
-            transition={{ delay: 0.5, duration: 2 }}
           />
           <path
             className="CyberEl49_svg__fil1 path3"

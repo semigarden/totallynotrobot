@@ -1,31 +1,65 @@
-import React from "react";
-import { motion, Reorder } from "framer-motion";
+import React, { useState, useRef } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 import CyberDescLabelHud from "components/hud/CyberDescLabelHud";
 
-const SkillTab = ({ skillTab, onClick, isSelected }) => {
+const SkillTab = ({ skillTab, onClick, isSelected, onDragStart, onDragOver, onDrop, index }) => {
+  const [textRef] = useAutoAnimate();
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef(null);
+
+  const handleDragStart = (e) => {
+    setIsDragging(true);
+    e.dataTransfer.setData('text/plain', index);
+    e.dataTransfer.effectAllowed = 'move';
+    if (onDragStart) onDragStart(e, index);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (onDragOver) onDragOver(e, index);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+    const toIndex = index;
+    if (onDrop && fromIndex !== toIndex) {
+      onDrop(fromIndex, toIndex);
+    }
+  };
+
   return (
-    <Reorder.Item
-      value={skillTab}
-      initial={{ opacity: 0, y: 30 }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.15 }
+    <div
+      ref={dragRef}
+      draggable
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      style={{ 
+        willChange: 'transform, opacity',
+        opacity: isDragging ? 0.5 : 1,
+        transform: isDragging ? 'scale(0.95)' : 'scale(1)',
+        transition: 'opacity 0.2s, transform 0.2s'
       }}
-      exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
-      className={`character-skill-label-wrapper ${isSelected ? "selected" : ""}`}
+      className={`character-skill-label-wrapper animate-skill-tab ${isSelected ? "selected" : ""}`}
       onPointerDown={onClick}
     >
       <CyberDescLabelHud className="character-skill-label-hud" />
-      <motion.div className={`character-skill-label-text ${isSelected ? "selected" : ""}`}
-        initial={{ opacity: isSelected ? [0, 1] : 0 }}
-        animate={{ opacity: [0, 1] }}
-        transition={{ delay: 2, duration: 3 }}
+      <div 
+        ref={textRef}
+        className={`character-skill-label-text animate-skill-text ${isSelected ? "selected" : ""}`}
+        style={{ willChange: 'opacity' }}
       >
         {skillTab.label}
-      </motion.div>
-    </Reorder.Item>
+      </div>
+    </div>
   );
 };
 

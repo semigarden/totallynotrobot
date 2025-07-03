@@ -1,6 +1,5 @@
 // External Libraries
 import { useState } from "react";
-import { motion, Reorder, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 
@@ -17,6 +16,8 @@ import CyberSkillHud from "components/hud/CyberSkillHud";
 // Assets
 import CharacterOrbitIcon from "assets/sleeper-orbit.webp";
 import CharacterIcon from "assets/sleeper-only.webp";
+
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 // Styles
 import "styles/CharacterInfo.scss";
@@ -49,7 +50,16 @@ const CharacterInfo = () => {
         setSelectedSkillTab(clickedTab);
     };
 
-    const descriptionText = data.bio
+    const handleReorder = (fromIndex, toIndex) => {
+        const newSkillTabs = [...skillTabs];
+        const [movedItem] = newSkillTabs.splice(fromIndex, 1);
+        newSkillTabs.splice(toIndex, 0, movedItem);
+        setSkillTabs(newSkillTabs);
+    };
+
+    const descriptionText = data.bio;
+
+    const [characterIconRef, orbitIconRef, firstNameRef, lastNameRef, fullNameRef, skillsLabelRef, skillTabsRef] = useAutoAnimate();
 
     return (
         <div className="character-info">
@@ -60,52 +70,44 @@ const CharacterInfo = () => {
 
                 <div className="horizon-wrapper">
                     <div className="character-icon-wrapper">
-                        <motion.img className="character-icon" src={CharacterIcon}
+                        <img 
+                            ref={characterIconRef}
+                            className="character-icon animate-float" 
+                            src={CharacterIcon}
                             draggable="false"
-                            animate={{ y: [0, 5, 0] }}
-                            transition={{
-                                times: [0, 1],
-                                delay: 2,
-                                duration: 4,
-                                repeat: Infinity,
-                                type: "keyframes",
-                                ease: "easeInOut",
-                            }}
                         />
-                        <motion.img className="character-orbit-icon" src={CharacterOrbitIcon}
+                        <img 
+                            ref={orbitIconRef} 
+                            className="character-orbit-icon animate-orbit" 
+                            src={CharacterOrbitIcon}
                             draggable="false"
-                            animate={{ y: [0, 10, 0] }}
-                            transition={{
-                                times: [0, 1],
-                                duration: 3,
-                                repeat: Infinity,
-                                type: "keyframes",
-                                ease: "easeInOut",
-                            }}
                         />
                     </div>
 
                     <div className="character-name-wrapper">
                         <CyberLabelMobileHud className="character-name-hud-mobile" />
 
-                        <motion.div className="character-firstname-label"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.5, duration: 3 }}
-                        >{ data.firstName }</motion.div>
+                        <div 
+                            ref={firstNameRef}
+                            className="character-firstname-label animate-fade-in-0-5"
+                        >
+                            { data.firstName }
+                        </div>
 
-                        <motion.div className="character-lastname-label"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.5, duration: 3 }}
-                        >{ data.lastName }</motion.div>
+                        <div 
+                            ref={lastNameRef}
+                            className="character-lastname-label animate-fade-in-0-5"
+                        >
+                            { data.lastName }
+                        </div>
 
                         <CyberLabelHud className="character-name-hud" />
-                        <motion.div className="character-name-label"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 4, duration: 3 }}
-                        >{ data.fullName }</motion.div>
+                        <div 
+                            ref={fullNameRef}
+                            className="character-name-label animate-fade-in-4"
+                        >
+                            { data.fullName }
+                        </div>
                     </div>
                 </div>
 
@@ -113,33 +115,28 @@ const CharacterInfo = () => {
                     <div className="character-details-label-wrapper">
                         <div className="character-skills-wrapper">
                             <CyberSkillHud className="character-skills-hud" />
-                            <motion.div className="character-skills-label"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 2, duration: 3 }}
-                            >Skills</motion.div>
+                            <div 
+                                ref={skillsLabelRef}
+                                className="character-skills-label animate-fade-in-2"
+                            >
+                                Skills
+                            </div>
                         </div>
                         
 
                         <nav className="character-skills-navigation">
-                            <Reorder.Group
-                                as="ul"
-                                axis="x"
-                                onReorder={setSkillTabs}
-                                className="skill-tab"
-                                values={skillTabs}
-                            >
-                                <AnimatePresence initial={false}>
-                                    {skillTabs.map((skillTab) => (
-                                        <SkillTab
-                                            key={skillTab.code}
-                                            skillTab={skillTab}
-                                            isSelected={selectedSkillTab === skillTab}
-                                            onClick={() => handleTabClick(skillTab)}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </Reorder.Group>
+                            <div ref={skillTabsRef} className="skill-tab">
+                                {skillTabs.map((skillTab, index) => (
+                                    <SkillTab
+                                        key={skillTab.code}
+                                        skillTab={skillTab}
+                                        index={index}
+                                        isSelected={selectedSkillTab === skillTab}
+                                        onClick={() => handleTabClick(skillTab)}
+                                        onDrop={handleReorder}
+                                    />
+                                ))}
+                            </div>
                         </nav>
                     </div>
 
