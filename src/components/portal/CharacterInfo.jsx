@@ -124,7 +124,7 @@ const CharacterInfo = () => {
                         </div>
                         
 
-                        <nav className="character-skills-navigation">
+                        <div className="character-skills-navigation">
                             <div ref={skillTabsRef} className="skill-tab">
                                 {skillTabs.map((skillTab, index) => (
                                     <SkillTab
@@ -137,7 +137,7 @@ const CharacterInfo = () => {
                                     />
                                 ))}
                             </div>
-                        </nav>
+                        </div>
                     </div>
 
                     <div className="character-skill-horizontal-divider"></div>

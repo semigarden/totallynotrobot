@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import SkillIcon from "./SkillIcon.tsx";
 
 export function Skill({ skill, moveRow, index }) {
   const ref = useRef(null);
@@ -68,7 +68,7 @@ export function Skill({ skill, moveRow, index }) {
       }}
       data-handler-id={collectedProps.handlerId}
     >
-      <FontAwesomeIcon style={{ color: skill.color }} icon={skill.icon} className={`character-skill-icon ${skill.animation}`} />
+      <SkillIcon icon={skill.icon} iconType={skill.iconType} color={skill.color} animation={`character-skill-icon ${skill.animation}`} />
       <div className="character-skill-label">{skill.label}</div>
     </div>
   );

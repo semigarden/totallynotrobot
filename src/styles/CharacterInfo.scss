@@ -591,6 +591,12 @@
                     .character-skill-icon {
                         width: 32px;
                         height: 32px;
+                        
+                        // Ensure MDI icons (SVG) display properly
+                        svg {
+                            width: 100%;
+                            height: 100%;
+                        }
                     }
 
                     .character-skill-label {
