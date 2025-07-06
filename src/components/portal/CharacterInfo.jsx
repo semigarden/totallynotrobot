@@ -113,34 +113,37 @@ const CharacterInfo = () => {
 
                 <div className="character-details-wrapper">
                     <div className="character-details-label-wrapper">
-                        <div className="character-skills-wrapper">
-                            <CyberSkillHud className="character-skills-hud" />
-                            <div 
-                                ref={skillsLabelRef}
-                                className="character-skills-label animate-fade-in-2"
-                            >
-                                Skills
+                        <div className="character-skills-label-wrapper">
+                            <div className="character-skills-wrapper">
+                                <CyberSkillHud className="character-skills-hud" />
+                                <div 
+                                    ref={skillsLabelRef}
+                                    className="character-skills-label animate-fade-in-2"
+                                >
+                                    Skills
+                                </div>
                             </div>
-                        </div>
-                        
+                            
 
-                        <div className="character-skills-navigation">
-                            <div ref={skillTabsRef} className="skill-tab">
-                                {skillTabs.map((skillTab, index) => (
-                                    <SkillTab
-                                        key={skillTab.code}
-                                        skillTab={skillTab}
-                                        index={index}
-                                        isSelected={selectedSkillTab === skillTab}
-                                        onClick={() => handleTabClick(skillTab)}
-                                        onDrop={handleReorder}
-                                    />
-                                ))}
+                            <div className="character-skills-navigation">
+                                <div ref={skillTabsRef} className="skill-tab">
+                                    {skillTabs.map((skillTab, index) => (
+                                        <SkillTab
+                                            key={skillTab.code}
+                                            skillTab={skillTab}
+                                            index={index}
+                                            isSelected={selectedSkillTab === skillTab}
+                                            onClick={() => handleTabClick(skillTab)}
+                                            onDrop={handleReorder}
+                                        />
+                                    ))}
+                                </div>
                             </div>
                         </div>
+
+                        <div className="character-skill-horizontal-divider"></div>               
                     </div>
 
-                    <div className="character-skill-horizontal-divider"></div>
                     
                     <DropZone skillsData={skills} />
                 </div>

@@ -168,9 +168,16 @@
 
             .character-details-label-wrapper {
                 display: flex;
+                flex-direction: column;
                 justify-content: space-around;
                 width: 90%;
                 padding: 6px 0 2px 0;
+
+                .character-skills-label-wrapper {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                }
 
                 .character-skills-wrapper {
                     position: relative;
@@ -182,29 +189,30 @@
                         width: 70px;
                         height: 20px;
 
-                        .path0, path2, path3, path4 {
-                            stroke: #40F99B;
-                            fill: #40F99B;
+                        .path0, .path2, .path3, .path4 {
+                            stroke: #00ff88;
+                            fill: #00ff88;
                         }
 
                         .path1 {
-                            stroke: #E76D83;
-                            fill: #9B5DE5;
+                            // stroke: #f0265e;
+                            fill: #f0265e;
                         }
 
                         .path5 {
-                            stroke: #40F99B;
-                            fill: #665687;
+                            stroke: #00ff88;
+                            // fill: #1a1a2e;
+                            fill: transparent;
                         }
 
                         .path6 {
-                            stroke: #E76D83;
-                            fill: #D5BBB1;
+                            // stroke: #f0265e;
+                            fill: #f0265e;
                         }
 
                         .path7 {
-                            stroke: #E76D83;
-                            fill: #D5BBB1;
+                            // stroke: #f0265e;
+                            fill: #f0265e;
                         }
                     }
 
@@ -561,7 +569,12 @@
                     }
     
                     .character-skills-navigation .skill-tab .character-skill-label-wrapper {
+                        width: 120px;
+                        height: 64px;
+                        position: relative;
+
                         .character-skill-label-hud {
+                            position: absolute;
                             width: 120px;
                             height: 64px;
 
