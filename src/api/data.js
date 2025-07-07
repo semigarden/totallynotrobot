@@ -6,7 +6,7 @@ const data = {
     firstName: "Faulty",
     lastName: "Circuit",
     fullName: "Faulty Circuit",
-    bio: "Threading web, I'm Spider",
+    bio: "I was thinking about something which I forgot...",
     skillTabs: [
         {code: "front-end", label: "Front-End", color: "#9ca3af"},
         {code: "back-end", label: "Back-End", color: "#9ca3af"}
