@@ -113,7 +113,7 @@ const CharacterInfo = () => {
 
                 <div className="character-details-wrapper">
                     <div className="character-details-label-wrapper">
-                        <div className="character-skills-label-wrapper">
+                        {/* <div className="character-skills-label-wrapper"> */}
                             <div className="character-skills-wrapper">
                                 <CyberSkillHud className="character-skills-hud" />
                                 <div 
@@ -139,12 +139,13 @@ const CharacterInfo = () => {
                                     ))}
                                 </div>
                             </div>
-                        </div>
+                        {/* </div> */}
 
-                        <div className="character-skill-horizontal-divider"></div>               
+                        {/* <div className="character-skill-horizontal-divider"></div> */}
                     </div>
 
-                    
+                    <div className="character-skill-horizontal-divider"></div>
+
                     <DropZone skillsData={skills} />
                 </div>
             </div>

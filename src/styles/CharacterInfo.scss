@@ -168,16 +168,16 @@
 
             .character-details-label-wrapper {
                 display: flex;
-                flex-direction: column;
-                justify-content: space-around;
+                // flex-direction: column;
+                justify-content: space-between;
                 width: 90%;
                 padding: 6px 0 2px 0;
 
-                .character-skills-label-wrapper {
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-                }
+                // .character-skills-label-wrapper {
+                //     display: flex;
+                //     flex-direction: row;
+                //     justify-content: space-between;
+                // }
 
                 .character-skills-wrapper {
                     position: relative;
@@ -231,6 +231,7 @@
                     display: grid;
                     grid-template-columns: 1fr;
                     overflow: hidden;
+                    margin-right: 20px;
 
                     .skill-tab {
                         flex-grow: 1;
@@ -278,7 +279,7 @@
 
             .character-skill-horizontal-divider {
                 border-bottom: 1px solid #f0265e;
-                width: 90%;
+                width: 100%;
                 display: inline-block;
             }
 
