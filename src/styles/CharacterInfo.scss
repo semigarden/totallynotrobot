@@ -296,9 +296,16 @@
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: space-evenly;
+                    justify-content: flex-end;
+                    gap: 4px;
+                    height: max-content;
                     transition: opacity 0.5s ease-in-out;
                     cursor: pointer;
+
+                    .character-skill-icon {
+                        width: 16px;
+                        height: 16px;
+                    }
 
                     .character-skill-label {
                         color: white;
@@ -479,6 +486,15 @@
             .character-details-wrapper {
                 padding-left: 30%;
                 padding-right: 4%;
+
+                .character-skill-list-wrapper {
+                    .character-skill-wrapper {
+                        .character-skill-icon {
+                            width: 24px;
+                            height: 24px;
+                        }
+                    }
+                }
             }
         }
     
