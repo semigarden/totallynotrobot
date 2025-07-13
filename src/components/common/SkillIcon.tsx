@@ -23,6 +23,12 @@ const SkillIcon: React.FC<{ icon: any, iconType: string, color: string, animatio
     );
   }
 
+  // Handle custom SVG components
+  if (iconType === "svg" && typeof icon === "function") {
+    const IconComponent = icon;
+    return <IconComponent color={color} className={animation} />;
+  }
+
   // Render FontAwesome icon
   return (
     iconType == "mdi" ? (

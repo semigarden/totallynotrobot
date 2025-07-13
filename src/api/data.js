@@ -1,6 +1,7 @@
 import { faVuejs, faReact, faHtml5, faJs, faCss3Alt, faBootstrap, faFigma,
     faNode, faLaravel, faSymfony, faPhp, faPython } from "@fortawesome/free-brands-svg-icons";
 import { mdiNuxt } from '@mdi/js';
+import NextJsIcon from "../assets/NextJsIcon.jsx";
 
 const data = {
     firstName: "Faulty",
@@ -13,6 +14,7 @@ const data = {
     ],
     skills: [
         {category: "front-end", label: "React.js", icon: faReact, iconType: "fontawesome", animation: "fa-spin", color: "#C1FFF2"},
+        {category: "front-end", label: "Next.js", icon: NextJsIcon, iconType: "svg", animation: "fa-beat-fade", color: "#FFF"},
         {category: "front-end", label: "Vue.js", icon: faVuejs, iconType: "fontawesome", animation: "fa-flip", color: "#7AFDD6"},
         {category: "front-end", label: "Nuxt.js", icon: mdiNuxt, iconType: "mdi", animation: "fa-beat-fade", color: "#7AFDD6"},
         // {category: "front-end", label: "Three.js", icon: faThreeJs, iconType: "fontawesome", animation: "fa-beat-fade", color: ""},
