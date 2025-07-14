@@ -23,6 +23,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import "styles/CharacterInfo.scss";
 
 import data from "api/data"
+import CircuitBoard from "components/portal/CircuitBoard";
 
 const CharacterInfo = () => {
     const initialSkillTabs = data.skillTabs;
@@ -64,13 +65,14 @@ const CharacterInfo = () => {
     return (
         <div className="character-info">
             <div className="content">
+                {/* <CircuitBoard className="circuit-board" /> */}
                 <div className="character-class-wrapper">
                     <AnimateText text={descriptionText} />
                 </div>
 
                 <div className="horizon-wrapper">
                     <div className="character-icon-wrapper">
-                        <img 
+                        {/* <img 
                             ref={characterIconRef}
                             className="character-icon animate-float" 
                             src={CharacterIcon}
@@ -81,7 +83,7 @@ const CharacterInfo = () => {
                             className="character-orbit-icon animate-orbit" 
                             src={CharacterOrbitIcon}
                             draggable="false"
-                        />
+                        /> */}
                     </div>
 
                     <div className="character-name-wrapper">
@@ -114,7 +116,7 @@ const CharacterInfo = () => {
                 <div className="character-details-wrapper">
                     <div className="character-details-label-wrapper">
                         {/* <div className="character-skills-label-wrapper"> */}
-                            <div className="character-skills-wrapper">
+                            {/* <div className="character-skills-wrapper">
                                 <CyberSkillHud className="character-skills-hud" />
                                 <div 
                                     ref={skillsLabelRef}
@@ -122,7 +124,7 @@ const CharacterInfo = () => {
                                 >
                                     Skills
                                 </div>
-                            </div>
+                            </div> */}
                             
 
                             <div className="character-skills-navigation">
