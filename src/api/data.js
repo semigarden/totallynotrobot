@@ -1,5 +1,6 @@
 import { faVuejs, faReact, faHtml5, faJs, faCss3Alt, faTumblrSquare, faFigma,
-    faNode, faLaravel, faMastodon, faPhp, faPython, faGithubAlt } from "@fortawesome/free-brands-svg-icons";
+    faNode, faLaravel, faMastodon, faPhp, faPython, faGithubAlt,
+    faSquareInstagram } from "@fortawesome/free-brands-svg-icons";
 import { mdiNuxt } from '@mdi/js';
 import NextJsIcon from "../assets/NextJsIcon.jsx";
 
@@ -29,9 +30,10 @@ const data = {
         {category: "0", label: "Laravel", icon: faLaravel, iconType: "fontawesome", animation: "fa-fade", color: "#FF6F7A"},
         {category: "0", label: "PHP", icon: faPhp, iconType: "fontawesome", animation: "fa-fade", color: "#9B5DE5"},
         {category: "0", label: "Python", icon: faPython, iconType: "fontawesome", animation: "fa-fade", color: "#FDE74C"},
-        {category: "0", label: "Github", icon: faGithubAlt, iconType: "fontawesome", animation: "fa-fade", color: "#fff"},
-        {category: "0", label: "Tumblr", icon: faTumblrSquare, iconType: "fontawesome", animation: "fa-fade", color: "#fff"},
-        {category: "0", label: "Mastodon", icon: faMastodon, iconType: "fontawesome", animation: "fa-fade", color: "#fff"},
+        {category: "0", label: "Github", icon: faGithubAlt, iconType: "fontawesome", animation: "fa-fade", color: "#fafbfc"},
+        {category: "0", label: "Tumblr", icon: faTumblrSquare, iconType: "fontawesome", animation: "fa-fade", color: "#fafbfc"},
+        {category: "0", label: "Mastodon", icon: faMastodon, iconType: "fontawesome", animation: "fa-fade", color: "#6364ff"},
+        // {category: "0", label: "Instagram", icon: faSquareInstagram, iconType: "fontawesome", animation: "fa-fade", color: "#d0006d"},
     ]
 }
 
