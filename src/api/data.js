@@ -8,7 +8,7 @@ const data = {
     firstName: "Faulty",
     lastName: "Circuit",
     fullName: "Faulty Circuit",
-    bio: "...",
+    preface: "Gates open with spark —\ncalcium flows like a thought.\nI remember light.",
     skillTabs: [
         {code: "0", label: "000", color: "#9ca3af"},
         {code: "1", label: "001", color: "#9ca3af"},

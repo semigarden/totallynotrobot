@@ -58,8 +58,6 @@ const CharacterInfo = () => {
         setSkillTabs(newSkillTabs);
     };
 
-    const descriptionText = data.bio;
-
     const [characterIconRef, orbitIconRef, firstNameRef, lastNameRef, fullNameRef, skillsLabelRef, skillTabsRef] = useAutoAnimate();
 
     return (
@@ -67,12 +65,13 @@ const CharacterInfo = () => {
             <div className="content">
                 {/* <CircuitBoard className="circuit-board" /> */}
                 <div className="character-class-wrapper">
-                    <AnimateText text={descriptionText} />
+                    <AnimateText text={"Voltage Dependence"} />
+                    <AnimateText text={data.preface} />
                 </div>
 
                 <div className="horizon-wrapper">
-                    <div className="character-icon-wrapper">
-                        {/* <img 
+                    {/* <div className="character-icon-wrapper">
+                        <img 
                             ref={characterIconRef}
                             className="character-icon animate-float" 
                             src={CharacterIcon}
@@ -83,8 +82,15 @@ const CharacterInfo = () => {
                             className="character-orbit-icon animate-orbit" 
                             src={CharacterOrbitIcon}
                             draggable="false"
-                        /> */}
-                    </div>
+                        />
+                    </div> */}
+                    {/* <div className="character-visual-wrapper">
+                        <div
+                            className="character-visual" 
+                            // src={CharacterIcon}
+                            draggable="false"
+                        />
+                    </div> */}
 
                     <div className="character-name-wrapper">
                         <CyberLabelMobileHud className="character-name-hud-mobile" />
@@ -111,6 +117,26 @@ const CharacterInfo = () => {
                             { data.fullName }
                         </div>
                     </div>
+
+                    {/* <div className="character-node-wrapper">
+                        <div className="character-node-list">
+                            <div className="character-node">
+                                Toolkit
+                            </div>
+                            <div className="character-node">
+                                Projects
+                            </div>
+                            <div className="character-node">
+                                Connection
+                            </div>
+                            <div className="character-node">
+                                Experience
+                            </div>
+                            <div className="character-node">
+                                Interests
+                            </div>
+                        </div>
+                    </div> */}
                 </div>
 
                 <div className="character-details-wrapper">

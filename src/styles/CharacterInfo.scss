@@ -25,6 +25,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
+            gap: 10px;
             color: white;
             padding: 10px;
             text-shadow: rebeccapurple 0 0 10px;
@@ -76,6 +78,22 @@
                     left: 0;
                     top: 0;
                     user-select: none;
+                }
+            }
+
+            .character-visual-wrapper {
+                position: relative;
+                margin-left: 2vw;
+
+                .character-visual {
+                    position: relative;
+                    width: 120px;
+                    height: 120px;
+                    border-radius: 100%;
+                    left: 0;
+                    top: 0;
+                    user-select: none;
+                    border: 2px solid #e9c8d1;
                 }
             }
 
