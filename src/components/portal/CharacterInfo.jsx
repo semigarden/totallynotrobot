@@ -26,6 +26,14 @@ import "styles/CharacterInfo.scss";
 import data from "api/data"
 import CircuitBoard from "components/portal/CircuitBoard";
 
+const defaultConnections = {
+    "0": "Projects",
+    "1": "Toolkit",
+    "4": "Connection",
+    "2": "Experience",
+    "3": "Interests"
+}
+
 const CharacterInfo = () => {
     const initialSkillTabs = data.skillTabs;
 
@@ -41,7 +49,7 @@ const CharacterInfo = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [draggedNode, setDraggedNode] = useState(null);
     const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
-    const [connectedNodes, setConnectedNodes] = useState({});
+    const [connectedNodes, setConnectedNodes] = useState(defaultConnections);
     const [nodePositions, setNodePositions] = useState({});
     const [slotPositions, setSlotPositions] = useState({});
 

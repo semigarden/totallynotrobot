@@ -38,18 +38,18 @@ const SkillTab = ({ skillTab, onClick, isSelected, onDragStart, onDragOver, onDr
     <div
       ref={dragRef}
       draggable
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      // onDragStart={handleDragStart}
+      // onDragEnd={handleDragEnd}
+      // onDragOver={handleDragOver}
+      // onDrop={handleDrop}
       style={{ 
         willChange: 'transform, opacity',
         opacity: isDragging ? 0.5 : 1,
         transform: isDragging ? 'scale(0.95)' : 'scale(1)',
-        transition: 'opacity 0.2s, transform 0.2s'
+        transition: 'opacity 0.2s, transform 0.2s',
       }}
       className={`character-skill-label-wrapper animate-skill-tab ${isSelected ? "selected" : ""} ${connectedNode ? "connected" : ""}`}
-      onPointerDown={onClick}
+      // onPointerDown={onClick}
       data-index={index}
     >
       <CyberDescLabelHud className="character-skill-label-hud" />
