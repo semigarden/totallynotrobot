@@ -55,9 +55,11 @@
         .horizon-wrapper {
             background-color: #f0265e;
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
             z-index: 1;
+            padding: 10px 0;
 
             .character-icon-wrapper {
                 position: relative;
@@ -176,6 +178,162 @@
                     display: none;
                 }
             }
+
+            .character-node-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                margin-top: 20px;
+
+                .character-node-list {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-evenly;
+                    gap: 4px;
+                    color: #fff;
+                    width: 100%;
+
+                    .character-node {
+                        position: relative;
+                        padding: 0;
+                        background-color: transparent;
+                        color: white;
+                        border: none;
+                        border-radius: 0;
+                        font-family: "Orbitron", sans-serif;
+                        font-size: 12px;
+                        text-transform: uppercase;
+                        cursor: grab;
+                        user-select: none;
+                        transition: all 0.2s ease;
+                        position: relative;
+                        z-index: 10;
+                        font-weight: 500;
+                        width: 80px;
+                        height: 32px;
+
+                        .character-node-hud {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            z-index: 1;
+                            transform: scaleY(-1) scale(0.15); // Flip vertically and scale down
+                            transform-origin: center;
+                            animation: nodeHudFadeIn 0.8s ease-in-out forwards;
+                        }
+
+                        .character-node-text {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            z-index: 2;
+                            color: white;
+                            font-family: "Orbitron", sans-serif;
+                            font-size: 8px;
+                            text-transform: uppercase;
+                            font-weight: 500;
+                            text-align: center;
+                            opacity: 0;
+                            animation: nodeTextFadeIn 0.8s ease-in-out 0.4s forwards;
+                        }
+
+                        &:hover {
+                            .character-node-hud .path0 {
+                                fill: #ff4080;
+                            }
+                        }
+
+                        &:active {
+                            cursor: grabbing;
+                        }
+
+                        &.dragging {
+                            opacity: 0.5;
+                            transform: scale(1.1);
+                            z-index: 1000;
+                        }
+
+                        &.connected {
+                            .character-node-hud .path0 {
+                                fill: #ff0000;
+                            }
+                            cursor: default;
+                            opacity: 0.7;
+
+                            &:hover {
+                                .character-node-hud .path0 {
+                                    fill: #ff0000;
+                                }
+                            }
+                        }
+
+                        .connector-hole {
+                            position: absolute;
+                            left: 0;
+                            right: 0;
+                            bottom: -6px;
+                            margin: auto;
+                            width: 12px;
+                            height: 12px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            z-index: 3;
+                            color: #f0265e;
+                            filter: drop-shadow(0 0 4px rgba(240, 38, 94, 0.6));
+
+                            svg {
+                                width: 12px;
+                                height: 12px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        @keyframes nodeHudFadeIn {
+            0% {
+                opacity: 0;
+                transform: scaleY(-1) scale(0.15) scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scaleY(-1) scale(0.15) scale(1.1);
+            }
+            100% {
+                opacity: 0.3;
+                transform: scaleY(-1) scale(0.15) scale(1);
+            }
+        }
+
+        @keyframes nodeTextFadeIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .floating-dragged-node {
+            padding: 8px 12px;
+            background-color: #1a1a2e;
+            border: 1px solid #ff0000;
+            border-radius: 4px;
+            font-family: "Orbitron", sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            transform: scale(1.1);
         }
 
         .character-details-wrapper {
@@ -187,6 +345,8 @@
             border-left: 1px solid #f0265e;
             border-right: 1px solid #f0265e;
             border-bottom: 1px solid #f0265e;
+            padding-top: 40px; // Add gap between nodes and slots
+            // gap: 10px;
 
             .character-details-label-wrapper {
                 display: flex;
@@ -294,6 +454,28 @@
                                 &.selected {
                                     color: #f0c36b;
                                 }
+                            }
+
+                            &.connected {
+                                .character-skill-label-hud .path0 {
+                                    stroke: #ff0000;
+                                    fill: #ff0000;
+                                }
+                            }
+
+                            .connected-node-indicator {
+                                position: absolute;
+                                top: -8px;
+                                right: -8px;
+                                background-color: #ff0000;
+                                color: white;
+                                font-size: 6px;
+                                font-family: "Orbitron", sans-serif;
+                                padding: 2px 4px;
+                                border-radius: 2px;
+                                text-transform: uppercase;
+                                font-weight: bold;
+                                z-index: 5;
                             }
                         }
                     }
@@ -579,7 +761,7 @@
                     .character-name-label {
                         letter-spacing: 1px;
                         font-size: 18px;
-                        top: 31px;
+                        top: 23px;
                         left: 94px;
                     }
                 }
