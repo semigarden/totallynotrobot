@@ -59,7 +59,8 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1;
-            padding: 10px 0;
+            // padding: 10px 0;
+            gap: 5px;
 
             .character-icon-wrapper {
                 position: relative;
@@ -99,83 +100,142 @@
                 }
             }
 
-            .character-name-wrapper {
+            .character-details-wrapper {
                 position: relative;
-                width: 120px;
-                height: 60px;
-                margin-left: 2vw;
+                width: 100%;
+                height: max-content;
+                display: flex;
+                flex-direction: row;
+                align-items: space-around;
+                justify-content: space-around;
+                flex-grow: 1;
+                margin: 0;
+                padding: 0;
+                padding-top: 10px;
+            
+                .character-name-wrapper {
+                    position: relative;
+                    width: 120px;
+                    height: 60px;
+                    margin-left: 2vw;
 
-                .character-name-hud-mobile {
-                    width: 100%;
-                    height: 100%;
-                    text-shadow: rebeccapurple 0 0 10px;
+                    .character-name-hud-mobile {
+                        width: 100%;
+                        height: 100%;
+                        text-shadow: rebeccapurple 0 0 10px;
 
-                    .path0 {
-                        fill: #CCF5AC;
-                        stroke: #403233;
+                        .path0 {
+                            fill: #CCF5AC;
+                            stroke: #403233;
+                        }
+
+                        .path1 {
+                            fill: #CCF5AC;
+                            stroke: #403233;
+                        }
+
+                        .path2 {
+                            fill: #CCF5AC;
+                            stroke: #403233;
+                        }
+
+                        .path3 {
+                            fill: #CCF5AC;
+                            stroke: #403233;
+                        }
+
+                        .path4 {
+                            fill: #CCF5AC;
+                            stroke: #403233;
+                        }
+
+                        .path5 {
+                            fill: #CCF5AC;
+                            stroke: #5C374C;
+                        }
+
+                        .path6 {
+                            fill: #CCF5AC;
+                            stroke: #5C374C;
+                        }
                     }
 
-                    .path1 {
-                        fill: #CCF5AC;
-                        stroke: #403233;
+                    .character-firstname-label {
+                        position: absolute;
+                        font-weight: bolder;
+                        font-family: "Orbitron", sans-serif;
+                        text-transform: uppercase;
+                        font-style: italic;
+                        letter-spacing: 6px;
+                        font-size: 7px;
+                        top: 14.5px;
+                        left: 40px;
+                        color: #D8F1A0;
+                        text-shadow: rebeccapurple 0 0 10px;
                     }
 
-                    .path2 {
-                        fill: #CCF5AC;
-                        stroke: #403233;
+                    .character-lastname-label {
+                        position: absolute;
+                        font-weight: 500;
+                        font-family: "Orbitron", sans-serif;
+                        text-transform: uppercase;
+                        font-style: italic;
+                        letter-spacing: 2px;
+                        font-size: 7px;
+                        top: 32px;
+                        left: 28px;
+                        color: #D8F1A0;
+                        text-shadow: rebeccapurple 0 0 10px;
                     }
 
-                    .path3 {
-                        fill: #CCF5AC;
-                        stroke: #403233;
-                    }
-
-                    .path4 {
-                        fill: #CCF5AC;
-                        stroke: #403233;
-                    }
-
-                    .path5 {
-                        fill: #CCF5AC;
-                        stroke: #5C374C;
-                    }
-
-                    .path6 {
-                        fill: #CCF5AC;
-                        stroke: #5C374C;
+                    .character-name-hud, .character-name-label {
+                        display: none;
                     }
                 }
 
-                .character-firstname-label {
-                    position: absolute;
-                    font-weight: bolder;
-                    font-family: "Orbitron", sans-serif;
-                    text-transform: uppercase;
-                    font-style: italic;
-                    letter-spacing: 6px;
-                    font-size: 7px;
-                    top: 14.5px;
-                    left: 40px;
-                    color: #D8F1A0;
-                    text-shadow: rebeccapurple 0 0 10px;
-                }
+                .character-details-info-wrapper {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: space-around;
+                    margin-right: 6vw;
+                    gap: 5px;
 
-                .character-lastname-label {
-                    position: absolute;
-                    font-weight: 500;
-                    font-family: "Orbitron", sans-serif;
-                    text-transform: uppercase;
-                    font-style: italic;
-                    letter-spacing: 2px;
-                    font-size: 7px;
-                    top: 32px;
-                    left: 28px;
-                    color: #D8F1A0;
-                    text-shadow: rebeccapurple 0 0 10px;
-                }
+                    .character-details-info {
+                        position: relative;
+                        // width: px;
+                        border-radius: 5px;
+                        // height: 10px;
+                        // transform: skewX(-25deg);
+                        background-color: #a81b42;
+                        color: #fff;
+                        font-size: 10px;
+                        font-family: "Orbitron", sans-serif;
+                        text-transform: uppercase;
+                        font-weight: 500;
+                        text-align: justify;
+                        padding: 2px 6px;
 
-                .character-name-hud, .character-name-label {
-                    display: none;
+                        // &:nth-child(1) {
+                        //     background-color: #912F56;
+                        // }
+
+                        // &:nth-child(2) {
+                        //     margin-right: 14px;
+                        //     background-color: #912F56;
+                        // }
+
+                        // &:nth-child(3) {
+                        //     margin-right: 28px;
+                        //     background-color: #912F56;
+                        // }
+
+                        // &:nth-child(4) {
+                        //     margin-right: 42px;
+                        //     background-color: #912F56;
+                        // }
+                    }
                 }
             }
 
@@ -185,7 +245,7 @@
                 align-items: center;
                 justify-content: center;
                 width: 100%;
-                margin-top: 20px;
+                // margin-top: 20px;
 
                 .character-node-list {
                     display: flex;
@@ -234,7 +294,7 @@
                             z-index: 2;
                             color: white;
                             font-family: "Orbitron", sans-serif;
-                            font-size: 8px;
+                            font-size: 9px;
                             text-transform: uppercase;
                             font-weight: 500;
                             text-align: center;
@@ -244,7 +304,7 @@
 
                         &:hover {
                             .character-node-hud .path0 {
-                                fill: #ff4080;
+                                fill: #f0265e;
                             }
                         }
 
@@ -260,14 +320,14 @@
 
                         &.connected {
                             .character-node-hud .path0 {
-                                fill: #ff0000;
+                                fill: #f0265e;
                             }
                             cursor: default;
                             opacity: 0.7;
 
                             &:hover {
                                 .character-node-hud .path0 {
-                                    fill: #ff0000;
+                                    fill: #f0265e;
                                 }
                             }
                         }
@@ -605,7 +665,7 @@
                     }
                 }
     
-                .character-name-wrapper {
+                .character-details-wrapper .character-name-wrapper {
                     width: 176px;
                     margin: 0;
     
@@ -749,7 +809,7 @@
                     }
                 }
     
-                .character-name-wrapper {
+                .character-details-wrapper .character-name-wrapper {
                     width: 300px;
                     height: 120px;
                     margin: 0 4vw;
@@ -761,7 +821,7 @@
                     .character-name-label {
                         letter-spacing: 1px;
                         font-size: 18px;
-                        top: 23px;
+                        top: 31px;
                         left: 94px;
                     }
                 }
@@ -1071,4 +1131,134 @@
             transform: scale(0.95);
         }
     }
+}
+
+// Enhanced cable flow animations
+@keyframes cableFlow {
+    0% {
+        stroke-dashoffset: 0;
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        stroke-dashoffset: -10;
+        opacity: 0.8;
+    }
+}
+
+@keyframes cableGlow {
+    0%, 100% {
+        filter: brightness(1) contrast(1);
+    }
+    50% {
+        filter: brightness(1.3) contrast(1.2);
+    }
+}
+
+// Enhanced cable glow effects
+.cable-layer {
+    path {
+        transition: all 0.3s ease-in-out;
+    }
+    
+    // Hover effects for connected cables
+    g:hover {
+        path {
+            filter: brightness(1.4) contrast(1.1);
+            animation: cableGlow 1s ease-in-out infinite;
+        }
+        
+        // Enhanced glow on hover
+        path[stroke*="gradient"] {
+            stroke-width: 4;
+        }
+    }
+    
+    // Active cable effects
+    g[data-node] {
+        cursor: pointer;
+        
+        &:hover {
+            transform: scale(1.02);
+        }
+    }
+}
+
+// Cable animations based on #f0265e accent color
+@keyframes toolkitPulse {
+    0%, 100% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 8px #f0265e) drop-shadow(0 0 12px #ff4d7d);
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px #f0265e) drop-shadow(0 0 25px #ff4d7d);
+    }
+}
+
+@keyframes projectsPulse {
+    0%, 100% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 8px #e91e63) drop-shadow(0 0 12px #f06292);
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px #e91e63) drop-shadow(0 0 25px #f06292);
+    }
+}
+
+@keyframes connectionPulse {
+    0%, 100% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 8px #c2185b) drop-shadow(0 0 12px #e91e63);
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px #c2185b) drop-shadow(0 0 25px #e91e63);
+    }
+}
+
+@keyframes experiencePulse {
+    0%, 100% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 8px #ad1457) drop-shadow(0 0 12px #c2185b);
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px #ad1457) drop-shadow(0 0 25px #c2185b);
+    }
+}
+
+@keyframes interestsPulse {
+    0%, 100% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 8px #880e4f) drop-shadow(0 0 12px #ad1457);
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px #880e4f) drop-shadow(0 0 25px #ad1457);
+    }
+}
+
+// Apply pulse animations to specific node connections
+.cable-layer g[data-node="Toolkit"] {
+    animation: toolkitPulse 3s ease-in-out infinite;
+}
+
+.cable-layer g[data-node="Projects"] {
+    animation: projectsPulse 3s ease-in-out infinite;
+}
+
+.cable-layer g[data-node="Connection"] {
+    animation: connectionPulse 3s ease-in-out infinite;
+}
+
+.cable-layer g[data-node="Experience"] {
+    animation: experiencePulse 3s ease-in-out infinite;
+}
+
+.cable-layer g[data-node="Interests"] {
+    animation: interestsPulse 3s ease-in-out infinite;
 }

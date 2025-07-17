@@ -49,7 +49,7 @@ const CharacterInfo = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [draggedNode, setDraggedNode] = useState(null);
     const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
-    const [connectedNodes, setConnectedNodes] = useState(defaultConnections);
+    const [connectedNodes, setConnectedNodes] = useState({});
     const [nodePositions, setNodePositions] = useState({});
     const [slotPositions, setSlotPositions] = useState({});
 
@@ -202,7 +202,7 @@ const CharacterInfo = () => {
             <div className="content">
                 {/* <CircuitBoard className="circuit-board" /> */}
                 <div className="character-class-wrapper">
-                    <AnimateText text={"Voltage Dependence"} />
+                    {/* <AnimateText text={"Preface Title"} /> */}
                     <AnimateText text={data.preface} />
                 </div>
 
@@ -229,29 +229,37 @@ const CharacterInfo = () => {
                         />
                     </div> */}
 
-                    <div className="character-name-wrapper">
-                        <CyberLabelMobileHud className="character-name-hud-mobile" />
+                    <div className="character-details-wrapper">
+                        <div className="character-name-wrapper">
+                            <CyberLabelMobileHud className="character-name-hud-mobile" />
 
-                        <div 
-                            ref={firstNameRef}
-                            className="character-firstname-label animate-fade-in-0-5"
-                        >
-                            { data.firstName }
+                            <div 
+                                ref={firstNameRef}
+                                className="character-firstname-label animate-fade-in-0-5"
+                            >
+                                { data.firstName }
+                            </div>
+
+                            <div 
+                                ref={lastNameRef}
+                                className="character-lastname-label animate-fade-in-0-5"
+                            >
+                                { data.lastName }
+                            </div>
+
+                            <CyberLabelHud className="character-name-hud" />
+                            <div 
+                                ref={fullNameRef}
+                                className="character-name-label animate-fade-in-4"
+                            >
+                                { data.fullName }
+                            </div>
                         </div>
 
-                        <div 
-                            ref={lastNameRef}
-                            className="character-lastname-label animate-fade-in-0-5"
-                        >
-                            { data.lastName }
-                        </div>
-
-                        <CyberLabelHud className="character-name-hud" />
-                        <div 
-                            ref={fullNameRef}
-                            className="character-name-label animate-fade-in-4"
-                        >
-                            { data.fullName }
+                        <div className="character-details-info-wrapper">
+                            <div className="character-details-info">Sample Text</div>
+                            <div className="character-details-info">Sample Text</div>
+                            <div className="character-details-info">Sample Text</div>
                         </div>
                     </div>
 
