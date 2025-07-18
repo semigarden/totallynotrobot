@@ -13,6 +13,7 @@ import CyberLabelMobileHud from "components/hud/CyberLabelMobileHud";
 import CyberLabelHud from "components/hud/CyberLabelHud";
 import CyberSkillHud from "components/hud/CyberSkillHud";
 import CyberDescLabelHud from "components/hud/CyberDescLabelHud";
+import CyberLevelBar from "components/hud/CyberLevelBar";
 
 // Assets
 import CharacterOrbitIcon from "assets/sleeper-orbit.webp";
@@ -253,6 +254,12 @@ const CharacterInfo = () => {
                                 className="character-name-label animate-fade-in-4"
                             >
                                 { data.fullName }
+                            </div>
+
+                            <div className="character-level-wrapper">
+                                <CyberLevelBar className="character-level-bar" />
+                                <div className="character-class-label">Nomad</div>
+                                <div className="character-level-label">26</div>
                             </div>
                         </div>
 
