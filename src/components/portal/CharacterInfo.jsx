@@ -257,9 +257,22 @@ const CharacterInfo = () => {
                         </div>
 
                         <div className="character-details-info-wrapper">
-                            <div className="character-details-info">Sample Text</div>
-                            <div className="character-details-info">Sample Text</div>
-                            <div className="character-details-info">Sample Text</div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info">Web Dev</div>
+                                <div className="character-details-info">Art</div>
+                            </div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info">Plants</div>
+                                <div className="character-details-info">Long Walks</div>
+                            </div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info">Reading</div>
+                                <div className="character-details-info">Writing</div>
+                            </div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info">Music</div>
+                                <div className="character-details-info">DIY</div>
+                            </div>
                         </div>
                     </div>
 

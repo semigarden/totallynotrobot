@@ -202,6 +202,14 @@
                     margin-right: 6vw;
                     gap: 5px;
 
+                    .character-details-info-group {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-around;
+                        gap: 5px;
+                    }
+
                     .character-details-info {
                         position: relative;
                         // width: px;
@@ -405,7 +413,7 @@
             border-left: 1px solid #f0265e;
             border-right: 1px solid #f0265e;
             border-bottom: 1px solid #f0265e;
-            padding-top: 40px; // Add gap between nodes and slots
+            padding-top: 10px; // Add gap between nodes and slots
             // gap: 10px;
 
             .character-details-label-wrapper {
