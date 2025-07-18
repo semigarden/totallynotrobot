@@ -224,6 +224,12 @@
                         font-weight: 500;
                         text-align: justify;
                         padding: 2px 6px;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            background-color: #f0265e;
+                            cursor: pointer;
+                        }
 
                         // &:nth-child(1) {
                         //     background-color: #912F56;
