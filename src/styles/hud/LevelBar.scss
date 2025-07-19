@@ -1,8 +1,8 @@
 .level-bar {
     position: relative;
-    width: 100%;
-    height: 100%;
-    color: #fff;
+    // width: 100%;
+    width: max-content;
+    color: #40F99B;
     font-family: "Orbitron", sans-serif;
     font-size: 11px;
     text-transform: uppercase;
@@ -10,4 +10,27 @@
     text-align: center;
     letter-spacing: 6px;
     font-style: italic;
+
+    display: flex;
+    justify-content: space-between;
+
+    --aug-border: 1px;
+    --aug-inset: 1px;
+    --aug-border-bg: #40F99B;
+    --aug-inset-bg: #40F99B;
+    --aug-border-opacity: 0.8;
+    --aug-inset-opacity: 0.8;
+
+    .exp {
+        width: 15px;
+        height: 5px;
+        background-color: #40F99B;
+        box-shadow: 0 0 20px 0 rgba(249, 64, 240);
+
+        --aug-border: 5px;
+        --aug-inset: 5px;
+
+        // --aug-border-bg: gold;
+        // --aug-inset-bg: gold;
+    }
 }

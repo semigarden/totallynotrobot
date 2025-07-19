@@ -259,8 +259,8 @@ const CharacterInfo = () => {
                             </div>
 
                             <div className="character-level-wrapper">
-                                {/* <LevelBar className="character-level-bar" /> */}
-                                <CyberLevelBar className="character-level-bar" />
+                                <LevelBar className="character-level-bar" />
+                                {/* <CyberLevelBar className="character-level-bar" /> */}
                                 <div className="character-class-label">Nomad</div>
                                 <div className="character-level-label">26</div>
                             </div>
