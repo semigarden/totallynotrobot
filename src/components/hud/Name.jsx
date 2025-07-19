@@ -24,6 +24,14 @@ const Name = ({ className, name = "Faulty Circuit" }) => {
                 </div>
                 <div className="frame-main">
                     <div className="text">{name}</div>
+                    <div className="animation">
+                        {Array.from({length: 16}).map((_, index) => (
+                            <div className="arrow" key={index}>
+                                <div className="line-1" augmented-ui="tr-clip bl-clip exe"/>
+                                <div className="line-2" augmented-ui="br-clip tl-clip exe"/>
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <div className="frame-bottom">
                     <div className="frame-1" augmented-ui="tl-clip br-clip exe"/>
