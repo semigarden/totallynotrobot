@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
 
-/* Small devices (mobiles) */
 .character-info {
     width: 100%;
     height: 100%;
@@ -788,9 +787,7 @@
         }
     }
 }
-// End mobile styles
 
-/* Medium devices (tablets) */
 @media (min-width: 426px) {
     .character-info {
         .content {
@@ -923,9 +920,7 @@
         }
     }
 }
-// End tablet styles
 
-/* Large devices (laptop) */
 @media (min-width: 769px) {
     .character-info {
         grid-template-rows: 160px 160px 3fr;
@@ -1045,7 +1040,6 @@
                         width: 32px;
                         height: 32px;
                         
-                        // Ensure MDI icons (SVG) display properly
                         svg {
                             width: 100%;
                             height: 100%;
@@ -1064,9 +1058,7 @@
         }
     }
 }
-// End laptop styles
 
-// Floating animation for character icon
 @keyframes float {
     0%, 100% {
         transform: translateY(0px);
@@ -1080,7 +1072,6 @@
     animation: float 2s ease-in-out infinite;
 }
 
-// Orbit animation for character orbit icon
 @keyframes orbit {
     0%, 100% {
         transform: translateY(0px);
@@ -1093,8 +1084,7 @@
 .animate-orbit {
     animation: orbit 3s ease-in-out infinite;
 }
-
-// Fade-in animations for name labels
+    
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -1116,7 +1106,6 @@
     animation: fadeIn 3s ease-in-out 4s both;
 }
 
-// Cursor blinker animation
 @keyframes blink {
     0%, 50% {
         opacity: 0;
@@ -1130,7 +1119,6 @@
     animation: blink 1s linear infinite;
 }
 
-// Skill tab animations
 @keyframes skillTabIn {
     from {
         opacity: 0;
@@ -1161,7 +1149,6 @@
     animation: fadeIn 3s ease-in-out 2s both;
 }
 
-// Cyber desc path animation
 @keyframes cyberDescPath {
     0% {
         opacity: 1;
@@ -1175,7 +1162,6 @@
     animation: cyberDescPath 2s ease-in-out 1s both;
 }
 
-// Arrow animations for CyberLabelHud
 @keyframes arrowFade {
     0% {
         opacity: 0;
@@ -1203,7 +1189,6 @@
 .animate-arrow-12 { animation: arrowFade 2s ease-in-out 1.3s both; }
 .animate-arrow-13 { animation: arrowFade 2s ease-in-out 1.4s both; }
 
-// Pulsing animation
 @keyframes pulsing {
     0%, 100% {
         opacity: 1;
@@ -1217,7 +1202,6 @@
     animation: pulsing 3s ease-in-out infinite;
 }
 
-// Mobile path animation
 @keyframes mobilePath {
     0% {
         opacity: 1;
@@ -1231,7 +1215,6 @@
     animation: mobilePath 2s ease-in-out 0.5s both;
 }
 
-// Skill path animations for CyberSkillHud
 @keyframes skillPathFade {
     0% {
         opacity: 0;
@@ -1263,7 +1246,6 @@
     animation: skillPathFade 2s ease-in-out 0s both;
 }
 
-// Drag and drop styles for skill tabs
 .skill-tab {
     display: flex;
     gap: 8px;
@@ -1286,7 +1268,6 @@
     }
 }
 
-// Enhanced cable flow animations
 @keyframes cableFlow {
     0% {
         stroke-dashoffset: 0;
@@ -1310,26 +1291,22 @@
     }
 }
 
-// Enhanced cable glow effects
 .cable-layer {
     path {
         transition: all 0.3s ease-in-out;
     }
     
-    // Hover effects for connected cables
     g:hover {
         path {
             filter: brightness(1.4) contrast(1.1);
             animation: cableGlow 1s ease-in-out infinite;
         }
         
-        // Enhanced glow on hover
         path[stroke*="gradient"] {
             stroke-width: 4;
         }
     }
     
-    // Active cable effects
     g[data-node] {
         cursor: pointer;
         
@@ -1339,7 +1316,6 @@
     }
 }
 
-// Cable animations based on #f0265e accent color
 @keyframes toolkitPulse {
     0%, 100% {
         opacity: 0.8;
@@ -1395,7 +1371,6 @@
     }
 }
 
-// Apply pulse animations to specific node connections
 .cable-layer g[data-node="Toolkit"] {
     animation: toolkitPulse 3s ease-in-out infinite;
 }
