@@ -44,6 +44,16 @@ const CharacterInfo = () => {
     const [skillTabs, setSkillTabs] = useState(initialSkillTabs);
     const [selectedSkillTab, setSelectedSkillTab] = useState(skillTabs[0]);
 
+    const getLevel = () => {
+        const startYear = 2025;
+        const startLevel = 26;
+        const currentYear = new Date().getFullYear();
+        const yearsDifference = currentYear - startYear;
+        return startLevel + yearsDifference;
+    };
+
+    const currentLevel = getLevel();
+
     const initialSkills = data.skills;
 
     let [skills] = useState(initialSkills);
@@ -264,7 +274,7 @@ const CharacterInfo = () => {
                                 <LevelBar className="character-level-bar" />
                                 {/* <CyberLevelBar className="character-level-bar" /> */}
                                 <div className="character-class-label">Nomad</div>
-                                <div className="character-level-label">26</div>
+                                <div className="character-level-label">{currentLevel}</div>
                             </div>
                         </div>
 
