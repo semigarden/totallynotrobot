@@ -206,7 +206,7 @@ const CharacterInfo = () => {
             <div className="content">
                 {/* <CircuitBoard className="circuit-board" /> */}
                 <div className="character-class-wrapper" augmented-ui="exe">
-                    {/* <AnimateText text={"Preface Title"} /> */}
+                    <AnimateText text={"Voltage Dependence"} />
                     <AnimateText text={data.preface} />
                 </div>
 
