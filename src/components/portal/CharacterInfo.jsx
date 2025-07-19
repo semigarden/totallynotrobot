@@ -22,6 +22,7 @@ import CharacterIcon from "assets/sleeper-only.webp";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 import LevelBar from "components/hud/LevelBar";
+import Name from "components/hud/Name";
 
 // Styles
 import "styles/CharacterInfo.scss";
@@ -234,8 +235,9 @@ const CharacterInfo = () => {
 
                     <div className="character-details-wrapper">
                         <div className="character-name-wrapper">
-                            <CyberLabelMobileHud className="character-name-hud-mobile" />
+                            {/* <CyberLabelMobileHud className="character-name-hud-mobile" /> */}
 
+                            <Name className="character-name-hud" />
                             <div 
                                 ref={firstNameRef}
                                 className="character-firstname-label animate-fade-in-0-5"
@@ -250,13 +252,13 @@ const CharacterInfo = () => {
                                 { data.lastName }
                             </div>
 
-                            <CyberLabelHud className="character-name-hud" />
-                            <div 
+                            {/* <CyberLabelHud className="character-name-hud" /> */}
+                            {/* <div 
                                 ref={fullNameRef}
                                 className="character-name-label animate-fade-in-4"
                             >
                                 { data.fullName }
-                            </div>
+                            </div> */}
 
                             <div className="character-level-wrapper">
                                 <LevelBar className="character-level-bar" />

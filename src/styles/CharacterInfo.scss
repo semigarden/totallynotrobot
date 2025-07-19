@@ -131,6 +131,10 @@
                     height: 60px;
                     margin-left: 2vw;
 
+                    .character-name-hud {
+                        position: absolute;
+                    }
+
                     .character-name-hud-mobile {
                         width: 100%;
                         height: 100%;
