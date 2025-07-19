@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import "styles/hud/Name.scss";
 
 const Name = ({ className, name = "Faulty Circuit" }) => {
+    const animationRef = useRef(null);
+
+    useEffect(() => {
+        const arrows = animationRef.current?.querySelectorAll('.arrow');
+        if (arrows) {
+            arrows.forEach((arrow, index) => {
+                arrow.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+    }, []);
+
     return (
         <div className={`name ${className}`}>
             <div className="circle">
@@ -24,7 +35,7 @@ const Name = ({ className, name = "Faulty Circuit" }) => {
                 </div>
                 <div className="frame-main">
                     <div className="text">{name}</div>
-                    <div className="animation">
+                    <div className="animation" ref={animationRef}>
                         {Array.from({length: 16}).map((_, index) => (
                             <div className="arrow" key={index}>
                                 <div className="line-1" augmented-ui="tr-clip bl-clip exe"/>
