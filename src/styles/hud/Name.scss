@@ -180,7 +180,6 @@
                 color: #F6F7F8;
                 text-shadow: rebeccapurple 0 0 10px;
                 
-                // Make name appear only after arrow animation completes
                 animation: nameAppear 1s ease-in-out 3.6s both;
             }
 
@@ -306,7 +305,6 @@
     }
 }
 
-// Arrow animation from CyberLabelHud (exact same)
 @keyframes arrowFade {
     0% {
         opacity: 0;
@@ -319,7 +317,6 @@
     }
 }
 
-// Name appear animation - shows name after arrow animation completes
 @keyframes nameAppear {
     0% {
         opacity: 0;
