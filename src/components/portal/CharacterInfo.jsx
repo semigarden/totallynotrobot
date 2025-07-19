@@ -21,6 +21,8 @@ import CharacterIcon from "assets/sleeper-only.webp";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
+import LevelBar from "components/hud/LevelBar";
+
 // Styles
 import "styles/CharacterInfo.scss";
 
@@ -202,7 +204,7 @@ const CharacterInfo = () => {
         <div className="character-info" onMouseMove={handleDrag} onMouseUp={handleDragEnd}>
             <div className="content">
                 {/* <CircuitBoard className="circuit-board" /> */}
-                <div className="character-class-wrapper">
+                <div className="character-class-wrapper" augmented-ui="exe">
                     {/* <AnimateText text={"Preface Title"} /> */}
                     <AnimateText text={data.preface} />
                 </div>
@@ -257,6 +259,7 @@ const CharacterInfo = () => {
                             </div>
 
                             <div className="character-level-wrapper">
+                                {/* <LevelBar className="character-level-bar" /> */}
                                 <CyberLevelBar className="character-level-bar" />
                                 <div className="character-class-label">Nomad</div>
                                 <div className="character-level-label">26</div>
@@ -264,22 +267,22 @@ const CharacterInfo = () => {
                         </div>
 
                         <div className="character-details-info-wrapper">
-                            <div className="character-details-info-group">
-                                <div className="character-details-info">Web Dev</div>
-                                <div className="character-details-info">Art</div>
-                            </div>
-                            <div className="character-details-info-group">
-                                <div className="character-details-info">Plants</div>
-                                <div className="character-details-info">Long Walks</div>
-                            </div>
-                            <div className="character-details-info-group">
-                                <div className="character-details-info">Reading</div>
-                                <div className="character-details-info">Writing</div>
-                            </div>
-                            <div className="character-details-info-group">
-                                <div className="character-details-info">Music</div>
-                                <div className="character-details-info">DIY</div>
-                            </div>
+                        <div className="character-details-info-group">
+                            <div className="character-details-info" augmented-ui="exe">Web Dev</div>
+                            <div className="character-details-info" augmented-ui="exe">Art</div>
+                        </div>
+                        <div className="character-details-info-group">
+                            <div className="character-details-info" augmented-ui="exe">Plants</div>
+                            <div className="character-details-info" augmented-ui="exe">Long Walks</div>
+                        </div>
+                        <div className="character-details-info-group">
+                            <div className="character-details-info" augmented-ui="exe">Reading</div>
+                            <div className="character-details-info" augmented-ui="exe">Writing</div>
+                        </div>
+                        <div className="character-details-info-group">
+                            <div className="character-details-info" augmented-ui="exe">Music</div>
+                            <div className="character-details-info" augmented-ui="exe">DIY</div>
+                        </div>
                         </div>
                     </div>
 

@@ -35,6 +35,18 @@
             border-right: 1px solid #f0265e;
             z-index: 1;
             
+            /* Augmented UI styling */
+            // --aug-border: 2px;
+            // --aug-border-bg: linear-gradient(45deg, #f0265e, #ff4d7d, #f0265e);
+            // --aug-border-opacity: 0.8;
+            // --aug-inset: 1px;
+            // --aug-inset-bg: linear-gradient(135deg, rgba(240, 38, 94, 0.1), rgba(255, 77, 125, 0.05));
+            // --aug-inset-opacity: 0.6;
+            // --aug-tl: 15px;
+            // --aug-tr: 15px;
+            // --aug-br: 10px;
+            // --aug-bl: 10px;
+            
             .character-class-bio {
                 font-size: 8px;
                 text-align: justify;
@@ -260,7 +272,7 @@
                     .character-details-info {
                         position: relative;
                         // width: px;
-                        border-radius: 5px;
+                        border-radius: 4px;
                         // height: 10px;
                         // transform: skewX(-25deg);
                         background-color: #a81b42;
@@ -272,11 +284,88 @@
                         text-align: justify;
                         padding: 2px 6px;
                         transition: all 0.3s ease;
+                        
+                        /* Augmented UI styling - Puzzle piece base */
+                        --aug-border: 1px;
+                        --aug-inset: 1px;
+        
+                        // --aug-border: 1.5px;
+                        // --aug-border-bg: linear-gradient(90deg, #f0265e, #ff4d7d, #f0265e);
+                        // --aug-border-opacity: 0.9;
+                        // --aug-inset: 0.5px;
+                        // --aug-inset-bg: linear-gradient(135deg, rgba(240, 38, 94, 0.2), rgba(255, 77, 125, 0.1));
+                        // --aug-inset-opacity: 0.7;
+                        // --aug-tl: 10px;
+                        // --aug-tr: 10px;
+                        // --aug-br: 8px;
+                        // --aug-bl: 8px;
+                        // box-shadow: 0 0 8px rgba(240, 38, 94, 0.3);
 
                         &:hover {
                             background-color: #f0265e;
                             cursor: pointer;
+                            --aug-border-bg: linear-gradient(90deg, #ff4d7d, #f0265e, #ff4d7d);
+                            --aug-border-opacity: 1;
+                            box-shadow: 0 0 15px rgba(240, 38, 94, 0.6);
+                            // transform: translateY(-1px);
                         }
+
+                        /* Puzzle piece variations */
+                        // &:nth-child(1) {
+    
+                        // }
+
+                        // &:nth-child(2) {
+                        //     --aug-tl: 0px;
+                        //     --aug-tr: 8px;
+                        //     --aug-br: 8px;
+                        //     --aug-bl: 0px;
+                        // }
+
+                        // /* Second row puzzle pieces */
+                        // &:nth-child(3) {
+                        //     --aug-tl: 8px;
+                        //     --aug-tr: 0px;
+                        //     --aug-br: 8px;
+                        //     --aug-bl: 0px;
+                        // }
+
+                        // &:nth-child(4) {
+                        //     --aug-tl: 0px;
+                        //     --aug-tr: 8px;
+                        //     --aug-br: 0px;
+                        //     --aug-bl: 8px;
+                        // }
+
+                        // /* Third row puzzle pieces */
+                        // &:nth-child(5) {
+                        //     --aug-tl: 8px;
+                        //     --aug-tr: 0px;
+                        //     --aug-br: 0px;
+                        //     --aug-bl: 8px;
+                        // }
+
+                        // &:nth-child(6) {
+                        //     --aug-tl: 0px;
+                        //     --aug-tr: 8px;
+                        //     --aug-br: 8px;
+                        //     --aug-bl: 0px;
+                        // }
+
+                        // /* Fourth row puzzle pieces */
+                        // &:nth-child(7) {
+                        //     --aug-tl: 8px;
+                        //     --aug-tr: 0px;
+                        //     --aug-br: 8px;
+                        //     --aug-bl: 0px;
+                        // }
+
+                        // &:nth-child(8) {
+                        //     --aug-tl: 0px;
+                        //     --aug-tr: 8px;
+                        //     --aug-br: 0px;
+                        //     --aug-bl: 8px;
+                        // }
 
                         // &:nth-child(1) {
                         //     background-color: #912F56;
