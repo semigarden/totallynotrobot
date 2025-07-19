@@ -14,8 +14,6 @@ const data = {
         {code: "1", label: "001", color: "#9ca3af"},
         {code: "2", label: "002", color: "#9ca3af"},
         {code: "3", label: "003", color: "#9ca3af"},
-        {code: "4", label: "004", color: "#9ca3af"},
-
     ],
     skills: [
         {category: "0", label: "React.js", icon: faReact, iconType: "fontawesome", animation: "fa-spin", color: "#C1FFF2"},
