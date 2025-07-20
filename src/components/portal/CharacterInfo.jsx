@@ -248,7 +248,7 @@ const CharacterInfo = () => {
                             {/* <CyberLabelMobileHud className="character-name-hud-mobile" /> */}
 
                             <Name className="character-name-hud" />
-                            <div 
+                            {/* <div 
                                 ref={firstNameRef}
                                 className="character-firstname-label animate-fade-in-0-5"
                             >
@@ -260,7 +260,7 @@ const CharacterInfo = () => {
                                 className="character-lastname-label animate-fade-in-0-5"
                             >
                                 { data.lastName }
-                            </div>
+                            </div> */}
 
                             {/* <CyberLabelHud className="character-name-hud" /> */}
                             {/* <div 
@@ -279,22 +279,37 @@ const CharacterInfo = () => {
                         </div>
 
                         <div className="character-details-info-wrapper">
-                        <div className="character-details-info-group">
-                            <div className="character-details-info" augmented-ui="exe">Web Dev</div>
-                            <div className="character-details-info" augmented-ui="exe">Art</div>
-                        </div>
-                        <div className="character-details-info-group">
-                            <div className="character-details-info" augmented-ui="exe">Plants</div>
-                            <div className="character-details-info" augmented-ui="exe">Long Walks</div>
-                        </div>
-                        <div className="character-details-info-group">
-                            <div className="character-details-info" augmented-ui="exe">Reading</div>
-                            <div className="character-details-info" augmented-ui="exe">Writing</div>
-                        </div>
-                        <div className="character-details-info-group">
-                            <div className="character-details-info" augmented-ui="exe">Music</div>
-                            <div className="character-details-info" augmented-ui="exe">DIY</div>
-                        </div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info" augmented-ui="exe">Web Dev</div>
+                                <div className="character-details-info" augmented-ui="exe">Art</div>
+                                <div className="character-details-info" augmented-ui="exe">DIY</div>
+                            </div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info" augmented-ui="exe">Music</div>
+                                <div className="character-details-info" augmented-ui="exe">Plants</div>
+                                <div className="character-details-info" augmented-ui="exe">Reading</div>
+                            </div>
+                                <div className="character-details-info-group">
+                                <div className="character-details-info" augmented-ui="exe">Long Walks</div>
+                                <div className="character-details-info" augmented-ui="exe">Writing</div>
+                            </div>
+                      
+                            {/* <div className="character-details-info-group">
+                                <div className="character-details-info" augmented-ui="exe">Web Dev</div>
+                                <div className="character-details-info" augmented-ui="exe">Art</div>
+                            </div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info" augmented-ui="exe">Plants</div>
+                                <div className="character-details-info" augmented-ui="exe">Long Walks</div>
+                            </div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info" augmented-ui="exe">Reading</div>
+                                <div className="character-details-info" augmented-ui="exe">Writing</div>
+                            </div>
+                            <div className="character-details-info-group">
+                                <div className="character-details-info" augmented-ui="exe">Music</div>
+                                <div className="character-details-info" augmented-ui="exe">DIY</div>
+                            </div> */}
                         </div>
                     </div>
 
@@ -322,8 +337,7 @@ const CharacterInfo = () => {
                 </div>
 
                 <div className="character-details-wrapper">
-                    {/* SVG for cables */}
-                    <svg 
+                    {/* <svg 
                         className="cable-layer" 
                         style={{
                             position: 'absolute',
@@ -335,7 +349,6 @@ const CharacterInfo = () => {
                             zIndex: 1
                         }}
                     >
-                        {/* Draw permanent connections */}
                         {Object.entries(connectedNodes).map(([slotCode, nodeName]) => {
                             const nodePos = nodePositions[nodeName];
                             const slotIndex = skillTabs.findIndex(tab => tab.code === slotCode);
@@ -356,7 +369,6 @@ const CharacterInfo = () => {
                             return null;
                         })}
 
-                        {/* Draw dragging cable */}
                         {isDragging && draggedNode && nodePositions[draggedNode] && (
                             <path
                                 d={drawCable(
@@ -370,21 +382,9 @@ const CharacterInfo = () => {
                                 fill="none"
                             />
                         )}
-                    </svg>
+                    </svg> */}
 
                     <div className="character-details-label-wrapper">
-                        {/* <div className="character-skills-label-wrapper"> */}
-                            {/* <div className="character-skills-wrapper">
-                                <CyberSkillHud className="character-skills-hud" />
-                                <div 
-                                    ref={skillsLabelRef}
-                                    className="character-skills-label animate-fade-in-2"
-                                >
-                                    Skills
-                                </div>
-                            </div> */}
-                            
-
                             <div className="character-skills-navigation">
                                 <div ref={skillTabsRef} className="skill-tab">
                                     {skillTabs.map((skillTab, index) => (
@@ -401,9 +401,6 @@ const CharacterInfo = () => {
                                     ))}
                                 </div>
                             </div>
-                        {/* </div> */}
-
-                        {/* <div className="character-skill-horizontal-divider"></div> */}
                     </div>
 
                     <div className="character-skill-horizontal-divider"></div>
