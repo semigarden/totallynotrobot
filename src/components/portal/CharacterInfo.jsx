@@ -326,7 +326,7 @@ const CharacterInfo = () => {
                         )}
                     </svg> */}
 
-                    <div className="character-details-label-wrapper">
+                    {/* <div className="character-details-label-wrapper">
                             <div className="character-skills-navigation">
                                 <div ref={skillTabsRef} className="skill-tab">
                                     {skillTabs.map((skillTab, index) => (
@@ -344,7 +344,7 @@ const CharacterInfo = () => {
                                     ))}
                                 </div>
                             </div>
-                    </div>
+                    </div> */}
 
                     <div className="character-skill-horizontal-divider"></div>
 
