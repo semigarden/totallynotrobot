@@ -33,12 +33,14 @@
             flex-direction: column;
             gap: 10px;
             color: white;
-            padding: 10px;
+            // padding: 10px;
             text-shadow: rebeccapurple 0 0 10px;
             // border-top: 1px solid #f0265e;
             // border-left: 1px solid #f0265e;
             // border-right: 1px solid #f0265e;
             z-index: 1;
+
+            padding: 10px 20px;
             
             /* Augmented UI styling */
             // --aug-border: 2px;
