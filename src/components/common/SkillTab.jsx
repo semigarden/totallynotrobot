@@ -3,7 +3,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 import CyberDescLabelHud from "components/hud/CyberDescLabelHud";
 
-const SkillTab = ({ skillTab, onClick, isSelected, onDragStart, onDragOver, onDrop, index, connectedNode }) => {
+const SkillTab = ({ className = "", skillTab, onClick, isSelected, onDragStart, onDragOver, onDrop, index, connectedNode }) => {
   const [textRef] = useAutoAnimate();
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef(null);
@@ -48,7 +48,7 @@ const SkillTab = ({ skillTab, onClick, isSelected, onDragStart, onDragOver, onDr
         transform: isDragging ? 'scale(0.95)' : 'scale(1)',
         transition: 'opacity 0.2s, transform 0.2s',
       }}
-      className={`character-skill-label-wrapper animate-skill-tab ${isSelected ? "selected" : ""} ${connectedNode ? "connected" : ""}`}
+      className={`${className} character-skill-label-wrapper animate-skill-tab ${isSelected ? "selected" : ""} ${connectedNode ? "connected" : ""} ${isDragging ? "dragging" : ""}`}
       // onPointerDown={onClick}
       data-index={index}
     >

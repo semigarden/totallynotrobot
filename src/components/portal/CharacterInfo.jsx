@@ -388,8 +388,9 @@ const CharacterInfo = () => {
                             <div className="character-skills-navigation">
                                 <div ref={skillTabsRef} className="skill-tab">
                                     {skillTabs.map((skillTab, index) => (
-                                        <div key={skillTab.code} ref={el => skillTabRefs.current[index] = el}>
+                                        <div key={skillTab.code} ref={el => skillTabRefs.current[index] = el} className="tab">
                                             <SkillTab
+                                                className="tab"
                                                 skillTab={skillTab}
                                                 index={index}
                                                 isSelected={selectedSkillTab === skillTab}
