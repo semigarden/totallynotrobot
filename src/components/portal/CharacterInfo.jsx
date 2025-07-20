@@ -327,9 +327,9 @@ const CharacterInfo = () => {
                                     <div className="character-node-text">
                                         {!Object.values(connectedNodes).includes(nodeName) && nodeName}
                                     </div>
-                                    {/* <div className="connector-hole">
+                                    <div className="connector">
                                         <FontAwesomeIcon icon={faCaretDown} />
-                                    </div> */}
+                                    </div>
                                 </div>
                             ))}
                         </div>
