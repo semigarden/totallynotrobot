@@ -278,6 +278,8 @@ const CharacterInfo = () => {
                             </div>
                         </div>
 
+                        <div className="divider"/>
+
                         <div className="character-details-info-wrapper">
                             <div className="character-details-info-group">
                                 <div className="character-details-info" augmented-ui="exe">Web Dev</div>
