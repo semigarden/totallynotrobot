@@ -747,7 +747,7 @@
 
             .character-skill-list-wrapper {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
                 // grid-template-rows: repeat(auto-fill, minmax(8vw, 1fr));
                 gap: 20px;
                 width: 90%;
@@ -765,8 +765,8 @@
                     cursor: pointer;
 
                     .character-skill-icon {
-                        width: 16px;
-                        height: 16px;
+                        width: 24px;
+                        height: 24px;
                     }
 
                     .character-skill-label {
