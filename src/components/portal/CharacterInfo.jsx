@@ -16,8 +16,6 @@ import CyberDescLabelHud from "components/hud/CyberDescLabelHud";
 import CyberLevelBar from "components/hud/CyberLevelBar";
 
 // Assets
-import CharacterOrbitIcon from "assets/sleeper-orbit.webp";
-import CharacterIcon from "assets/sleeper-only.webp";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
@@ -59,7 +57,6 @@ const CharacterInfo = () => {
     let [skills] = useState(initialSkills);
     skills = skills.filter((skill) => (skill.category === selectedSkillTab.code))
 
-    // Drag and drop state
     const [isDragging, setIsDragging] = useState(false);
     const [draggedNode, setDraggedNode] = useState(null);
     const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
@@ -92,7 +89,6 @@ const CharacterInfo = () => {
         setSkillTabs(newSkillTabs);
     };
 
-    // Drag handlers
     const handleDragStart = (e, nodeName) => {
         setIsDragging(true);
         setDraggedNode(nodeName);
@@ -103,7 +99,7 @@ const CharacterInfo = () => {
             const svgRect = svgContainer.getBoundingClientRect();
             setDragPosition({
                 x: rect.left + rect.width / 2 - svgRect.left,
-                y: rect.bottom + 6 + 3.25 - svgRect.top // Connector-hole position
+                y: rect.bottom + 6 + 3.25 - svgRect.top
             });
         } else {
             setDragPosition({
@@ -134,7 +130,6 @@ const CharacterInfo = () => {
     const handleDragEnd = (e) => {
         if (!isDragging) return;
 
-        // Check if dropped on a skill tab
         const skillTabElement = e.target.closest('.character-skill-label-wrapper');
         if (skillTabElement) {
             const skillTabIndex = parseInt(skillTabElement.dataset.index);
@@ -152,7 +147,6 @@ const CharacterInfo = () => {
         setDraggedNode(null);
     };
 
-    // Update positions when component mounts
     useEffect(() => {
         const updatePositions = () => {
             const svgContainer = document.querySelector('.cable-layer');
@@ -160,7 +154,6 @@ const CharacterInfo = () => {
             
             const svgRect = svgContainer.getBoundingClientRect();
             
-            // Update node positions (connector-hole center positions)
             const newNodePositions = {};
             Object.keys(characterNodeRefs.current).forEach(nodeName => {
                 const element = characterNodeRefs.current[nodeName];
@@ -168,18 +161,15 @@ const CharacterInfo = () => {
                     const rect = element.getBoundingClientRect();
                     const isConnected = Object.values(connectedNodes).includes(nodeName);
                     
-                    // Calculate position relative to SVG container
-                    // For connected nodes, the connector-hole is closer to the top due to reduced height
-                    const connectorOffset = isConnected ? 10 : 14; // Adjust offset for connected vs unconnected
+                    const connectorOffset = isConnected ? 10 : 14;
                     newNodePositions[nodeName] = {
                         x: rect.left + rect.width / 2 - svgRect.left,
-                        y: rect.bottom + connectorOffset - svgRect.top // Exact center of connector-hole
+                        y: rect.bottom + connectorOffset - svgRect.top
                     };
                 }
             });
             setNodePositions(newNodePositions);
 
-            // Update slot positions (top center of skill tabs)
             const newSlotPositions = {};
             Object.keys(skillTabRefs.current).forEach(slotIndex => {
                 const element = skillTabRefs.current[slotIndex];
@@ -187,7 +177,7 @@ const CharacterInfo = () => {
                     const rect = element.getBoundingClientRect();
                     newSlotPositions[slotIndex] = {
                         x: rect.left + rect.width / 2 - svgRect.left - 4,
-                        y: rect.top - svgRect.top // Top of the skill tab
+                        y: rect.top - svgRect.top
                     };
                 }
             });
@@ -197,9 +187,8 @@ const CharacterInfo = () => {
         updatePositions();
         window.addEventListener('resize', updatePositions);
         return () => window.removeEventListener('resize', updatePositions);
-    }, [skillTabs, connectedNodes]); // Add connectedNodes to dependencies
+    }, [skillTabs, connectedNodes]);
 
-    // Draw bezier curve cable
     const drawCable = (startX, startY, endX, endY) => {
         const controlPoint1X = startX;
         const controlPoint1Y = startY + (endY - startY) * 0.3;
@@ -209,70 +198,22 @@ const CharacterInfo = () => {
         return `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
     };
 
-    const [characterIconRef, orbitIconRef, firstNameRef, lastNameRef, fullNameRef, skillsLabelRef, skillTabsRef] = useAutoAnimate();
+    const [skillTabsRef] = useAutoAnimate();
 
     return (
         <div className="character-info" onMouseMove={handleDrag} onMouseUp={handleDragEnd}>
             <div className="content">
-                {/* <CircuitBoard className="circuit-board" /> */}
                 <div className="character-class-wrapper" augmented-ui="exe">
-                    <AnimateText text={"Voltage Dependence"} />
                     <AnimateText text={data.preface} />
                 </div>
 
                 <div className="horizon-wrapper">
-                    {/* <div className="character-icon-wrapper">
-                        <img 
-                            ref={characterIconRef}
-                            className="character-icon animate-float" 
-                            src={CharacterIcon}
-                            draggable="false"
-                        />
-                        <img 
-                            ref={orbitIconRef} 
-                            className="character-orbit-icon animate-orbit" 
-                            src={CharacterOrbitIcon}
-                            draggable="false"
-                        />
-                    </div> */}
-                    {/* <div className="character-visual-wrapper">
-                        <div
-                            className="character-visual" 
-                            // src={CharacterIcon}
-                            draggable="false"
-                        />
-                    </div> */}
-
                     <div className="character-details-wrapper">
                         <div className="character-name-wrapper">
-                            {/* <CyberLabelMobileHud className="character-name-hud-mobile" /> */}
-
                             <Name className="character-name-hud" />
-                            {/* <div 
-                                ref={firstNameRef}
-                                className="character-firstname-label animate-fade-in-0-5"
-                            >
-                                { data.firstName }
-                            </div>
-
-                            <div 
-                                ref={lastNameRef}
-                                className="character-lastname-label animate-fade-in-0-5"
-                            >
-                                { data.lastName }
-                            </div> */}
-
-                            {/* <CyberLabelHud className="character-name-hud" /> */}
-                            {/* <div 
-                                ref={fullNameRef}
-                                className="character-name-label animate-fade-in-4"
-                            >
-                                { data.fullName }
-                            </div> */}
-
+ 
                             <div className="character-level-wrapper">
                                 <LevelBar className="character-level-bar" />
-                                {/* <CyberLevelBar className="character-level-bar" /> */}
                                 <div className="character-class-label">Nomad</div>
                                 <div className="character-level-label">{currentLevel}</div>
                             </div>
@@ -325,7 +266,6 @@ const CharacterInfo = () => {
                                     draggable={!Object.values(connectedNodes).includes(nodeName)}
                                     onMouseDown={(e) => handleDragStart(e, nodeName)}
                                 >
-                                    {/* <CyberDescLabelHud className="character-node-hud" /> */}
                                     <div className="character-node-text">
                                         {!Object.values(connectedNodes).includes(nodeName) && nodeName}
                                     </div>
