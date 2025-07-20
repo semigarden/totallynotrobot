@@ -323,13 +323,13 @@ const CharacterInfo = () => {
                                     draggable={!Object.values(connectedNodes).includes(nodeName)}
                                     onMouseDown={(e) => handleDragStart(e, nodeName)}
                                 >
-                                    <CyberDescLabelHud className="character-node-hud" />
+                                    {/* <CyberDescLabelHud className="character-node-hud" /> */}
                                     <div className="character-node-text">
                                         {!Object.values(connectedNodes).includes(nodeName) && nodeName}
                                     </div>
-                                    <div className="connector-hole">
+                                    {/* <div className="connector-hole">
                                         <FontAwesomeIcon icon={faCaretDown} />
-                                    </div>
+                                    </div> */}
                                 </div>
                             ))}
                         </div>

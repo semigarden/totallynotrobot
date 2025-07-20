@@ -133,6 +133,8 @@
                 margin: 0;
                 padding: 0;
                 padding-top: 10px;
+
+                gap: 10px;
             
                 .character-name-wrapper {
                     position: relative;
@@ -426,26 +428,29 @@
                     color: #fff;
                     width: 100%;
 
-                    flex-wrap: wrap;
+                    // flex-wrap: wrap;
+                    // justify-content: space-between;
 
                     .character-node {
                         position: relative;
                         padding: 0;
                         background-color: transparent;
-                        color: white;
-                        border: none;
-                        border-radius: 0;
-                        font-family: "Orbitron", sans-serif;
-                        font-size: 12px;
-                        text-transform: uppercase;
+        
                         cursor: grab;
                         user-select: none;
                         transition: all 0.2s ease;
                         position: relative;
                         z-index: 10;
                         font-weight: 500;
-                        width: 80px;
-                        height: 32px;
+                        // width: 80px;
+
+                        width: max-content;
+                        // height: 32px;
+                        height: auto;
+                        padding: 10px 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
 
                         .character-node-hud {
                             position: absolute;
@@ -454,16 +459,18 @@
                             width: 100%;
                             height: 100%;
                             z-index: 1;
-                            transform: scaleY(-1) scale(0.15); // Flip vertically and scale down
+                            // transform: scaleY(-1) scale(0.15); // Flip vertically and scale down
                             transform-origin: center;
                             animation: nodeHudFadeIn 0.8s ease-in-out forwards;
+
+                            display: none;
                         }
 
                         .character-node-text {
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
+                            // position: absolute;
+                            // top: 50%;
+                            // left: 50%;
+                            // transform: translate(-50%, -50%);
                             z-index: 2;
                             color: white;
                             font-family: "Orbitron", sans-serif;
@@ -471,8 +478,12 @@
                             text-transform: uppercase;
                             font-weight: 500;
                             text-align: center;
-                            opacity: 0;
-                            animation: nodeTextFadeIn 0.8s ease-in-out 0.4s forwards;
+                            // opacity: 0;
+                            // animation: nodeTextFadeIn 0.8s ease-in-out 0.4s forwards;
+
+                            display: block;
+                            position: relative;
+                            
                         }
 
                         &:hover {
@@ -519,6 +530,8 @@
                             z-index: 3;
                             color: #f0265e;
                             filter: drop-shadow(0 0 4px rgba(240, 38, 94, 0.6));
+
+                            display: none;
 
                             svg {
                                 width: 12px;
