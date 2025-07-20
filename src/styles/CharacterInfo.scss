@@ -17,9 +17,6 @@
         grid-template-rows: 70px 70px 1fr;
         background-color: transparent;
         position: relative;
-
-
-
         grid-template-rows: auto;
         width: 100vw;
 
@@ -31,23 +28,9 @@
             gap: 10px;
             color: white;
             text-shadow: rebeccapurple 0 0 10px;
-            
             z-index: 1;
-
             padding: 10px 20px;
-            
-            /* Augmented UI styling */
-            // --aug-border: 2px;
-            // --aug-border-bg: linear-gradient(45deg, #f0265e, #ff4d7d, #f0265e);
-            // --aug-border-opacity: 0.8;
-            // --aug-inset: 1px;
-            // --aug-inset-bg: linear-gradient(135deg, rgba(240, 38, 94, 0.1), rgba(255, 77, 125, 0.05));
-            // --aug-inset-opacity: 0.6;
-            // --aug-tl: 15px;
-            // --aug-tr: 15px;
-            // --aug-br: 10px;
-            // --aug-bl: 10px;
-            
+
             .character-class-bio {
                 font-size: 12px;
                 text-align: justify;
@@ -84,7 +67,6 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1;
-            // padding: 10px 0;
             gap: 15px;
 
             height: max-content;
@@ -139,15 +121,10 @@
                 margin: 0;
                 padding: 0;
                 padding-top: 10px;
-
                 gap: 10px;
             
                 .character-name-wrapper {
                     position: relative;
-                    // width: 120px;
-                    // height: 60px;
-                    // margin-left: 2vw;
-
                     width: 100%;
                     height: 120px;
                     display: flex;
@@ -155,84 +132,6 @@
                     justify-content: center;
 
                     width: 320px;
-
-                    .character-name-hud {
-                        // position: relative;
-                        
-                    }
-
-                    // .character-name-hud-mobile {
-                    //     width: 100%;
-                    //     height: 100%;
-                    //     text-shadow: rebeccapurple 0 0 10px;
-
-                    //     .path0 {
-                    //         fill: #CCF5AC;
-                    //         stroke: #403233;
-                    //     }
-
-                    //     .path1 {
-                    //         fill: #CCF5AC;
-                    //         stroke: #403233;
-                    //     }
-
-                    //     .path2 {
-                    //         fill: #CCF5AC;
-                    //         stroke: #403233;
-                    //     }
-
-                    //     .path3 {
-                    //         fill: #CCF5AC;
-                    //         stroke: #403233;
-                    //     }
-
-                    //     .path4 {
-                    //         fill: #CCF5AC;
-                    //         stroke: #403233;
-                    //     }
-
-                    //     .path5 {
-                    //         fill: #CCF5AC;
-                    //         stroke: #5C374C;
-                    //     }
-
-                    //     .path6 {
-                    //         fill: #CCF5AC;
-                    //         stroke: #5C374C;
-                    //     }
-                    // }
-
-                    // .character-firstname-label {
-                    //     position: absolute;
-                    //     font-weight: bolder;
-                    //     font-family: "Orbitron", sans-serif;
-                    //     text-transform: uppercase;
-                    //     font-style: italic;
-                    //     letter-spacing: 6px;
-                    //     font-size: 7px;
-                    //     top: 14.5px;
-                    //     left: 40px;
-                    //     color: #D8F1A0;
-                    //     text-shadow: rebeccapurple 0 0 10px;
-                    // }
-
-                    // .character-lastname-label {
-                    //     position: absolute;
-                    //     font-weight: 500;
-                    //     font-family: "Orbitron", sans-serif;
-                    //     text-transform: uppercase;
-                    //     font-style: italic;
-                    //     letter-spacing: 2px;
-                    //     font-size: 7px;
-                    //     top: 32px;
-                    //     left: 28px;
-                    //     color: #D8F1A0;
-                    //     text-shadow: rebeccapurple 0 0 10px;
-                    // }
-
-                    // .character-name-hud, .character-name-label {
-                    //     // display: none;
-                    // }
 
                     .character-level-wrapper {
                         position: absolute;
@@ -287,7 +186,6 @@
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-around;
-                    // margin-right: 6vw;
                     gap: 5px;
 
                     .character-details-info-group {
@@ -300,10 +198,7 @@
 
                     .character-details-info {
                         position: relative;
-                        // width: px;
                         border-radius: 4px;
-                        // height: 10px;
-                        // transform: skewX(-25deg);
                         background-color: #a81b42;
                         color: #fff;
                         font-size: 10px;
@@ -313,22 +208,8 @@
                         text-align: justify;
                         padding: 2px 6px;
                         transition: all 0.3s ease;
-                        
-                        /* Augmented UI styling - Puzzle piece base */
                         --aug-border: 1px;
                         --aug-inset: 1px;
-        
-                        // --aug-border: 1.5px;
-                        // --aug-border-bg: linear-gradient(90deg, #f0265e, #ff4d7d, #f0265e);
-                        // --aug-border-opacity: 0.9;
-                        // --aug-inset: 0.5px;
-                        // --aug-inset-bg: linear-gradient(135deg, rgba(240, 38, 94, 0.2), rgba(255, 77, 125, 0.1));
-                        // --aug-inset-opacity: 0.7;
-                        // --aug-tl: 10px;
-                        // --aug-tr: 10px;
-                        // --aug-br: 8px;
-                        // --aug-bl: 8px;
-                        // box-shadow: 0 0 8px rgba(240, 38, 94, 0.3);
 
                         &:hover {
                             background-color: #f0265e;
@@ -336,84 +217,7 @@
                             --aug-border-bg: linear-gradient(90deg, #ff4d7d, #f0265e, #ff4d7d);
                             --aug-border-opacity: 1;
                             box-shadow: 0 0 15px rgba(240, 38, 94, 0.6);
-                            // transform: translateY(-1px);
                         }
-
-                        /* Puzzle piece variations */
-                        // &:nth-child(1) {
-    
-                        // }
-
-                        // &:nth-child(2) {
-                        //     --aug-tl: 0px;
-                        //     --aug-tr: 8px;
-                        //     --aug-br: 8px;
-                        //     --aug-bl: 0px;
-                        // }
-
-                        // /* Second row puzzle pieces */
-                        // &:nth-child(3) {
-                        //     --aug-tl: 8px;
-                        //     --aug-tr: 0px;
-                        //     --aug-br: 8px;
-                        //     --aug-bl: 0px;
-                        // }
-
-                        // &:nth-child(4) {
-                        //     --aug-tl: 0px;
-                        //     --aug-tr: 8px;
-                        //     --aug-br: 0px;
-                        //     --aug-bl: 8px;
-                        // }
-
-                        // /* Third row puzzle pieces */
-                        // &:nth-child(5) {
-                        //     --aug-tl: 8px;
-                        //     --aug-tr: 0px;
-                        //     --aug-br: 0px;
-                        //     --aug-bl: 8px;
-                        // }
-
-                        // &:nth-child(6) {
-                        //     --aug-tl: 0px;
-                        //     --aug-tr: 8px;
-                        //     --aug-br: 8px;
-                        //     --aug-bl: 0px;
-                        // }
-
-                        // /* Fourth row puzzle pieces */
-                        // &:nth-child(7) {
-                        //     --aug-tl: 8px;
-                        //     --aug-tr: 0px;
-                        //     --aug-br: 8px;
-                        //     --aug-bl: 0px;
-                        // }
-
-                        // &:nth-child(8) {
-                        //     --aug-tl: 0px;
-                        //     --aug-tr: 8px;
-                        //     --aug-br: 0px;
-                        //     --aug-bl: 8px;
-                        // }
-
-                        // &:nth-child(1) {
-                        //     background-color: #912F56;
-                        // }
-
-                        // &:nth-child(2) {
-                        //     margin-right: 14px;
-                        //     background-color: #912F56;
-                        // }
-
-                        // &:nth-child(3) {
-                        //     margin-right: 28px;
-                        //     background-color: #912F56;
-                        // }
-
-                        // &:nth-child(4) {
-                        //     margin-right: 42px;
-                        //     background-color: #912F56;
-                        // }
                     }
                 }
             }
@@ -424,7 +228,6 @@
                 align-items: center;
                 justify-content: center;
                 width: 100%;
-                // margin-top: 20px;
 
                 .character-node-list {
                     display: flex;
@@ -435,22 +238,16 @@
                     width: 100%;
                     height: 22px;
 
-                    // flex-wrap: wrap;
-                    // justify-content: space-between;
-
                     .character-node {
                         position: relative;
                         padding: 0;
                         background-color: transparent;
-        
                         cursor: grab;
                         user-select: none;
                         transition: all 0.2s ease;
                         position: relative;
                         z-index: 10;
                         font-weight: 500;
-                        // width: 80px;
-
                         width: max-content;
                         height: auto;
                         display: flex;
@@ -465,18 +262,12 @@
                             width: 100%;
                             height: 100%;
                             z-index: 1;
-                            // transform: scaleY(-1) scale(0.15); // Flip vertically and scale down
                             transform-origin: center;
                             animation: nodeHudFadeIn 0.8s ease-in-out forwards;
-
                             display: none;
                         }
 
                         .character-node-text {
-                            // position: absolute;
-                            // top: 50%;
-                            // left: 50%;
-                            // transform: translate(-50%, -50%);
                             z-index: 2;
                             color: white;
                             font-family: "Orbitron", sans-serif;
@@ -513,7 +304,6 @@
                                 fill: #f0265e;
                             }
                             cursor: default;
-                            // opacity: 0.7;
 
                             &:hover {
                                 .character-node-hud .path0 {
@@ -591,29 +381,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            // justify-content: stretch;
-            // border-left: 1px solid #f0265e;
-            // border-right: 1px solid #f0265e;
-            // border-bottom: 1px solid #f0265e;
-            padding-top: 30px; // Add gap between nodes and slots
-            // gap: 10px;
-
+            padding-top: 30px;
             justify-content: center;
 
             .character-details-label-wrapper {
                 display: flex;
-                // flex-direction: column;
-                // justify-content: space-between;
                 width: 100%;
                 padding: 6px 0 2px 0;
-
-
-
-                // .character-skills-label-wrapper {
-                //     display: flex;
-                //     flex-direction: row;
-                //     justify-content: space-between;
-                // }
 
                 .character-skills-wrapper {
                     position: relative;
@@ -631,23 +405,19 @@
                         }
 
                         .path1 {
-                            // stroke: #f0265e;
                             fill: #f0265e;
                         }
 
                         .path5 {
                             stroke: #00ff88;
-                            // fill: #1a1a2e;
                             fill: transparent;
                         }
 
                         .path6 {
-                            // stroke: #f0265e;
                             fill: #f0265e;
                         }
 
                         .path7 {
-                            // stroke: #f0265e;
                             fill: #f0265e;
                         }
                     }
@@ -666,9 +436,7 @@
                 .character-skills-navigation {
                     display: grid;
                     grid-template-columns: 1fr;
-                    // overflow: hidden;
                     width: 100%;
-                    // margin-right: 20px;
 
                     .skill-tab {
                         flex-grow: 1;
@@ -696,8 +464,6 @@
                             position: relative;
 
                             .character-skill-label-hud {
-                                // width: 60px;
-                                // height: 32px;
                                 width: 100%;
                                 height: 100%;
 
@@ -772,7 +538,6 @@
             .character-skill-list-wrapper {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-                // grid-template-rows: repeat(auto-fill, minmax(8vw, 1fr));
                 gap: 20px;
                 width: 90%;
                 margin: 2vh 0;
@@ -870,8 +635,6 @@
                 .character-details-wrapper {
                     flex-direction: row;
                     justify-content: center;
-                    // padding: 0 4vw;
-                    // gap: 2vw;
 
                     .divider {
                         width: 4%;
@@ -890,7 +653,6 @@
         .content {
             grid-template-rows: 160px 160px 1fr;
             width: 70vw;
-            // margin: 0 2vw;
     
             .character-class-wrapper {
                 padding: 4vw;
@@ -904,18 +666,10 @@
             }
     
             .horizon-wrapper .character-details-wrapper {
-                // padding-left: 20%;
-                // gap: 2vw;
                 justify-content: space-around;
 
                 .divider {
-                    // flex-grow: 1;
-                    // max-width: 20%;
                     display: none;
-                }
-
-                @media (min-width: 920px) {
-                    // padding-left: 30%;
                 }
     
                 .character-details-label-wrapper {
