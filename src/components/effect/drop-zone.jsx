@@ -9,7 +9,7 @@ import { Skill } from "components/common/Skill";
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 const Backend = isMobile ? TouchBackend : HTML5Backend; 
 
-export function DropZone({ skillsData }) {
+export function DropZone({ skillsData, skillRefs }) {
     const [skills, setSkills] = useState(skillsData);
 
     useEffect(() => {
@@ -37,6 +37,7 @@ export function DropZone({ skillsData }) {
                         key={skill.label}
                         skill={skill}
                         moveRow={moveRow}
+                        skillRefs={skillRefs}
                     />
                 ))}
             </div>

@@ -5,7 +5,6 @@ import { faCaretLeft, faCaretRight, faCaretDown } from "@fortawesome/free-solid-
 
 // Components
 import { DropZone } from "components/effect/drop-zone";
-import SkillTab from "components/common/SkillTab";
 import AnimateText from "components/effect/AnimateText";
 
 // Huds
@@ -17,7 +16,7 @@ import CyberLevelBar from "components/hud/CyberLevelBar";
 
 // Assets
 
-import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 
 import LevelBar from "components/hud/LevelBar";
 import Name from "components/hud/Name";
@@ -37,10 +36,7 @@ const defaultConnections = {
 }
 
 const CharacterInfo = () => {
-    const initialSkillTabs = data.skillTabs;
 
-    const [skillTabs, setSkillTabs] = useState(initialSkillTabs);
-    const [selectedSkillTab, setSelectedSkillTab] = useState(skillTabs[0]);
 
     const getLevel = () => {
         const startYear = 2025;
@@ -55,39 +51,18 @@ const CharacterInfo = () => {
     const initialSkills = data.skills;
 
     let [skills] = useState(initialSkills);
-    skills = skills.filter((skill) => (skill.category === selectedSkillTab.code))
 
     const [isDragging, setIsDragging] = useState(false);
     const [draggedNode, setDraggedNode] = useState(null);
     const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
     const [connectedNodes, setConnectedNodes] = useState({});
     const [nodePositions, setNodePositions] = useState({});
-    const [slotPositions, setSlotPositions] = useState({});
+    const [skillPositions, setSkillPositions] = useState({});
 
     const characterNodeRefs = useRef({});
-    const skillTabRefs = useRef({});
+    const skillRefs = useRef({});
 
-    const handleTabClick = (clickedTab) => {
-        if (skillTabs[0] === clickedTab) {
-            setSelectedSkillTab(clickedTab);
-            return;
-        }
-        
-        const updatedSkillTabs = skillTabs.filter((tab) => tab !== clickedTab);
-        updatedSkillTabs.unshift(clickedTab);
 
-        skills = skills.filter((skill) => (skill.category === selectedSkillTab.code))
-    
-        setSkillTabs(updatedSkillTabs);
-        setSelectedSkillTab(clickedTab);
-    };
-
-    const handleReorder = (fromIndex, toIndex) => {
-        const newSkillTabs = [...skillTabs];
-        const [movedItem] = newSkillTabs.splice(fromIndex, 1);
-        newSkillTabs.splice(toIndex, 0, movedItem);
-        setSkillTabs(newSkillTabs);
-    };
 
     const handleDragStart = (e, nodeName) => {
         setIsDragging(true);
@@ -130,15 +105,14 @@ const CharacterInfo = () => {
     const handleDragEnd = (e) => {
         if (!isDragging) return;
 
-        const skillTabElement = e.target.closest('.character-skill-label-wrapper');
-        if (skillTabElement) {
-            const skillTabIndex = parseInt(skillTabElement.dataset.index);
-            const skillTab = skillTabs[skillTabIndex];
+        const skillElement = e.target.closest('.character-skill-wrapper');
+        if (skillElement) {
+            const skillLabel = skillElement.querySelector('.character-skill-label')?.textContent;
             
-            if (skillTab && draggedNode) {
+            if (skillLabel && draggedNode) {
                 setConnectedNodes(prev => ({
                     ...prev,
-                    [skillTab.code]: draggedNode
+                    [skillLabel]: draggedNode
                 }));
             }
         }
@@ -170,35 +144,42 @@ const CharacterInfo = () => {
             });
             setNodePositions(newNodePositions);
 
-            const newSlotPositions = {};
-            Object.keys(skillTabRefs.current).forEach(slotIndex => {
-                const element = skillTabRefs.current[slotIndex];
+            const newSkillPositions = {};
+            Object.keys(skillRefs.current).forEach(skillLabel => {
+                const element = skillRefs.current[skillLabel];
                 if (element) {
                     const rect = element.getBoundingClientRect();
-                    newSlotPositions[slotIndex] = {
-                        x: rect.left + rect.width / 2 - svgRect.left - 4,
-                        y: rect.top - svgRect.top
+                    newSkillPositions[skillLabel] = {
+                        x: rect.left + rect.width / 2 - svgRect.left,
+                        y: rect.bottom - 5 - svgRect.top
                     };
                 }
             });
-            setSlotPositions(newSlotPositions);
+            setSkillPositions(newSkillPositions);
         };
 
         updatePositions();
         window.addEventListener('resize', updatePositions);
         return () => window.removeEventListener('resize', updatePositions);
-    }, [skillTabs, connectedNodes]);
+    }, [skills, connectedNodes]);
 
     const drawCable = (startX, startY, endX, endY) => {
+        // Calculate horizontal approach distance
+        const horizontalDistance = 30;
+        
+        // Determine if we're approaching from left or right
+        const isApproachingFromLeft = startX < endX;
+        const approachX = isApproachingFromLeft ? endX - horizontalDistance : endX + horizontalDistance;
+        
         const controlPoint1X = startX;
         const controlPoint1Y = startY + (endY - startY) * 0.3;
-        const controlPoint2X = endX;
-        const controlPoint2Y = startY + (endY - startY) * 0.7;
+        const controlPoint2X = approachX;
+        const controlPoint2Y = endY;
 
         return `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
     };
 
-    const [skillTabsRef] = useAutoAnimate();
+
 
     return (
         <div className="character-info" onMouseMove={handleDrag} onMouseUp={handleDragEnd}>
@@ -267,7 +248,7 @@ const CharacterInfo = () => {
                                     onMouseDown={(e) => handleDragStart(e, nodeName)}
                                 >
                                     <div className="character-node-text">
-                                        {!Object.values(connectedNodes).includes(nodeName) && nodeName}
+                                        {nodeName}
                                     </div>
                                     <div className="connector">
                                         <FontAwesomeIcon icon={faCaretDown} />
@@ -279,7 +260,7 @@ const CharacterInfo = () => {
                 </div>
 
                 <div className="character-details-wrapper">
-                    {/* <svg 
+                    <svg 
                         className="cable-layer" 
                         style={{
                             position: 'absolute',
@@ -291,19 +272,18 @@ const CharacterInfo = () => {
                             zIndex: 1
                         }}
                     >
-                        {Object.entries(connectedNodes).map(([slotCode, nodeName]) => {
+                        {Object.entries(connectedNodes).map(([skillLabel, nodeName]) => {
                             const nodePos = nodePositions[nodeName];
-                            const slotIndex = skillTabs.findIndex(tab => tab.code === slotCode);
-                            const slotPos = slotPositions[slotIndex];
+                            const skillPos = skillPositions[skillLabel];
                             
-                            if (nodePos && slotPos) {
-                                const pathData = drawCable(nodePos.x, nodePos.y, slotPos.x, slotPos.y);
+                            if (nodePos && skillPos) {
+                                const pathData = drawCable(nodePos.x, nodePos.y, skillPos.x, skillPos.y);
                                 return (
                                     <path
-                                        key={`${slotCode}-${nodeName}`}
+                                        key={`${skillLabel}-${nodeName}`}
                                         d={pathData}
-                                        stroke="#ff0000"
-                                        strokeWidth="2"
+                                        stroke="#f0265e"
+                                        strokeWidth="1"
                                         fill="none"
                                     />
                                 );
@@ -319,36 +299,18 @@ const CharacterInfo = () => {
                                     dragPosition.x,
                                     dragPosition.y
                                 )}
-                                stroke="#ff0000"
-                                strokeWidth="2"
+                                stroke="#f0265e"
+                                strokeWidth="1"
                                 fill="none"
                             />
                         )}
-                    </svg> */}
+                    </svg>
 
-                    {/* <div className="character-details-label-wrapper">
-                            <div className="character-skills-navigation">
-                                <div ref={skillTabsRef} className="skill-tab">
-                                    {skillTabs.map((skillTab, index) => (
-                                        <div key={skillTab.code} ref={el => skillTabRefs.current[index] = el} className="tab">
-                                            <SkillTab
-                                                className="tab"
-                                                skillTab={skillTab}
-                                                index={index}
-                                                isSelected={selectedSkillTab === skillTab}
-                                                onClick={() => handleTabClick(skillTab)}
-                                                onDrop={handleReorder}
-                                                connectedNode={connectedNodes[skillTab.code]}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                    </div> */}
 
-                    <div className="character-skill-horizontal-divider"></div>
 
-                    <DropZone skillsData={skills} />
+                    {/* <div className="character-skill-horizontal-divider"></div> */}
+
+                    <DropZone skillsData={skills} skillRefs={skillRefs} />
                 </div>
             </div>
 

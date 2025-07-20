@@ -10,10 +10,10 @@ const data = {
     fullName: "Faulty Circuit",
     preface: "A system doesn't run on logic alone. Here's what powers mine and what short-circuits it. The stuff I work on, the things I think about and the things that just don't make sense.",
     skillTabs: [
-        {code: "0", label: "000", color: "#9ca3af"},
-        {code: "1", label: "001", color: "#9ca3af"},
-        {code: "2", label: "002", color: "#9ca3af"},
-        {code: "3", label: "003", color: "#9ca3af"},
+        {code: "0", label: "Toolkit", color: "#9ca3af"},
+        {code: "1", label: "Projects", color: "#9ca3af"},
+        {code: "2", label: "Experience", color: "#9ca3af"},
+        {code: "3", label: "Interests", color: "#9ca3af"},
     ],
     skills: [
         {category: "0", label: "React.js", icon: faReact, iconType: "fontawesome", animation: "fa-spin", color: "#C1FFF2"},

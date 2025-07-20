@@ -513,7 +513,7 @@
                                 fill: #f0265e;
                             }
                             cursor: default;
-                            opacity: 0.7;
+                            // opacity: 0.7;
 
                             &:hover {
                                 .character-node-hud .path0 {
@@ -777,6 +777,7 @@
                 width: 90%;
                 margin: 2vh 0;
                 color: white;
+                z-index: 1;
                 
                 .character-skill-wrapper {
                     display: flex;
@@ -796,6 +797,9 @@
                     .character-skill-label {
                         color: white;
                         font-size: 8px;
+                        background-color: #000;
+                        border-radius: 10px;
+                        padding: 0 1px;
                     }
                 }
             }

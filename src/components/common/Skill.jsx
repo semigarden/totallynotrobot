@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import SkillIcon from "./SkillIcon.tsx";
 
-export function Skill({ skill, moveRow, index }) {
+export function Skill({ skill, moveRow, index, skillRefs }) {
   const ref = useRef(null);
 
   const [collectedProps, drop] = useDrop({
@@ -57,6 +57,11 @@ export function Skill({ skill, moveRow, index }) {
   const trans = collectedDragProps.isDragging ? 0 : 1;
 
   drag(drop(ref));
+
+  // Store ref for position tracking
+  if (skillRefs && ref.current) {
+    skillRefs.current[skill.label] = ref.current;
+  }
 
   return (
     <div
