@@ -1,6 +1,5 @@
 .level-bar {
     position: relative;
-    // width: 100%;
     width: max-content;
     color: #40F99B;
     font-family: "Orbitron", sans-serif;
@@ -10,10 +9,8 @@
     text-align: center;
     letter-spacing: 6px;
     font-style: italic;
-
     display: flex;
     justify-content: space-between;
-
     --aug-border: 1px;
     --aug-inset: 1px;
     --aug-border-bg: #40F99B;
@@ -27,12 +24,8 @@
         background-color: #40F99B;
         box-shadow: 0 0 20px 0 rgba(249, 64, 240);
         animation: levelBarPulse 4s ease-in-out forwards;
-
         --aug-border: 5px;
         --aug-inset: 5px;
-
-        // --aug-border-bg: gold;
-        // --aug-inset-bg: gold;
     }
 }
 
