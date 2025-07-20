@@ -31,7 +31,8 @@ const AnimateText = ({ text }) => {
 
     return (
         <div ref={parentRef} className="character-class-bio">
-            <div>{displayText}</div>
+            <div className="placeholder">{text}</div>
+            <div className="text">{displayText}</div>
             {/* <CursorBlinker /> */}
         </div>
     );
