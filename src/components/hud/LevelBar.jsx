@@ -7,14 +7,16 @@ const LevelBar = ({ className }) => {
     const totalBars = 20;
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
-    const { level, threshold } = data;
-    let progress, displayLevel;
+    const currentYear = now.getFullYear();
+    const { level, threshold, year } = data;
+    const yearsPassed = currentYear - year;
+    let displayLevel = level + yearsPassed;
+    let progress;
     if (currentMonth >= threshold) {
       progress = 1;
-      displayLevel = level + 1;
+      displayLevel += 1;
     } else {
       progress = currentMonth / threshold;
-      displayLevel = level;
     }
     const litBars = Math.round(progress * totalBars);
     const [animated, setAnimated] = useState(Array(totalBars).fill(false));

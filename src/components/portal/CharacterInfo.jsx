@@ -38,15 +38,16 @@ const defaultConnections = {
 const CharacterInfo = () => {
 
 
-    const getLevel = () => {
-        const startYear = 2025;
-        const startLevel = 26;
-        const currentYear = new Date().getFullYear();
-        const yearsDifference = currentYear - startYear;
-        return startLevel + yearsDifference;
-    };
-
-    const currentLevel = getLevel();
+    // Remove getLevel and use unified logic for level
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+    const { level, threshold, year } = data;
+    const yearsPassed = currentYear - year;
+    let displayLevel = level + yearsPassed;
+    if (currentMonth >= threshold) {
+      displayLevel += 1;
+    }
 
     const initialSkills = data.skills;
 
@@ -196,7 +197,7 @@ const CharacterInfo = () => {
                             <div className="character-level-wrapper">
                                 <LevelBar className="character-level-bar" />
                                 <div className="character-class-label">Nomad</div>
-                                <div className="character-level-label">{currentLevel}</div>
+                                <div className="character-level-label">{displayLevel}</div>
                             </div>
                         </div>
 
