@@ -250,9 +250,9 @@ const CharacterInfo = () => {
                                     <div className="character-node-text">
                                         {nodeName}
                                     </div>
-                                    <div className="connector">
+                                    {/* <div className="connector">
                                         <FontAwesomeIcon icon={faCaretDown} />
-                                    </div>
+                                    </div> */}
                                 </div>
                             ))}
                         </div>
@@ -260,7 +260,7 @@ const CharacterInfo = () => {
                 </div>
 
                 <div className="character-details-wrapper">
-                    <svg 
+                    {/* <svg 
                         className="cable-layer" 
                         style={{
                             position: 'absolute',
@@ -305,7 +305,7 @@ const CharacterInfo = () => {
                             />
                         )}
                     </svg>
-
+ */}
 
 
                     {/* <div className="character-skill-horizontal-divider"></div> */}
