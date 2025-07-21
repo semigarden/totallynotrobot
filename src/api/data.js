@@ -9,6 +9,8 @@ const data = {
     lastName: "Circuit",
     fullName: "Faulty Circuit",
     preface: "A system doesn't run on logic alone. Here's what powers mine and what short-circuits it. The stuff I work on, the things I think about and the things that just don't make sense.",
+    level: 26,
+    threshold: 9,
     skillTabs: [
         {code: "0", label: "Toolkit", color: "#9ca3af"},
         {code: "1", label: "Projects", color: "#9ca3af"},
