@@ -8,7 +8,7 @@ const data = {
     firstName: "Faulty",
     lastName: "Circuit",
     fullName: "Faulty Circuit",
-    preface: "A system doesn't run on logic alone. Here's what powers mine and what short-circuits it. The stuff I work on, the things I think about and the things that just don't make sense.",
+    preface: "A system doesn't run on logic alone. Here's what powers mine and what short-circuits it. The stuff I work on, the things I think about and the things that just don't make sense. A system doesn't run on logic alone. Here's what powers mine and what short-circuits it. The stuff I work on, the things I think about and the things that just don't make sense. A system doesn't run on logic alone. Here's what powers mine and what short-circuits it. The stuff I work on, the things I think about and the things that just don't make sense.",
     level: 26,
     threshold: 9,
     year: 2025,

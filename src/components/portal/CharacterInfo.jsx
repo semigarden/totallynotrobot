@@ -62,6 +62,7 @@ const CharacterInfo = () => {
 
     const characterNodeRefs = useRef({});
     const skillRefs = useRef({});
+    const horizonRef = useRef(null);
 
 
 
@@ -102,6 +103,35 @@ const CharacterInfo = () => {
             }
         }
     };
+
+    const positionArrows = () => {
+        if (horizonRef.current) {
+            const horizonRect = horizonRef.current.getBoundingClientRect();
+            const leftArrow = document.querySelector('.leftArrow');
+            const rightArrow = document.querySelector('.rightArrow');
+            
+            if (leftArrow) {
+                leftArrow.style.top = `${horizonRect.top}px`;
+                leftArrow.style.height = `${horizonRect.height}px`;
+            }
+            
+            if (rightArrow) {
+                rightArrow.style.top = `${horizonRect.top}px`;
+                rightArrow.style.height = `${horizonRect.height}px`;
+            }
+        }
+    };
+
+    useEffect(() => {
+        positionArrows();
+        window.addEventListener('resize', positionArrows);
+        window.addEventListener('scroll', positionArrows);
+        
+        return () => {
+            window.removeEventListener('resize', positionArrows);
+            window.removeEventListener('scroll', positionArrows);
+        };
+    }, []);
 
     const handleDragEnd = (e) => {
         if (!isDragging) return;
@@ -189,7 +219,11 @@ const CharacterInfo = () => {
                     <AnimateText text={data.preface} />
                 </div>
 
-                <div className="horizon-wrapper">
+                <div className="horizon-wrapper" ref={horizonRef}>
+                    <div className="leftArrow">
+                        <FontAwesomeIcon className="navigation-left-icon" icon={faCaretLeft} />
+                    </div>
+                    
                     <div className="character-details-wrapper">
                         <div className="character-name-wrapper">
                             <Name className="character-name-hud" />
@@ -258,6 +292,10 @@ const CharacterInfo = () => {
                             ))}
                         </div>
                     </div>
+
+                    <div className="rightArrow">
+                        <FontAwesomeIcon className="navigation-right-icon" icon={faCaretRight} />
+                    </div>
                 </div>
 
                 <div className="character-details-wrapper">
@@ -313,13 +351,6 @@ const CharacterInfo = () => {
 
                     <DropZone skillsData={skills} skillRefs={skillRefs} />
                 </div>
-            </div>
-
-            <div className="leftArrow">
-                <FontAwesomeIcon className="navigation-left-icon" icon={faCaretLeft} />
-            </div>
-            <div className="rightArrow">
-                <FontAwesomeIcon className="navigation-right-icon" icon={faCaretRight} />
             </div>
         </div>
     );
