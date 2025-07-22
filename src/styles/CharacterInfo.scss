@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
 
+
 .character-info {
     width: 100%;
     height: 100%;
@@ -10,6 +11,13 @@
     justify-content: center;
     background-color: #000100;
     position: relative;
+
+    // *, ::before, ::after {
+    //     box-sizing: border-box;
+    //     border-width: 1px;
+    //     border-style: solid;
+    //     border-color: #e5e7eb;
+    // }
 
     .content {
         grid-column: 2;
@@ -204,7 +212,7 @@
                     .character-details-info {
                         position: relative;
                         border-radius: 4px;
-                        background-color: #a81b42;
+                        // background-color: #a81b42;
                         color: #fff;
                         font-size: 10px;
                         font-family: "Orbitron", sans-serif;
@@ -217,11 +225,67 @@
                         --aug-inset: 1px;
 
                         &:hover {
-                            background-color: #f0265e;
+                            // background-color: #f0265e;
                             cursor: pointer;
                             --aug-border-bg: linear-gradient(90deg, #ff4d7d, #f0265e, #ff4d7d);
                             --aug-border-opacity: 1;
                             box-shadow: 0 0 15px rgba(240, 38, 94, 0.6);
+                        }
+                    }
+
+                    .character-details-group {
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        justify-content: space-around;
+                        gap: 5px;
+
+                        .value {
+                            position: relative;
+
+                     
+                            // &::before {
+                            //     content: "";
+                            //     position: absolute;
+                            //     left: -12px;
+                            //     top: 0;
+                            //     width: 1px;
+                            //     height: 100%;
+                            //     background-color: #fff;
+                            //     z-index: 1;
+                            // }
+                        }
+
+                    
+
+                        .character-details-subgroup {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-start;
+                            justify-content: space-around;
+                            gap: 2px;
+                            margin-left: 10px;
+
+                        }
+
+                        .character-details-info {
+                            position: relative;
+                            // background-color: #000;
+                            display: flex;
+                            color: #fff;
+                            font-size: 10px;
+                            font-family: "Orbitron", sans-serif;
+                            text-transform: uppercase;
+
+                            .line {
+                                position: absolute;
+                                left: 0;
+                                top: 0;
+                                width: 1px;
+                                height: 100%;
+                                background-color: #fff;
+                            }
                         }
                     }
                 }
@@ -692,7 +756,7 @@
     
         .content {
             width: 70vw;
-            border: 1px solid #f0265e;
+            // border: 1px solid #f0265e;
     
             .character-class-wrapper {
                 padding: 1.5rem 2rem;
@@ -792,7 +856,7 @@
         }
     
         .leftArrow {
-            display: flex;
+            // display: flex;
             padding-right: calc(35vw + 3rem);
 
             // &::after {
@@ -812,8 +876,8 @@
             }
         }
     
-                .rightArrow {
-            display: flex;
+        .rightArrow {
+            // display: flex;
             padding-left: calc(35vw + 3rem);
     
             // &::after {

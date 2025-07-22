@@ -269,6 +269,30 @@ const CharacterInfo = () => {
                                 <div className="character-details-info" augmented-ui="exe">Music</div>
                                 <div className="character-details-info" augmented-ui="exe">DIY</div>
                             </div> */}
+
+
+
+                            {/* <div className="character-details-group">
+                                <div className="character-details-info" augmented-ui="exe">
+                                    <div className="line"/>
+                                    <div className="value">Web Dev</div>
+                                </div>
+                            
+                                <div className="character-details-subgroup" augmented-ui="exe">
+                                    <div className="line"/>
+                                    <div className="character-details-info" augmented-ui="exe">
+                                        <div className="line" augmented-ui="exe"/>
+                                        Art</div>
+                                    <div className="character-details-info" augmented-ui="exe">
+                                        <div className="line"/>
+                                        DIY</div>
+                                    <div className="character-details-info" augmented-ui="exe">
+                                        <div className="line"/>
+                                        Plants</div>
+                                    <div className="character-details-info" augmented-ui="exe">Reading</div>
+                                    <div className="character-details-info" augmented-ui="exe">Writing</div>
+                                </div>
+                            </div> */}
                         </div>
                     </div>
 
