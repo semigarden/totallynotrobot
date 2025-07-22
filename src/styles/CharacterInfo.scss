@@ -227,9 +227,11 @@
                         &:hover {
                             // background-color: #f0265e;
                             cursor: pointer;
-                            --aug-border-bg: linear-gradient(90deg, #ff4d7d, #f0265e, #ff4d7d);
+                            // --aug-border-bg: linear-gradient(90deg, #ff4d7d, #f0265e, #ff4d7d);
+                            --aug-border-bg: linear-gradient(90deg, #fff, #000, #fff);
                             --aug-border-opacity: 1;
-                            box-shadow: 0 0 15px rgba(240, 38, 94, 0.6);
+                            --aug-border-radius: 10px;
+                            // box-shadow: 0 0 15px rgba(240, 38, 94, 0.6);
                         }
                     }
 
