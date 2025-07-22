@@ -47,7 +47,7 @@ const Name = ({ className, name = "Faulty Circuit" }) => {
                 <div className="frame-bottom">
                     <div className="frame-1" augmented-ui="tl-clip br-clip exe"/>
                     <div className="frame-2" augmented-ui="br-clip exe"/>
-                    <div className="frame-3" augmented-ui="tl-clip exe"/>
+                    <div className="frame-3" augmented-ui="tl-clip br-clip exe"/>
                     <div className="frame-4" augmented-ui="br-clip tl-clip exe"/>
                     <div className="frame-5" augmented-ui="br-clip exe"/>
                 </div>

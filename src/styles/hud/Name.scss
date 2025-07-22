@@ -245,13 +245,14 @@
             }
 
             .frame-3 {
-                width: 46px;
-                height: 6px;
+                width: 58px;
+                height: 7px;
                 left: 40px;
                 position: absolute;
                 background-color: rgb(145, 47, 86);
                 z-index: 1;
                 bottom: 0px;
+                --aug-border-bg: #f0265e;
             }
 
             .frame-4 {
