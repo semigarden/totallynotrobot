@@ -103,10 +103,11 @@
             height: 16px;
             left: 0;
             top: 0;
+            overflow: hidden;
 
             .frame-1 {
-                width: 83px;
-                height: 13px;
+                width: 84px;
+                height: 12px;
                 left: 10px;
                 position: absolute;
                 border-left: 1px solid #fff;
@@ -117,7 +118,7 @@
 
             .line-1 {
                 width: 30px;
-                height: 13px;
+                height: 12px;
                 left: 90px;
                 position: absolute;
                 border-left: 1px solid #fff;
