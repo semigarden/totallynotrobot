@@ -62,7 +62,8 @@
         }
 
         .horizon-wrapper {
-            background-color: #f0265e;
+            // background-color: #f0265e;
+            backdrop-filter: blur(10px);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -275,7 +276,7 @@
                             z-index: 2;
                             color: white;
                             font-family: "Orbitron", sans-serif;
-                            font-size: 9px;
+                            font-size: 10px;
                             text-transform: uppercase;
                             font-weight: 500;
                             text-align: center;
@@ -579,7 +580,7 @@
         position: fixed;
         left: 0;
         width: 50vw;
-        background: linear-gradient(90deg, #f0265e 0%, #e91e63 50%, transparent 100%);
+        // background: linear-gradient(90deg, #f0265e 0%, #e91e63 50%, transparent 100%);
         // border-right: 1px solid #f0265e;
         display: flex;
         justify-content: flex-end;
@@ -612,7 +613,7 @@
         }
 
         &:hover {
-            background: linear-gradient(90deg, #f0265e 0%, #e91e63 60%, transparent 100%);
+            // background: linear-gradient(90deg, #f0265e 0%, #e91e63 60%, transparent 100%);
             box-shadow: 4px 0 15px rgba(240, 38, 94, 0.4);
             
             .navigation-left-icon {
@@ -626,7 +627,7 @@
         position: fixed;
         right: 0;
         width: 50vw;
-        background: linear-gradient(270deg, #f0265e 0%, #e91e63 50%, transparent 100%);
+        // background: linear-gradient(270deg, #f0265e 0%, #e91e63 50%, transparent 100%);
         // border-left: 1px solid #f0265e;
         display: flex;
         justify-content: flex-start;
@@ -657,7 +658,7 @@
         }
 
         &:hover {
-            background: linear-gradient(270deg, #f0265e 0%, #e91e63 60%, transparent 100%);
+            // background: linear-gradient(270deg, #f0265e 0%, #e91e63 60%, transparent 100%);
             box-shadow: -4px 0 15px rgba(240, 38, 94, 0.4);
             
             .navigation-right-icon {
