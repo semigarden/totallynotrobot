@@ -9,7 +9,7 @@ const data = {
     firstName: "Faulty",
     lastName: "Circuit",
     fullName: "Faulty Circuit",
-    preface: "This space wasn’t made for an audience. It was made so I could hear myself. There was a time when I wasn’t making anything. I’ve carried the weight of unfinished projects.  Ideas paused by poverty, by lack of knowledge, by things I couldn’t yet grasp.  But I always came back, returning to the work whenever I found a way forward. In recent years, I stopped making and it made me sad in ways I couldn’t always name. This project is a collection for all those ideas.",
+    preface: "",
     level: 0,
     threshold: 1,
     year: 2024,

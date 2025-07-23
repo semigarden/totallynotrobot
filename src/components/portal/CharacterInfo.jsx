@@ -204,9 +204,9 @@ const CharacterInfo = () => {
     return (
         <div className="character-info" onMouseMove={handleDrag} onMouseUp={handleDragEnd}>
             <div className="content">
-                <div className="character-class-wrapper" augmented-ui="exe">
+                {/* <div className="character-class-wrapper" augmented-ui="exe">
                     <AnimateText text={data.preface} />
-                </div>
+                </div> */}
 
                 <div className="horizon-wrapper" ref={horizonRef}>
                     <div className="leftArrow">
