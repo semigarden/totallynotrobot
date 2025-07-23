@@ -1,24 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import "styles/hud/LevelBar.scss";
-import data from '../../api/data';
+import { exp } from 'api/data';
 
 const LevelBar = ({ className }) => {
     const levelBarRef = useRef(null);
     const totalBars = 20;
-    const now = new Date();
-    const currentMonth = now.getMonth() + 1;
-    const currentYear = now.getFullYear();
-    const { level, threshold, year } = data;
-    const yearsPassed = currentYear - year;
-    let displayLevel = level + yearsPassed;
-    let progress;
-    if (currentMonth >= threshold) {
-      progress = 1;
-      displayLevel += 1;
-    } else {
-      progress = currentMonth / threshold;
-    }
-    const litBars = Math.round(progress * totalBars);
+
+    const litBars = Math.round(exp * totalBars);
     const [animated, setAnimated] = useState(Array(totalBars).fill(false));
 
     useEffect(() => {

@@ -3,15 +3,16 @@ import { faVuejs, faReact, faHtml5, faJs, faCss3Alt, faTumblrSquare, faFigma,
     faSquareInstagram, faMonero, faRedditAlien } from "@fortawesome/free-brands-svg-icons";
 import { mdiNuxt } from '@mdi/js';
 import NextJsIcon from "../assets/NextJsIcon.jsx";
+import { getLevel, getExp } from "utils/utils";
 
 const data = {
     firstName: "Faulty",
     lastName: "Circuit",
     fullName: "Faulty Circuit",
-    preface: "A system doesn't run on logic alone. Here's what powers mine and what short-circuits it. The stuff I work on, the things I think about and the things that just don't make sense.",
-    level: 26,
-    threshold: 9,
-    year: 2025,
+    preface: "This space wasn’t made for an audience. It was made so I could hear myself. There was a time when I wasn’t making anything. I’ve carried the weight of unfinished projects.  Ideas paused by poverty, by lack of knowledge, by things I couldn’t yet grasp.  But I always came back, returning to the work whenever I found a way forward. In recent years, I stopped making and it made me sad in ways I couldn’t always name. This project is a collection for all those ideas.",
+    level: 0,
+    threshold: 1,
+    year: 2024,
     skillTabs: [
         {code: "0", label: "Toolkit", color: "#9ca3af"},
         {code: "1", label: "Projects", color: "#9ca3af"},
@@ -39,5 +40,8 @@ const data = {
         // {category: "0", label: "Monero", icon: faMonero, iconType: "fontawesome", animation: "fa-fade", color: "#5933ad"},
     ]
 }
+
+export const level = getLevel(data.level, data.year);
+export const exp = getExp(data.threshold);
 
 export default data;
