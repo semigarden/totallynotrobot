@@ -91,11 +91,11 @@ const CircuitBoard = ({ className = '', source = null, children = null }) => {
                         left: outline.left,
                         width: outline.width,
                         height: outline.height,
-                        border: '1px solid #ffffff10',
+                        border: '1px solid #ffffff30',
                         borderRadius: 4,
                         boxSizing: 'border-box',
                         pointerEvents: 'none',
-                        filter: 'blur(4px)',
+                        // filter: 'blur(4px)',
                     }}
                 />
             ))}
