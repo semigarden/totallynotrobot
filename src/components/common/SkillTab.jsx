@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
-import CyberDescLabelHud from "components/hud/CyberDescLabelHud";
+import CyberDescLabelHud from "@/components/hud/CyberDescLabelHud";
+import styles from "@/styles/Panel.module.scss";
 
 const SkillTab = ({ className = "", skillTab, onClick, isSelected, onDragStart, onDragOver, onDrop, index, connectedNode }) => {
   const [textRef] = useAutoAnimate();
@@ -48,14 +49,14 @@ const SkillTab = ({ className = "", skillTab, onClick, isSelected, onDragStart, 
         transform: isDragging ? 'scale(0.95)' : 'scale(1)',
         transition: 'opacity 0.2s, transform 0.2s',
       }}
-      className={`${className} character-skill-label-wrapper animate-skill-tab ${isSelected ? "selected" : ""} ${connectedNode ? "connected" : ""} ${isDragging ? "dragging" : ""}`}
+      className={`${className} ${styles.characterSkillLabelWrapper} ${styles.animateSkillTab} ${isSelected ? styles.selected : ""} ${connectedNode ? styles.connected : ""} ${isDragging ? styles.dragging : ""}`}
       // onPointerDown={onClick}
       data-index={index}
     >
-      <CyberDescLabelHud className="character-skill-label-hud" />
+      <CyberDescLabelHud className={styles.characterSkillLabelHud} />
       <div 
         ref={textRef}
-        className={`character-skill-label-text animate-skill-text ${isSelected ? "selected" : ""}`}
+        className={`${styles.characterSkillLabelText} ${styles.animateSkillText} ${isSelected ? styles.selected : ""}`}
         style={{ willChange: 'opacity' }}
       >
         {connectedNode || skillTab.label}

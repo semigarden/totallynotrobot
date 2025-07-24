@@ -23,7 +23,7 @@
         transform: translateZ(0);
         z-index: 3;
 
-        .circle-glow {
+        .circleGlow {
             width: 6px;
             height: 6px;
             border-radius: 50%;
@@ -33,7 +33,7 @@
         }
     }
 
-    .circle-line {
+    .circleLine {
         position: absolute;
         bottom: 6px;
         left: 0;
@@ -41,7 +41,7 @@
         height: 100px;
         transform: rotate(-45deg);
 
-        .line-0 {
+        .line0 {
             position: absolute;
             width: 46px;
             height: 31px;
@@ -52,7 +52,7 @@
             border-right: 3px solid #fff;
         }
 
-        .line-1 {
+        .line1 {
             position: absolute;
             width: 23px;
             bottom: 73px;
@@ -80,7 +80,7 @@
         z-index: 1;
 
 
-        .square-glow {
+        .squareGlow {
             width: 12px;
             height: 12px;
             background-color: #fff;
@@ -97,7 +97,7 @@
         bottom: 33px;
 
 
-        .frame-top {
+        .frameTop {
             position: absolute;
             width: 100%;
             height: 16px;
@@ -105,7 +105,7 @@
             top: 0;
             overflow: hidden;
 
-            .frame-1 {
+            .frame1 {
                 width: 84px;
                 height: 12px;
                 left: 10px;
@@ -116,7 +116,7 @@
                 --aug-border-bg: #fff;
             }
 
-            .line-1 {
+            .line1 {
                 width: 30px;
                 height: 12px;
                 left: 90px;
@@ -126,7 +126,7 @@
                 --aug-border-bg: #fff;
             }
 
-            .line-2 {
+            .line2 {
                 width: 10px;
                 height: 7px;
                 border-top: 1px solid #fff;
@@ -134,7 +134,7 @@
                 left: 90px;
             }
 
-            .frame-2 {
+            .frame2 {
                 width: 47px;
                 height: 7px;
                 left: 99px;
@@ -147,7 +147,7 @@
                 background-color: #000;
             }
 
-            .frame-3 {
+            .frame3 {
                 width: 113px;
                 height: 7px;
                 left: 87px;
@@ -157,7 +157,7 @@
             }
         }
 
-        .frame-main {
+        .frameMain {
             position: absolute;
             width: 100%;
             height: 42px;
@@ -205,7 +205,7 @@
                     height: 30px;
                     animation: arrowFade 2s ease-in-out both;
 
-                    .line-1 {
+                    .line1 {
                         position: absolute;
                         top: 0;
                         left: 0;
@@ -216,7 +216,7 @@
                         --aug-border-bg: #fff;
                     }
 
-                    .line-2 {
+                    .line2 {
                         position: absolute;
                         top: 15px;
                         left: 0;
@@ -230,14 +230,14 @@
             }
         }
 
-        .frame-bottom {
+        .frameBottom {
             position: absolute;
             width: 188px;
             height: 18px;
             left: -21px;
             bottom: -6px;
 
-            .frame-1 {
+            .frame1 {
                 width: 58px;
                 height: 18px;
                 left: 1px;
@@ -248,7 +248,7 @@
                 z-index: 1;
             }
 
-            .frame-2 {
+            .frame2 {
                 width: 42px;
                 height: 7px;
                 left: 53px;
@@ -258,7 +258,7 @@
                 z-index: 1;
             }
 
-            .frame-3 {
+            .frame3 {
                 width: 58px;
                 height: 7px;
                 left: 40px;
@@ -270,7 +270,7 @@
                 --aug-border-bg: #f0265e;
             }
 
-            .frame-4 {
+            .frame4 {
                 width: 21px;
                 height: 18px;
                 left: 80px;
@@ -280,7 +280,7 @@
                 z-index: 2;
             }
 
-            .frame-5 {
+            .frame5 {
                 width: 101px;
                 height: 6px;
                 left: 96px;

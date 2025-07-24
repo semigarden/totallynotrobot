@@ -1,10 +1,10 @@
-import CharacterInfo from 'components/portal/CharacterInfo';
-import './styles/App.scss';
+import Panel from '@/components/portal/Panel';
+import '@/styles/App.scss';
 
 function App() {
   return (
     <div className="App">
-      <CharacterInfo />
+      <Panel />
     </div>
   );
 }

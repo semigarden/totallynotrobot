@@ -2,8 +2,8 @@ import { faVuejs, faReact, faHtml5, faJs, faCss3Alt, faTumblrSquare, faFigma,
     faNode, faLaravel, faMastodon, faPhp, faPython, faGithubAlt,
     faSquareInstagram, faMonero, faRedditAlien } from "@fortawesome/free-brands-svg-icons";
 import { mdiNuxt } from '@mdi/js';
-import NextJsIcon from "../assets/NextJsIcon.jsx";
-import { getLevel, getExp } from "utils/utils";
+import NextJsIcon from "@/assets/NextJsIcon.jsx";
+import { getLevel, getExp } from "@/utils/utils";
 
 const data = {
     firstName: "Faulty",

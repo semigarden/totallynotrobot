@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import SkillIcon from "./SkillIcon.tsx";
+import SkillIcon from "@/components/common/SkillIcon.tsx";
+import styles from "@/styles/Panel.module.scss";
 
 export function Skill({ skill, moveRow, index, skillRefs }) {
   const ref = useRef(null);
@@ -65,7 +66,7 @@ export function Skill({ skill, moveRow, index, skillRefs }) {
 
   return (
     <div
-      className="character-skill-wrapper"
+      className={styles.characterSkillWrapper}
       ref={ref}
       style={{
           opacity: trans,
@@ -73,8 +74,8 @@ export function Skill({ skill, moveRow, index, skillRefs }) {
       }}
       data-handler-id={collectedProps.handlerId}
     >
-      <SkillIcon icon={skill.icon} iconType={skill.iconType} color={skill.color} animation={`character-skill-icon ${skill.animation}`} />
-      <div className="character-skill-label">{skill.label}</div>
+      <SkillIcon icon={skill.icon} iconType={skill.iconType} color={skill.color} animation={`${styles.characterSkillIcon} ${skill.animation}`} />
+      <div className={styles.characterSkillLabel}>{skill.label}</div>
     </div>
   );
 }

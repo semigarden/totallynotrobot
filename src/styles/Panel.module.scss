@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
 
 
-.character-info {
+.panel {
     width: 100%;
     height: 100%;
     display: flex;
@@ -29,7 +29,7 @@
         position: relative;
         width: 100vw;
 
-        .character-class-wrapper {
+        .characterClassWrapper {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -40,7 +40,7 @@
             z-index: 1;
             padding: 10px 20px;
 
-            .character-class-bio {
+            .characterClassBio {
                 font-size: 12px;
                 text-align: justify;
                 font-family: "Sulphur Point",sans-serif;
@@ -69,7 +69,7 @@
             }
         }
 
-        .horizon-wrapper {
+        .horizonWrapper {
             // background-color: #f0265e;
             // backdrop-filter: blur(10px);
             display: flex;
@@ -83,12 +83,12 @@
 
             height: max-content;
 
-            .character-icon-wrapper {
+            .characterIconWrapper {
                 position: relative;
                 width: 18vw;
                 margin-right: 2vw;
 
-                .character-icon {
+                .characterIcon {
                     position: relative;
                     max-width: 100%;
                     left: 0;
@@ -96,7 +96,7 @@
                     user-select: none;
                 }
 
-                .character-orbit-icon {
+                .characterOrbitIcon {
                     position: relative;
                     max-width: 100%;
                     left: 0;
@@ -105,11 +105,11 @@
                 }
             }
 
-            .character-visual-wrapper {
+            .characterVisualWrapper {
                 position: relative;
                 margin-left: 2vw;
 
-                .character-visual {
+                .characterVisual {
                     position: relative;
                     width: 120px;
                     height: 120px;
@@ -121,7 +121,7 @@
                 }
             }
 
-            .character-details-wrapper {
+            .characterDetailsWrapper {
                 position: relative;
                 width: 100%;
                 height: max-content;
@@ -136,7 +136,7 @@
                 gap: 10px;
                 z-index: 1;
             
-                .character-name-wrapper {
+                .characterNameWrapper {
                     position: relative;
                     width: 100%;
                     height: 120px;
@@ -146,14 +146,14 @@
 
                     width: 320px;
 
-                    .character-level-wrapper {
+                    .characterLevelWrapper {
                         position: absolute;
                         bottom: 7px;
                         left: 0px;
                         width: 100%;
                         height: 38px;
 
-                        .character-level-bar {
+                        .characterLevelBar {
                             position: absolute;
                             bottom: 8px;
                             left: 36px;
@@ -165,7 +165,7 @@
                             }
                         }
 
-                        .character-level-label {
+                        .characterLevelLabel {
                             position: absolute;
                             width: 40px;
                             top: -10px;
@@ -179,7 +179,7 @@
                             text-align: center;
                         }
 
-                        .character-class-label {
+                        .characterClassLabel {
                             position: absolute;
                             width: 84px;
                             top: 6px;
@@ -196,7 +196,7 @@
                     }
                 }
 
-                .character-details-info-wrapper {
+                .characterDetailsInfoWrapper {
                     position: relative;
                     display: flex;
                     flex-direction: column;
@@ -204,7 +204,7 @@
                     justify-content: space-around;
                     gap: 5px;
 
-                    .character-details-info-group {
+                    .characterDetailsInfoGroup {
                         display: flex;
                         flex-direction: row;
                         align-items: center;
@@ -212,7 +212,7 @@
                         gap: 5px;
                     }
 
-                    .character-details-info {
+                    .characterDetailsInfo {
                         position: relative;
                         border-radius: 4px;
                         // background-color: #a81b42;
@@ -238,7 +238,7 @@
                         }
                     }
 
-                    .character-details-group {
+                    .characterDetailsGroup {
                         position: relative;
                         display: flex;
                         flex-direction: column;
@@ -264,7 +264,7 @@
 
                     
 
-                        .character-details-subgroup {
+                        .characterDetailsSubgroup {
                             display: flex;
                             flex-direction: column;
                             align-items: flex-start;
@@ -274,7 +274,7 @@
 
                         }
 
-                        .character-details-info {
+                        .characterDetailsInfo {
                             position: relative;
                             // background-color: #000;
                             display: flex;
@@ -296,14 +296,14 @@
                 }
             }
 
-            .character-node-wrapper {
+            .characterNodeWrapper {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 width: 100%;
 
-                .character-node-list {
+                .characterNodeList {
                     display: flex;
                     align-items: center;
                     justify-content: space-evenly;
@@ -312,7 +312,7 @@
                     width: 100%;
                     height: 22px;
 
-                    .character-node {
+                    .characterNode {
                         position: relative;
                         padding: 0;
                         background-color: transparent;
@@ -329,7 +329,7 @@
                         justify-content: center;
                         padding: 4px 0;
 
-                        .character-node-hud {
+                        .characterNodeHud {
                             position: absolute;
                             top: 0;
                             left: 0;
@@ -341,7 +341,7 @@
                             display: none;
                         }
 
-                        .character-node-text {
+                        .characterNodeText {
                             z-index: 2;
                             color: white;
                             font-family: "Orbitron", sans-serif;
@@ -358,7 +358,7 @@
                         }
 
                         &:hover {
-                            .character-node-hud .path0 {
+                            .characterNodeHud .path0 {
                                 fill: #f0265e;
                             }
                         }
@@ -374,13 +374,13 @@
                         }
 
                         &.connected {
-                            .character-node-hud .path0 {
+                            .characterNodeHud .path0 {
                                 fill: #f0265e;
                             }
                             cursor: default;
 
                             &:hover {
-                                .character-node-hud .path0 {
+                                .characterNodeHud .path0 {
                                     fill: #f0265e;
                                 }
                             }
@@ -450,7 +450,7 @@
             transform: scale(1.1);
         }
 
-        .character-details-wrapper {
+        .characterDetailsWrapper {
             position: relative;
             display: flex;
             flex-direction: column;
@@ -458,18 +458,18 @@
             padding-top: 30px;
             justify-content: center;
 
-            .character-details-label-wrapper {
+            .characterDetailsLabelWrapper {
                 display: flex;
                 width: 100%;
                 padding: 6px 0 2px 0;
 
-                .character-skills-wrapper {
+                .characterSkillsWrapper {
                     position: relative;
                     display: flex;
                     align-items: flex-end;
                     justify-content: center;
 
-                    .character-skills-hud {
+                    .characterSkillsHud {
                         width: 70px;
                         height: 20px;
 
@@ -496,7 +496,7 @@
                         }
                     }
 
-                    .character-skills-label {
+                    .characterSkillsLabel {
                         position: absolute;
                         font-family: "Black Ops One", system-ui;
                         text-transform: uppercase;
@@ -507,12 +507,12 @@
                     }
                 }
 
-                .character-skills-navigation {
+                .characterSkillsNavigation {
                     display: grid;
                     grid-template-columns: 1fr;
                     width: 100%;
 
-                    .skill-tab {
+                    .skillTab {
                         flex-grow: 1;
                         display: flex;
                         justify-content: space-evenly;
@@ -534,10 +534,10 @@
                             }
                         }
 
-                        .character-skill-label-wrapper {
+                        .characterSkillLabelWrapper {
                             position: relative;
 
-                            .character-skill-label-hud {
+                            .characterSkillLabelHud {
                                 width: 100%;
                                 height: 100%;
 
@@ -557,7 +557,7 @@
                                 }
                             }
     
-                            .character-skill-label-text {
+                            .characterSkillLabelText {
                                 position: absolute;
                                 color: #9ca3af;
                                 transform: skewX(-20deg);
@@ -578,13 +578,13 @@
                             }
 
                             &.connected {
-                                .character-skill-label-hud .path0 {
+                                .characterSkillLabelHud .path0 {
                                     stroke: #ff0000;
                                     fill: #ff0000;
                                 }
                             }
 
-                            .connected-node-indicator {
+                            .connectedNodeIndicator {
                                 position: absolute;
                                 top: -8px;
                                 right: -8px;
@@ -603,13 +603,13 @@
                 }
             }
 
-            .character-skill-horizontal-divider {
+            .characterSkillHorizontalDivider {
                 border-bottom: 1px solid #f0265e;
                 width: 100%;
                 display: inline-block;
             }
 
-            .character-skill-list-wrapper {
+            .characterSkillListWrapper {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
                 gap: 20px;
@@ -618,7 +618,7 @@
                 color: white;
                 z-index: 1;
                 
-                .character-skill-wrapper {
+                .characterSkillWrapper {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -628,12 +628,12 @@
                     transition: opacity 0.5s ease-in-out;
                     cursor: pointer;
 
-                    .character-skill-icon {
+                    .characterSkillIcon {
                         width: 32px;
                         height: 32px;
                     }
 
-                    .character-skill-label {
+                    .characterSkillLabel {
                         color: white;
                         font-size: 12px;
                     }
@@ -641,105 +641,13 @@
             }
         }
     }
-
-    .leftArrow {
-        position: fixed;
-        left: 0;
-        width: 50vw;
-        // background: linear-gradient(90deg, #f0265e 0%, #e91e63 50%, transparent 100%);
-        // border-right: 1px solid #f0265e;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        padding-right: calc(35vw + 2rem);
-        display: none;
-        z-index: 10;
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        // transition: all 0.3s ease;
-        box-shadow: 2px 0 10px rgba(240, 38, 94, 0.2);
-        animation: arrowGlow 3s ease-in-out infinite;
-        z-index: 0;
-
-        // &::after {
-        //     content: "";
-        //     position: absolute;
-        //     width: 10px;
-        //     height: 100%;
-        //     top: 0;
-        //     right: -2px;
-        //     background-color: #f0265e;
-        //     box-shadow: 2px 0 8px rgba(240, 38, 94, 0.3);
-        // }
-
-        .navigation-left-icon {
-            user-select: none;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        &:hover {
-            // background: linear-gradient(90deg, #f0265e 0%, #e91e63 60%, transparent 100%);
-            box-shadow: 4px 0 15px rgba(240, 38, 94, 0.4);
-            
-            .navigation-left-icon {
-                transform: scale(1.1);
-                color: #fff;
-            }
-        }
-    }
-
-    .rightArrow {
-        position: fixed;
-        right: 0;
-        width: 50vw;
-        // background: linear-gradient(270deg, #f0265e 0%, #e91e63 50%, transparent 100%);
-        // border-left: 1px solid #f0265e;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding-left: calc(35vw + 2rem);
-        display: none;
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        // transition: all 0.3s ease;
-        box-shadow: -2px 0 10px rgba(240, 38, 94, 0.2);
-        animation: arrowGlowRight 3s ease-in-out infinite;
-        z-index: 0;
-
-        // &::after {
-        //     content: "";
-        //     position: absolute;
-        //     width: 10px;
-        //     height: 100%;
-        //     top: 0;
-        //     left: -2px;
-        //     background-color: #f0265e;
-        // }
-
-        .navigation-right-icon {
-            user-select: none;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        &:hover {
-            // background: linear-gradient(270deg, #f0265e 0%, #e91e63 60%, transparent 100%);
-            box-shadow: -4px 0 15px rgba(240, 38, 94, 0.4);
-            
-            .navigation-right-icon {
-                transform: scale(1.1);
-                color: #fff;
-            }
-        }
-    }
 }
 
 @media (min-width: 576px) {
-    .character-info {
+    .panel {
         .content {
-            .horizon-wrapper {
-                .character-details-wrapper {
+            .horizonWrapper {
+                .characterDetailsWrapper {
                     flex-direction: row;
                     justify-content: center;
 
@@ -753,63 +661,63 @@
 }
 
 @media (min-width: 768px) {
-    .character-info {
+    .panel {
         padding: 8vh 0;
     
         .content {
             width: 70vw;
             // border: 1px solid #f0265e;
     
-            .character-class-wrapper {
+            .characterClassWrapper {
                 padding: 1.5rem 2rem;
     
-                .character-class-bio {
+                .characterClassBio {
                     font-size: 16px;
                 }
             }
     
-            .horizon-wrapper .character-details-wrapper {
+            .horizonWrapper .characterDetailsWrapper {
                 justify-content: space-around;
 
                 .divider {
                     display: none;
                 }
     
-                .character-details-label-wrapper {
+                .characterDetailsLabelWrapper {
                     width: 100%;
                     padding: 4vh 0 2px 0;
     
-                    .character-skills-wrapper {
-                        .character-skills-hud {
+                    .characterSkillsWrapper {
+                        .characterSkillsHud {
                             width: 176px;
                             height: 50px;
                         }
     
-                        .character-skills-label {
+                        .characterSkillsLabel {
                             font-size: 28px;
                             bottom: 10px;
                             left: 31px;
                         }
                     }
     
-                    .character-skills-navigation .skill-tab {
+                    .characterSkillsNavigation .skillTab {
                         .tab {
                             width: max-content;
                         }
 
-                        .character-skill-label-wrapper {
+                        .characterSkillLabelWrapper {
                             width: 120px;
                             height: 64px;
                             position: relative;
                             
 
-                            .character-skill-label-hud {
+                            .characterSkillLabelHud {
                                 position: absolute;
                                 width: 120px;
                                 height: 64px;    
                             }
 
-                            .character-skill-label-text {
+                            .characterSkillLabelText {
                                 top: 18px;
                                 left: 0;
                                 right: 0;
@@ -819,15 +727,15 @@
                     }
                 }
     
-                .character-skill-horizontal-divider {
+                .characterSkillHorizontalDivider {
                     min-width: 200px;
                 }
     
-                .character-skill-list-wrapper {
+                .characterSkillListWrapper {
 
                 
-                    .character-skill-wrapper {
-                        .character-skill-icon {
+                    .characterSkillWrapper {
+                        .characterSkillIcon {
                             width: 32px;
                             height: 32px;
                             
@@ -837,17 +745,17 @@
                             }
                         }
 
-                        .character-skill-label {
+                        .characterSkillLabel {
                             font-size: 14px;
                         }
                     }
                 }
             }
 
-            .character-details-wrapper {
+            .characterDetailsWrapper {
                 padding: 0.5rem;
 
-                .character-skill-list-wrapper {
+                .characterSkillListWrapper {
                     width: 100%;
                     display: grid;
                     // grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -871,7 +779,7 @@
             //     background-color: #f0265e;
             // }
     
-            .navigation-left-icon {
+            .navigationLeftIcon {
                 user-select: none;
                 cursor: pointer;
                 font-size: 50px;
@@ -893,7 +801,7 @@
             //     box-shadow: -2px 0 8px rgba(240, 38, 94, 0.3);
             // }
     
-            .navigation-right-icon {
+            .navigationRightIcon {
                 user-select: none;
                 cursor: pointer;
                 font-size: 50px;
@@ -1019,20 +927,20 @@
     }
 }
 
-.animate-arrow-0 { animation: arrowFade 2s ease-in-out 0s both; }
-.animate-arrow-1 { animation: arrowFade 2s ease-in-out 0.2s both; }
-.animate-arrow-2 { animation: arrowFade 2s ease-in-out 0.3s both; }
-.animate-arrow-3 { animation: arrowFade 2s ease-in-out 0.4s both; }
-.animate-arrow-4 { animation: arrowFade 2s ease-in-out 0.5s both; }
-.animate-arrow-5 { animation: arrowFade 2s ease-in-out 0.6s both; }
-.animate-arrow-6 { animation: arrowFade 2s ease-in-out 0.7s both; }
-.animate-arrow-7 { animation: arrowFade 2s ease-in-out 0.8s both; }
-.animate-arrow-8 { animation: arrowFade 2s ease-in-out 0.9s both; }
-.animate-arrow-9 { animation: arrowFade 2s ease-in-out 1s both; }
-.animate-arrow-10 { animation: arrowFade 2s ease-in-out 1.1s both; }
-.animate-arrow-11 { animation: arrowFade 2s ease-in-out 1.2s both; }
-.animate-arrow-12 { animation: arrowFade 2s ease-in-out 1.3s both; }
-.animate-arrow-13 { animation: arrowFade 2s ease-in-out 1.4s both; }
+.animateArrow0 { animation: arrowFade 2s ease-in-out 0s both; }
+.animateArrow1 { animation: arrowFade 2s ease-in-out 0.2s both; }
+.animateArrow2 { animation: arrowFade 2s ease-in-out 0.3s both; }
+.animateArrow3 { animation: arrowFade 2s ease-in-out 0.4s both; }
+.animateArrow4 { animation: arrowFade 2s ease-in-out 0.5s both; }
+.animateArrow5 { animation: arrowFade 2s ease-in-out 0.6s both; }
+.animateArrow6 { animation: arrowFade 2s ease-in-out 0.7s both; }
+.animateArrow7 { animation: arrowFade 2s ease-in-out 0.8s both; }
+.animateArrow8 { animation: arrowFade 2s ease-in-out 0.9s both; }
+.animateArrow9 { animation: arrowFade 2s ease-in-out 1s both; }
+.animateArrow10 { animation: arrowFade 2s ease-in-out 1.1s both; }
+.animateArrow11 { animation: arrowFade 2s ease-in-out 1.2s both; }
+.animateArrow12 { animation: arrowFade 2s ease-in-out 1.3s both; }
+.animateArrow13 { animation: arrowFade 2s ease-in-out 1.4s both; }
 
 @keyframes pulsing {
     0%, 100% {
@@ -1043,7 +951,7 @@
     }
 }
 
-.animate-pulsing {
+.animatePulsing {
     animation: pulsing 3s ease-in-out infinite;
 }
 
@@ -1056,7 +964,7 @@
     }
 }
 
-.animate-mobile-path {
+.animateMobilePath {
     animation: mobilePath 2s ease-in-out 0.5s both;
 }
 
@@ -1075,23 +983,23 @@
     }
 }
 
-.animate-skill-path-0 {
+.animateSkillPath0 {
     animation: skillPathFade 2s ease-in-out 0.75s both;
 }
 
-.animate-skill-path-2 {
+.animateSkillPath2 {
     animation: skillPathFade 2s ease-in-out 0.5s both;
 }
 
-.animate-skill-path-3 {
+.animateSkillPath3 {
     animation: skillPathFade 2s ease-in-out 1s both;
 }
 
-.animate-skill-path-4 {
+.animateSkillPath4 {
     animation: skillPathFade 2s ease-in-out 0s both;
 }
 
-.skill-tab {
+.skillTab {
     display: flex;
     gap: 8px;
     list-style: none;
@@ -1136,7 +1044,7 @@
     }
 }
 
-.cable-layer {
+.cableLayer {
     path {
         transition: all 0.3s ease-in-out;
     }
@@ -1234,23 +1142,23 @@
     }
 }
 
-.cable-layer g[data-node="Toolkit"] {
+.cableLayer g[data-node="Toolkit"] {
     animation: toolkitPulse 3s ease-in-out infinite;
 }
 
-.cable-layer g[data-node="Projects"] {
+.cableLayer g[data-node="Projects"] {
     animation: projectsPulse 3s ease-in-out infinite;
 }
 
-.cable-layer g[data-node="Connection"] {
+.cableLayer g[data-node="Connection"] {
     animation: connectionPulse 3s ease-in-out infinite;
 }
 
-.cable-layer g[data-node="Experience"] {
+.cableLayer g[data-node="Experience"] {
     animation: experiencePulse 3s ease-in-out infinite;
 }
 
-.cable-layer g[data-node="Interests"] {
+.cableLayer g[data-node="Interests"] {
     animation: interestsPulse 3s ease-in-out infinite;
 }
 

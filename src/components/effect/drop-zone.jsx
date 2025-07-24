@@ -4,7 +4,9 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import update from "immutability-helper";
 
-import { Skill } from "components/common/Skill";
+import { Skill } from "@/components/common/Skill";
+
+import styles from "@/styles/Panel.module.scss";
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 const Backend = isMobile ? TouchBackend : HTML5Backend; 
@@ -30,7 +32,7 @@ export function DropZone({ skillsData, skillRefs }) {
 
     return (
         <DndProvider backend={Backend}>
-            <div className="character-skill-list-wrapper">
+            <div className={styles.characterSkillListWrapper}>
                 {skills.map((skill, index) => (
                     <Skill
                         index={index}

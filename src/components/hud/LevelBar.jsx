@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import "styles/hud/LevelBar.scss";
-import { exp } from 'api/data';
+import styles from "@/styles/hud/LevelBar.module.scss";
+import { exp } from '@/api/data';
 
 const LevelBar = ({ className }) => {
     const levelBarRef = useRef(null);
@@ -10,7 +10,7 @@ const LevelBar = ({ className }) => {
     const [animated, setAnimated] = useState(Array(totalBars).fill(false));
 
     useEffect(() => {
-        const expBars = levelBarRef.current?.querySelectorAll('.exp');
+        const expBars = levelBarRef.current?.querySelectorAll(`.${styles.exp}`);
         if (expBars) {
             expBars.forEach((bar, index) => {
                 bar.style.animationDelay = `${index * 0.1}s`;
@@ -20,12 +20,12 @@ const LevelBar = ({ className }) => {
     }, []);
 
     return (
-        <div className={`level-bar ${className}`} ref={levelBarRef}>
+        <div className={`${styles.levelBar} ${className}`} ref={levelBarRef}>
             {Array.from({ length: totalBars }).map((_, index) => {
                 const isLit = index < litBars && animated[index];
                 return (
                     <div
-                        className={`exp ${isLit ? 'lit' : ''}`}
+                        className={`${styles.exp} ${isLit ? styles.lit : ''}`}
                         key={index}
                         augmented-ui="tl-clip br-clip exe"
                         style={{ animationDelay: `${index * 0.1}s` }}
