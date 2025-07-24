@@ -219,7 +219,7 @@ const CharacterInfo = () => {
  
                             <div className="character-level-wrapper">
                                 <LevelBar className="character-level-bar" />
-                                <div className="character-class-label">Closed</div>
+                                <div className="character-class-label">Online</div>
                                 <div className="character-level-label">{level}</div>
                             </div>
                         </div>
