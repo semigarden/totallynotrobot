@@ -27,6 +27,7 @@ import "styles/CharacterInfo.scss";
 import data, { level } from "api/data"
 import CircuitBoard from "components/portal/CircuitBoard";
 import CursorBlinker from "components/effect/CursorBlinker";
+import Line from "components/hud/Line";
 
 
 const defaultConnections = {
@@ -199,10 +200,26 @@ const CharacterInfo = () => {
         return `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
     };
 
-
+    const webDevRef = useRef(null);
+    const characterInfoRef = useRef(null);
 
     return (
-        <div className="character-info" onMouseMove={handleDrag} onMouseUp={handleDragEnd}>
+        <div className="character-info" onMouseMove={handleDrag} onMouseUp={handleDragEnd} ref={characterInfoRef}>
+
+            <CircuitBoard
+                source={characterInfoRef}
+            >
+                {/* <Line startRef={characterNodeRefs.current.Toolkit} endRef={webDevRef}
+                            startAnchor="top"
+                            endAnchor="left"
+                            holeRadius={3}
+                            holeStrokeWidth={1}
+                            routing="vh"
+                            breakpointCount={3}
+                            randomizeBreakpoints
+                            containerRef={characterInfoRef}
+                         /> */}
+            </CircuitBoard>
             <div className="content">
                 {/* <div className="character-class-wrapper" augmented-ui="exe">
                     <AnimateText text={data.preface} />
@@ -222,13 +239,13 @@ const CharacterInfo = () => {
                                 <div className="character-class-label">Online</div>
                                 <div className="character-level-label">{level}</div>
                             </div>
-                        </div>
+                            </div>
 
                         <div className="divider"/>
 
                         <div className="character-details-info-wrapper">
                             <div className="character-details-info-group">
-                                <div className="character-details-info" augmented-ui="exe">Web Dev</div>
+                                <div ref={webDevRef} className="character-details-info" augmented-ui="exe">Web Dev</div>
                                 <div className="character-details-info" augmented-ui="exe">Art</div>
                                 <div className="character-details-info" augmented-ui="exe">DIY</div>
                             </div>
@@ -286,7 +303,10 @@ const CharacterInfo = () => {
                     </div>
 
                     <div className="character-node-wrapper">
-                        <div className="character-node-list">
+                        
+
+
+                        <div className="character-node-list" ref={characterNodeRefs}>
                             {['Toolkit', 'Projects', 'Connection', 'Experience', 'Interests'].map((nodeName) => (
                                 <div 
                                     key={nodeName}
@@ -301,6 +321,7 @@ const CharacterInfo = () => {
                                     {/* <div className="connector">
                                         <FontAwesomeIcon icon={faCaretDown} />
                                     </div> */}
+                                    
                                 </div>
                             ))}
                         </div>
