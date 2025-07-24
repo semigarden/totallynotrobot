@@ -206,10 +206,10 @@ const CharacterInfo = () => {
     return (
         <div className="character-info" onMouseMove={handleDrag} onMouseUp={handleDragEnd} ref={characterInfoRef}>
 
-            <CircuitBoard
+            {/* <CircuitBoard
                 source={characterInfoRef}
             >
-                {/* <Line startRef={characterNodeRefs.current.Toolkit} endRef={webDevRef}
+                <Line startRef={characterNodeRefs.current.Toolkit} endRef={webDevRef}
                             startAnchor="top"
                             endAnchor="left"
                             holeRadius={3}
@@ -218,8 +218,8 @@ const CharacterInfo = () => {
                             breakpointCount={3}
                             randomizeBreakpoints
                             containerRef={characterInfoRef}
-                         /> */}
-            </CircuitBoard>
+                         />
+            </CircuitBoard> */}
             <div className="content">
                 {/* <div className="character-class-wrapper" augmented-ui="exe">
                     <AnimateText text={data.preface} />
