@@ -1,231 +1,28 @@
 // External Libraries
-import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretLeft, faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import { DropZone } from "components/effect/drop-zone";
-import AnimateText from "components/effect/AnimateText";
-
-// Huds
-import CyberLabelMobileHud from "components/hud/CyberLabelMobileHud";
-import CyberLabelHud from "components/hud/CyberLabelHud";
-import CyberSkillHud from "components/hud/CyberSkillHud";
-import CyberDescLabelHud from "components/hud/CyberDescLabelHud";
-import CyberLevelBar from "components/hud/CyberLevelBar";
-
-// Assets
-
-
-
 import LevelBar from "components/hud/LevelBar";
 import Name from "components/hud/Name";
 
 // Styles
 import "styles/CharacterInfo.scss";
 
+// Data
 import data, { level } from "api/data"
-import CircuitBoard from "components/portal/CircuitBoard";
-import CursorBlinker from "components/effect/CursorBlinker";
-import Line from "components/hud/Line";
-
-
-const defaultConnections = {
-    "0": "Projects",
-    "1": "Toolkit",
-    "4": "Connection",
-    "2": "Experience",
-    "3": "Interests"
-}
 
 const CharacterInfo = () => {
-    const initialSkills = data.skills;
-
-    let [skills] = useState(initialSkills);
-
-    const [isDragging, setIsDragging] = useState(false);
-    const [draggedNode, setDraggedNode] = useState(null);
-    const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
-    const [connectedNodes, setConnectedNodes] = useState({});
-    const [nodePositions, setNodePositions] = useState({});
-    const [skillPositions, setSkillPositions] = useState({});
-
-    const characterNodeRefs = useRef({});
-    const skillRefs = useRef({});
-    const horizonRef = useRef(null);
-
-
-
-    const handleDragStart = (e, nodeName) => {
-        setIsDragging(true);
-        setDraggedNode(nodeName);
-        
-        const rect = e.currentTarget.getBoundingClientRect();
-        const svgContainer = document.querySelector('.cable-layer');
-        if (svgContainer) {
-            const svgRect = svgContainer.getBoundingClientRect();
-            setDragPosition({
-                x: rect.left + rect.width / 2 - svgRect.left,
-                y: rect.bottom + 6 + 3.25 - svgRect.top
-            });
-        } else {
-            setDragPosition({
-                x: rect.left + rect.width / 2,
-                y: rect.bottom + 6 + 3.25
-            });
-        }
-    };
-
-    const handleDrag = (e) => {
-        if (isDragging) {
-            const svgContainer = document.querySelector('.cable-layer');
-            if (svgContainer) {
-                const svgRect = svgContainer.getBoundingClientRect();
-                setDragPosition({
-                    x: e.clientX - svgRect.left,
-                    y: e.clientY - svgRect.top
-                });
-            } else {
-                setDragPosition({
-                    x: e.clientX,
-                    y: e.clientY
-                });
-            }
-        }
-    };
-
-    const positionArrows = () => {
-        if (horizonRef.current) {
-            const horizonRect = horizonRef.current.getBoundingClientRect();
-            const leftArrow = document.querySelector('.leftArrow');
-            const rightArrow = document.querySelector('.rightArrow');
-            
-            if (leftArrow) {
-                leftArrow.style.top = `${horizonRect.top}px`;
-                leftArrow.style.height = `${horizonRect.height}px`;
-            }
-            
-            if (rightArrow) {
-                rightArrow.style.top = `${horizonRect.top}px`;
-                rightArrow.style.height = `${horizonRect.height}px`;
-            }
-        }
-    };
-
-    useEffect(() => {
-        positionArrows();
-        window.addEventListener('resize', positionArrows);
-        window.addEventListener('scroll', positionArrows);
-        
-        return () => {
-            window.removeEventListener('resize', positionArrows);
-            window.removeEventListener('scroll', positionArrows);
-        };
-    }, []);
-
-    const handleDragEnd = (e) => {
-        if (!isDragging) return;
-
-        const skillElement = e.target.closest('.character-skill-wrapper');
-        if (skillElement) {
-            const skillLabel = skillElement.querySelector('.character-skill-label')?.textContent;
-            
-            if (skillLabel && draggedNode) {
-                setConnectedNodes(prev => ({
-                    ...prev,
-                    [skillLabel]: draggedNode
-                }));
-            }
-        }
-
-        setIsDragging(false);
-        setDraggedNode(null);
-    };
-
-    useEffect(() => {
-        const updatePositions = () => {
-            const svgContainer = document.querySelector('.cable-layer');
-            if (!svgContainer) return;
-            
-            const svgRect = svgContainer.getBoundingClientRect();
-            
-            const newNodePositions = {};
-            Object.keys(characterNodeRefs.current).forEach(nodeName => {
-                const element = characterNodeRefs.current[nodeName];
-                if (element) {
-                    const rect = element.getBoundingClientRect();
-                    const isConnected = Object.values(connectedNodes).includes(nodeName);
-                    
-                    const connectorOffset = isConnected ? 10 : 14;
-                    newNodePositions[nodeName] = {
-                        x: rect.left + rect.width / 2 - svgRect.left,
-                        y: rect.bottom + connectorOffset - svgRect.top
-                    };
-                }
-            });
-            setNodePositions(newNodePositions);
-
-            const newSkillPositions = {};
-            Object.keys(skillRefs.current).forEach(skillLabel => {
-                const element = skillRefs.current[skillLabel];
-                if (element) {
-                    const rect = element.getBoundingClientRect();
-                    newSkillPositions[skillLabel] = {
-                        x: rect.left + rect.width / 2 - svgRect.left,
-                        y: rect.bottom - 5 - svgRect.top
-                    };
-                }
-            });
-            setSkillPositions(newSkillPositions);
-        };
-
-        updatePositions();
-        window.addEventListener('resize', updatePositions);
-        return () => window.removeEventListener('resize', updatePositions);
-    }, [skills, connectedNodes]);
-
-    const drawCable = (startX, startY, endX, endY) => {
-        // Calculate horizontal approach distance
-        const horizontalDistance = 30;
-        
-        // Determine if we're approaching from left or right
-        const isApproachingFromLeft = startX < endX;
-        const approachX = isApproachingFromLeft ? endX - horizontalDistance : endX + horizontalDistance;
-        
-        const controlPoint1X = startX;
-        const controlPoint1Y = startY + (endY - startY) * 0.3;
-        const controlPoint2X = approachX;
-        const controlPoint2Y = endY;
-
-        return `M ${startX} ${startY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${endX} ${endY}`;
-    };
-
-    const webDevRef = useRef(null);
-    const characterInfoRef = useRef(null);
 
     return (
-        <div className="character-info" onMouseMove={handleDrag} onMouseUp={handleDragEnd} ref={characterInfoRef}>
-
-            {/* <CircuitBoard
-                source={characterInfoRef}
-            >
-                <Line startRef={characterNodeRefs.current.Toolkit} endRef={webDevRef}
-                            startAnchor="top"
-                            endAnchor="left"
-                            holeRadius={3}
-                            holeStrokeWidth={1}
-                            routing="vh"
-                            breakpointCount={3}
-                            randomizeBreakpoints
-                            containerRef={characterInfoRef}
-                         />
-            </CircuitBoard> */}
+        <div className="character-info">
             <div className="content">
                 {/* <div className="character-class-wrapper" augmented-ui="exe">
                     <AnimateText text={data.preface} />
                 </div> */}
 
-                <div className="horizon-wrapper" ref={horizonRef}>
+                <div className="horizon-wrapper">
                     <div className="leftArrow">
                         <FontAwesomeIcon className="navigation-left-icon" icon={faCaretLeft} />
                     </div>
@@ -245,7 +42,7 @@ const CharacterInfo = () => {
 
                         <div className="character-details-info-wrapper">
                             <div className="character-details-info-group">
-                                <div ref={webDevRef} className="character-details-info" augmented-ui="exe">Web Dev</div>
+                                <div className="character-details-info" augmented-ui="exe">Web Dev</div>
                                 <div className="character-details-info" augmented-ui="exe">Art</div>
                                 <div className="character-details-info" augmented-ui="exe">DIY</div>
                             </div>
@@ -258,47 +55,6 @@ const CharacterInfo = () => {
                                 <div className="character-details-info" augmented-ui="exe">Long Walks</div>
                                 <div className="character-details-info" augmented-ui="exe">Writing</div>
                             </div>
-                      
-                            {/* <div className="character-details-info-group">
-                                <div className="character-details-info" augmented-ui="exe">Web Dev</div>
-                                <div className="character-details-info" augmented-ui="exe">Art</div>
-                            </div>
-                            <div className="character-details-info-group">
-                                <div className="character-details-info" augmented-ui="exe">Plants</div>
-                                <div className="character-details-info" augmented-ui="exe">Long Walks</div>
-                            </div>
-                            <div className="character-details-info-group">
-                                <div className="character-details-info" augmented-ui="exe">Reading</div>
-                                <div className="character-details-info" augmented-ui="exe">Writing</div>
-                            </div>
-                            <div className="character-details-info-group">
-                                <div className="character-details-info" augmented-ui="exe">Music</div>
-                                <div className="character-details-info" augmented-ui="exe">DIY</div>
-                            </div> */}
-
-
-
-                            {/* <div className="character-details-group">
-                                <div className="character-details-info" augmented-ui="exe">
-                                    <div className="line"/>
-                                    <div className="value">Web Dev</div>
-                                </div>
-                            
-                                <div className="character-details-subgroup" augmented-ui="exe">
-                                    <div className="line"/>
-                                    <div className="character-details-info" augmented-ui="exe">
-                                        <div className="line" augmented-ui="exe"/>
-                                        Art</div>
-                                    <div className="character-details-info" augmented-ui="exe">
-                                        <div className="line"/>
-                                        DIY</div>
-                                    <div className="character-details-info" augmented-ui="exe">
-                                        <div className="line"/>
-                                        Plants</div>
-                                    <div className="character-details-info" augmented-ui="exe">Reading</div>
-                                    <div className="character-details-info" augmented-ui="exe">Writing</div>
-                                </div>
-                            </div> */}
                         </div>
                     </div>
 
@@ -306,22 +62,15 @@ const CharacterInfo = () => {
                         
 
 
-                        <div className="character-node-list" ref={characterNodeRefs}>
+                        <div className="character-node-list">
                             {['Toolkit', 'Projects', 'Connection', 'Experience', 'Interests'].map((nodeName) => (
                                 <div 
                                     key={nodeName}
-                                    ref={el => characterNodeRefs.current[nodeName] = el}
-                                    className={`character-node ${isDragging && draggedNode === nodeName ? 'dragging' : ''} ${Object.values(connectedNodes).includes(nodeName) ? 'connected' : ''}`}
-                                    draggable={!Object.values(connectedNodes).includes(nodeName)}
-                                    onMouseDown={(e) => handleDragStart(e, nodeName)}
+                                    className={`character-node`}
                                 >
                                     <div className="character-node-text">
                                         {nodeName}
-                                    </div>
-                                    {/* <div className="connector">
-                                        <FontAwesomeIcon icon={faCaretDown} />
-                                    </div> */}
-                                    
+                                    </div>   
                                 </div>
                             ))}
                         </div>
@@ -333,57 +82,7 @@ const CharacterInfo = () => {
                 </div>
 
                 <div className="character-details-wrapper">
-                    {/* <svg 
-                        className="cable-layer" 
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            pointerEvents: 'none',
-                            zIndex: 1
-                        }}
-                    >
-                        {Object.entries(connectedNodes).map(([skillLabel, nodeName]) => {
-                            const nodePos = nodePositions[nodeName];
-                            const skillPos = skillPositions[skillLabel];
-                            
-                            if (nodePos && skillPos) {
-                                const pathData = drawCable(nodePos.x, nodePos.y, skillPos.x, skillPos.y);
-                                return (
-                                    <path
-                                        key={`${skillLabel}-${nodeName}`}
-                                        d={pathData}
-                                        stroke="#f0265e"
-                                        strokeWidth="1"
-                                        fill="none"
-                                    />
-                                );
-                            }
-                            return null;
-                        })}
-
-                        {isDragging && draggedNode && nodePositions[draggedNode] && (
-                            <path
-                                d={drawCable(
-                                    nodePositions[draggedNode].x,
-                                    nodePositions[draggedNode].y,
-                                    dragPosition.x,
-                                    dragPosition.y
-                                )}
-                                stroke="#f0265e"
-                                strokeWidth="1"
-                                fill="none"
-                            />
-                        )}
-                    </svg>
- */}
-
-
-                    {/* <div className="character-skill-horizontal-divider"></div> */}
-
-                    <DropZone skillsData={skills} skillRefs={skillRefs} />
+                    <DropZone skillsData={data.skills} />
                 </div>
             </div>
         </div>
