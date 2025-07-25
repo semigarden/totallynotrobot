@@ -11,7 +11,7 @@ import styles from "@/styles/Panel.module.scss";
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 const Backend = isMobile ? TouchBackend : HTML5Backend; 
 
-export function DropZone({ skillsData, skillRefs }) {
+export function DropZone({ skillsData, skillRefs, className = "" }) {
     const [skills, setSkills] = useState(skillsData);
 
     useEffect(() => {
@@ -32,7 +32,7 @@ export function DropZone({ skillsData, skillRefs }) {
 
     return (
         <DndProvider backend={Backend}>
-            <div className={styles.characterSkillListWrapper}>
+            <div className={`${styles.characterSkillListWrapper} ${className}`}>
                 {skills.map((skill, index) => (
                     <Skill
                         index={index}

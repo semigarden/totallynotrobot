@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 // eslint-disable-next-line
 import CursorBlinker from "./CursorBlinker";
+import styles from "@/styles/Panel.module.scss";
 
-const AnimateText = ({ text }) => {
+const AnimateText = ({ text, className = "" }) => {
     const [displayText, setDisplayText] = useState("");
     const [parentRef] = useAutoAnimate();
 
@@ -30,9 +31,9 @@ const AnimateText = ({ text }) => {
     }, [text]);
 
     return (
-        <div ref={parentRef} className="character-class-bio">
-            <div className="placeholder">{text}</div>
-            <div className="text">{displayText}</div>
+        <div ref={parentRef} className={`${styles.text} ${className}`}>
+            <div className={styles.placeholder}>{text}</div>
+            <div className={styles.text}>{displayText}</div>
             {/* <CursorBlinker /> */}
         </div>
     );

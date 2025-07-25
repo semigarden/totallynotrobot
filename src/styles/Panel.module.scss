@@ -12,13 +12,6 @@
     background-color: #000100;
     position: relative;
 
-    // *, ::before, ::after {
-    //     box-sizing: border-box;
-    //     border-width: 1px;
-    //     border-style: solid;
-    //     border-color: #e5e7eb;
-    // }
-
     .content {
         grid-column: 2;
         grid-row: span 3;
@@ -29,7 +22,7 @@
         position: relative;
         width: 100vw;
 
-        .characterClassWrapper {
+        .preface {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -40,7 +33,7 @@
             z-index: 1;
             padding: 10px 20px;
 
-            .characterClassBio {
+            .text {
                 font-size: 12px;
                 text-align: justify;
                 font-family: "Sulphur Point",sans-serif;
@@ -69,9 +62,7 @@
             }
         }
 
-        .horizonWrapper {
-            // background-color: #f0265e;
-            // backdrop-filter: blur(10px);
+        .info {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -83,51 +74,13 @@
 
             height: max-content;
 
-            .characterIconWrapper {
-                position: relative;
-                width: 18vw;
-                margin-right: 2vw;
-
-                .characterIcon {
-                    position: relative;
-                    max-width: 100%;
-                    left: 0;
-                    top: 0;
-                    user-select: none;
-                }
-
-                .characterOrbitIcon {
-                    position: relative;
-                    max-width: 100%;
-                    left: 0;
-                    top: 0;
-                    user-select: none;
-                }
-            }
-
-            .characterVisualWrapper {
-                position: relative;
-                margin-left: 2vw;
-
-                .characterVisual {
-                    position: relative;
-                    width: 120px;
-                    height: 120px;
-                    border-radius: 100%;
-                    left: 0;
-                    top: 0;
-                    user-select: none;
-                    border: 2px solid #e9c8d1;
-                }
-            }
-
-            .characterDetailsWrapper {
+            .details {
                 position: relative;
                 width: 100%;
                 height: max-content;
                 display: flex;
                 flex-direction: column;
-                align-items: space-around;
+                align-items: center;
                 justify-content: space-around;
                 flex-grow: 1;
                 margin: 0;
@@ -136,7 +89,7 @@
                 gap: 10px;
                 z-index: 1;
             
-                .characterNameWrapper {
+                .hud {
                     position: relative;
                     width: 100%;
                     height: 120px;
@@ -146,14 +99,14 @@
 
                     width: 320px;
 
-                    .characterLevelWrapper {
+                    .levelHud {
                         position: absolute;
                         bottom: 7px;
                         left: 0px;
                         width: 100%;
                         height: 38px;
 
-                        .characterLevelBar {
+                        .bar {
                             position: absolute;
                             bottom: 8px;
                             left: 36px;
@@ -165,21 +118,7 @@
                             }
                         }
 
-                        .characterLevelLabel {
-                            position: absolute;
-                            width: 40px;
-                            top: -10px;
-                            // right: 32px;
-                            left: 248px;
-                            color: #fff;
-                            font-family: "Orbitron", sans-serif;
-                            font-size: 24px;
-                            text-transform: uppercase;
-                            font-weight: 500;
-                            text-align: center;
-                        }
-
-                        .characterClassLabel {
+                        .status {
                             position: absolute;
                             width: 84px;
                             top: 6px;
@@ -193,10 +132,23 @@
                             letter-spacing: 6px;
                             font-style: italic;
                         }
+
+                        .level {
+                            position: absolute;
+                            width: 40px;
+                            top: -10px;
+                            left: 248px;
+                            color: #fff;
+                            font-family: "Orbitron", sans-serif;
+                            font-size: 24px;
+                            text-transform: uppercase;
+                            font-weight: 500;
+                            text-align: center;
+                        }
                     }
                 }
 
-                .characterDetailsInfoWrapper {
+                .tags {
                     position: relative;
                     display: flex;
                     flex-direction: column;
@@ -204,7 +156,7 @@
                     justify-content: space-around;
                     gap: 5px;
 
-                    .characterDetailsInfoGroup {
+                    .group {
                         display: flex;
                         flex-direction: row;
                         align-items: center;
@@ -212,10 +164,9 @@
                         gap: 5px;
                     }
 
-                    .characterDetailsInfo {
+                    .name {
                         position: relative;
                         border-radius: 4px;
-                        // background-color: #a81b42;
                         color: #fff;
                         font-size: 10px;
                         font-family: "Orbitron", sans-serif;
@@ -228,205 +179,61 @@
                         --aug-inset: 1px;
 
                         &:hover {
-                            // background-color: #f0265e;
                             cursor: pointer;
-                            // --aug-border-bg: linear-gradient(90deg, #ff4d7d, #f0265e, #ff4d7d);
                             --aug-border-bg: linear-gradient(90deg, #fff, #000, #fff);
                             --aug-border-opacity: 1;
                             --aug-border-radius: 10px;
-                            // box-shadow: 0 0 15px rgba(240, 38, 94, 0.6);
-                        }
-                    }
-
-                    .characterDetailsGroup {
-                        position: relative;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: flex-start;
-                        justify-content: space-around;
-                        gap: 5px;
-
-                        .value {
-                            position: relative;
-
-                     
-                            // &::before {
-                            //     content: "";
-                            //     position: absolute;
-                            //     left: -12px;
-                            //     top: 0;
-                            //     width: 1px;
-                            //     height: 100%;
-                            //     background-color: #fff;
-                            //     z-index: 1;
-                            // }
-                        }
-
-                    
-
-                        .characterDetailsSubgroup {
-                            display: flex;
-                            flex-direction: column;
-                            align-items: flex-start;
-                            justify-content: space-around;
-                            gap: 2px;
-                            margin-left: 10px;
-
-                        }
-
-                        .characterDetailsInfo {
-                            position: relative;
-                            // background-color: #000;
-                            display: flex;
-                            color: #fff;
-                            font-size: 10px;
-                            font-family: "Orbitron", sans-serif;
-                            text-transform: uppercase;
-
-                            .line {
-                                position: absolute;
-                                left: 0;
-                                top: 0;
-                                width: 1px;
-                                height: 100%;
-                                background-color: #fff;
-                            }
                         }
                     }
                 }
             }
 
-            .characterNodeWrapper {
+            .tabs {
                 display: flex;
-                flex-direction: column;
                 align-items: center;
-                justify-content: center;
+                justify-content: space-evenly;
+                gap: 4px;
+                color: #fff;
                 width: 100%;
+                height: 22px;
 
-                .characterNodeList {
+                .tab {
+                    position: relative;
+                    padding: 0;
+                    background-color: transparent;
+                    cursor: grab;
+                    user-select: none;
+                    transition: all 0.2s ease;
+                    position: relative;
+                    z-index: 10;
+                    font-weight: 500;
+                    width: max-content;
+                    height: auto;
                     display: flex;
                     align-items: center;
-                    justify-content: space-evenly;
-                    gap: 4px;
-                    color: #fff;
-                    width: 100%;
-                    height: 22px;
+                    justify-content: center;
+                    padding: 4px 0;
 
-                    .characterNode {
-                        position: relative;
-                        padding: 0;
-                        background-color: transparent;
-                        cursor: grab;
-                        user-select: none;
-                        transition: all 0.2s ease;
-                        position: relative;
-                        z-index: 10;
+                    .name {
+                        z-index: 2;
+                        color: white;
+                        font-family: "Orbitron", sans-serif;
+                        font-size: 10px;
+                        text-transform: uppercase;
                         font-weight: 500;
-                        width: max-content;
-                        height: auto;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        padding: 4px 0;
+                        text-align: center;
+                        opacity: 0;
+                        animation: tabFadeIn 0.8s ease-in-out 0.4s forwards;
 
-                        .characterNodeHud {
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            z-index: 1;
-                            transform-origin: center;
-                            animation: nodeHudFadeIn 0.8s ease-in-out forwards;
-                            display: none;
-                        }
-
-                        .characterNodeText {
-                            z-index: 2;
-                            color: white;
-                            font-family: "Orbitron", sans-serif;
-                            font-size: 10px;
-                            text-transform: uppercase;
-                            font-weight: 500;
-                            text-align: center;
-                            opacity: 0;
-                            animation: nodeTextFadeIn 0.8s ease-in-out 0.4s forwards;
-
-                            display: block;
-                            position: relative;
-                            
-                        }
-
-                        &:hover {
-                            .characterNodeHud .path0 {
-                                fill: #f0265e;
-                            }
-                        }
-
-                        &:active {
-                            cursor: grabbing;
-                        }
-
-                        &.dragging {
-                            opacity: 0.5;
-                            transform: scale(1.1);
-                            z-index: 1000;
-                        }
-
-                        &.connected {
-                            .characterNodeHud .path0 {
-                                fill: #f0265e;
-                            }
-                            cursor: default;
-
-                            &:hover {
-                                .characterNodeHud .path0 {
-                                    fill: #f0265e;
-                                }
-                            }
-                        }
-
-                        .connector {
-                            position: absolute;
-                            left: 0;
-                            right: 0;
-                            bottom: -12px;
-                            margin: auto;
-                            width: 12px;
-                            height: 12px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            z-index: 3;
-                            color: #f0265e;
-                            filter: drop-shadow(0 0 4px rgba(240, 38, 94, 0.6));
-
-                            svg {
-                                width: 12px;
-                                height: 12px;
-                            }
-                        }
+                        display: block;
+                        position: relative;
+                        
                     }
                 }
             }
         }
 
-        @keyframes nodeHudFadeIn {
-            0% {
-                opacity: 0;
-                transform: scaleY(-1) scale(0.15) scale(0.8);
-            }
-            50% {
-                opacity: 1;
-                transform: scaleY(-1) scale(0.15) scale(1.1);
-            }
-            100% {
-                opacity: 0.3;
-                transform: scaleY(-1) scale(0.15) scale(1);
-            }
-        }
-
-        @keyframes nodeTextFadeIn {
+        @keyframes tabFadeIn {
             0% {
                 opacity: 0;
                 transform: scale(0.8);
@@ -437,206 +244,33 @@
             }
         }
 
-        .floating-dragged-node {
-            padding: 8px 12px;
-            background-color: #1a1a2e;
-            border: 1px solid #ff0000;
-            border-radius: 4px;
-            font-family: "Orbitron", sans-serif;
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-            transform: scale(1.1);
-        }
-
-        .characterDetailsWrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 30px;
-            justify-content: center;
-
-            .characterDetailsLabelWrapper {
+        .list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin: 2vh 0;
+            color: white;
+            z-index: 1;
+            
+            .item {
                 display: flex;
-                width: 100%;
-                padding: 6px 0 2px 0;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 4px;
+                height: max-content;
+                transition: opacity 0.5s ease-in-out;
+                cursor: pointer;
 
-                .characterSkillsWrapper {
-                    position: relative;
-                    display: flex;
-                    align-items: flex-end;
-                    justify-content: center;
-
-                    .characterSkillsHud {
-                        width: 70px;
-                        height: 20px;
-
-                        .path0, .path2, .path3, .path4 {
-                            stroke: #00ff88;
-                            fill: #00ff88;
-                        }
-
-                        .path1 {
-                            fill: #f0265e;
-                        }
-
-                        .path5 {
-                            stroke: #00ff88;
-                            fill: transparent;
-                        }
-
-                        .path6 {
-                            fill: #f0265e;
-                        }
-
-                        .path7 {
-                            fill: #f0265e;
-                        }
-                    }
-
-                    .characterSkillsLabel {
-                        position: absolute;
-                        font-family: "Black Ops One", system-ui;
-                        text-transform: uppercase;
-                        color: #f0265e;
-                        font-size: 11px;
-                        bottom: 4px;
-                        left: 13px;
-                    }
+                .icon {
+                    width: 32px;
+                    height: 32px;
                 }
 
-                .characterSkillsNavigation {
-                    display: grid;
-                    grid-template-columns: 1fr;
-                    width: 100%;
-
-                    .skillTab {
-                        flex-grow: 1;
-                        display: flex;
-                        justify-content: space-evenly;
-                        align-items: flex-end;
-                        flex-wrap: nowrap;
-
-                        min-width: 200px;
-                        overflow-x: auto;
-
-                        .tab {
-                            width: 90px;
-
-                            &:first-child {
-                                margin-left: 1vw;
-                            }
-
-                            &:last-child {
-                                margin-right: 1vw;
-                            }
-                        }
-
-                        .characterSkillLabelWrapper {
-                            position: relative;
-
-                            .characterSkillLabelHud {
-                                width: 100%;
-                                height: 100%;
-
-                                .path0 {
-                                    stroke: #E76D83;
-                                    fill: #E76D83;
-                                }
-                                
-                                .path1 {
-                                    stroke: #f0265e;
-                                    fill: #f0265e;
-                                }
-    
-                                .path2 {
-                                    stroke: #f0265e;
-                                    fill: #f0265e;
-                                }
-                            }
-    
-                            .characterSkillLabelText {
-                                position: absolute;
-                                color: #9ca3af;
-                                transform: skewX(-20deg);
-                                top: 12px;
-                                left: 0;
-                                right: 0;
-                                font-size: 9px;
-                                font-family: "Orbitron", sans-serif;
-                                text-transform: uppercase;
-                                font-style: italic;
-                                text-wrap: nowrap;
-                                font-weight: 500;
-                                cursor: pointer;
-    
-                                &.selected {
-                                    color: #f0c36b;
-                                }
-                            }
-
-                            &.connected {
-                                .characterSkillLabelHud .path0 {
-                                    stroke: #ff0000;
-                                    fill: #ff0000;
-                                }
-                            }
-
-                            .connectedNodeIndicator {
-                                position: absolute;
-                                top: -8px;
-                                right: -8px;
-                                background-color: #ff0000;
-                                color: white;
-                                font-size: 6px;
-                                font-family: "Orbitron", sans-serif;
-                                padding: 2px 4px;
-                                border-radius: 2px;
-                                text-transform: uppercase;
-                                font-weight: bold;
-                                z-index: 5;
-                            }
-                        }
-                    }
-                }
-            }
-
-            .characterSkillHorizontalDivider {
-                border-bottom: 1px solid #f0265e;
-                width: 100%;
-                display: inline-block;
-            }
-
-            .characterSkillListWrapper {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-                gap: 20px;
-                width: 90%;
-                margin: 2vh 0;
-                color: white;
-                z-index: 1;
-                
-                .characterSkillWrapper {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: flex-end;
-                    gap: 4px;
-                    height: max-content;
-                    transition: opacity 0.5s ease-in-out;
-                    cursor: pointer;
-
-                    .characterSkillIcon {
-                        width: 32px;
-                        height: 32px;
-                    }
-
-                    .characterSkillLabel {
-                        color: white;
-                        font-size: 12px;
-                    }
+                .name {
+                    color: white;
+                    font-size: 12px;
                 }
             }
         }
@@ -646,8 +280,8 @@
 @media (min-width: 576px) {
     .panel {
         .content {
-            .horizonWrapper {
-                .characterDetailsWrapper {
+            .info {
+                .details {
                     flex-direction: row;
                     justify-content: center;
 
@@ -666,7 +300,6 @@
     
         .content {
             width: 70vw;
-            // border: 1px solid #f0265e;
     
             .characterClassWrapper {
                 padding: 1.5rem 2rem;
@@ -676,188 +309,25 @@
                 }
             }
     
-            .horizonWrapper .characterDetailsWrapper {
+            .info .details {
                 justify-content: space-around;
 
                 .divider {
                     display: none;
                 }
-    
-                .characterDetailsLabelWrapper {
-                    width: 100%;
-                    padding: 4vh 0 2px 0;
-    
-                    .characterSkillsWrapper {
-                        .characterSkillsHud {
-                            width: 176px;
-                            height: 50px;
-                        }
-    
-                        .characterSkillsLabel {
-                            font-size: 28px;
-                            bottom: 10px;
-                            left: 31px;
-                        }
-                    }
-    
-                    .characterSkillsNavigation .skillTab {
-                        .tab {
-                            width: max-content;
-                        }
-
-                        .characterSkillLabelWrapper {
-                            width: 120px;
-                            height: 64px;
-                            position: relative;
-                            
-
-                            .characterSkillLabelHud {
-                                position: absolute;
-                                width: 120px;
-                                height: 64px;    
-                            }
-
-                            .characterSkillLabelText {
-                                top: 18px;
-                                left: 0;
-                                right: 0;
-                                font-size: 12px;
-                            }
-                        }
-                    }
-                }
-    
-                .characterSkillHorizontalDivider {
-                    min-width: 200px;
-                }
-    
-                .characterSkillListWrapper {
-
-                
-                    .characterSkillWrapper {
-                        .characterSkillIcon {
-                            width: 32px;
-                            height: 32px;
-                            
-                            svg {
-                                width: 100%;
-                                height: 100%;
-                            }
-                        }
-
-                        .characterSkillLabel {
-                            font-size: 14px;
-                        }
-                    }
-                }
             }
 
-            .characterDetailsWrapper {
-                padding: 0.5rem;
-
-                .characterSkillListWrapper {
-                    width: 100%;
-                    display: grid;
-                    // grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                    gap: 2rem 1rem;
-                    padding: 0.5rem 1.5rem; 
-                }
+            .list {
+                width: 100%;
+                display: grid;
+                gap: 2rem 1rem;
+                padding: 0.5rem 1.5rem; 
             }
         }
-    
-        .leftArrow {
-            // display: flex;
-            padding-right: calc(35vw + 3rem);
-
-            // &::after {
-            //     content: "";
-            //     position: absolute;
-            //     width: 10px;
-            //     height: 100%;
-            //     top: 0;
-            //     right: -2px;
-            //     background-color: #f0265e;
-            // }
-    
-            .navigationLeftIcon {
-                user-select: none;
-                cursor: pointer;
-                font-size: 50px;
-            }
-        }
-    
-        .rightArrow {
-            // display: flex;
-            padding-left: calc(35vw + 3rem);
-    
-            // &::after {
-            //     content: "";
-            //     position: absolute;
-            //     width: 10px;
-            //     height: 100%;
-            //     top: 0;
-            //     left: -2px;
-            //     background-color: #f0265e;
-            //     box-shadow: -2px 0 8px rgba(240, 38, 94, 0.3);
-            // }
-    
-            .navigationRightIcon {
-                user-select: none;
-                cursor: pointer;
-                font-size: 50px;
-            }
-        }
-
-
     }
 }
 
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-5px);
-    }
-}
 
-.animate-float {
-    animation: float 2s ease-in-out infinite;
-}
-
-@keyframes orbit {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-.animate-orbit {
-    animation: orbit 3s ease-in-out infinite;
-}
-    
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.animate-fade-in-0-5 {
-    animation: fadeIn 3s ease-in-out 0.5s both;
-}
-
-.animate-fade-in-2 {
-    animation: fadeIn 3s ease-in-out 2s both;
-}
-
-.animate-fade-in-4 {
-    animation: fadeIn 3s ease-in-out 4s both;
-}
 
 @keyframes blink {
     0%, 50% {
@@ -868,338 +338,6 @@
     }
 }
 
-.animate-blink {
+.animateBlink {
     animation: blink 1s linear infinite;
-}
-
-@keyframes skillTabIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes skillTabOut {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-}
-
-.animate-skill-tab {
-    animation: skillTabIn 0.15s ease-out;
-}
-
-.animate-skill-text {
-    animation: fadeIn 3s ease-in-out 2s both;
-}
-
-@keyframes cyberDescPath {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-
-.animate-cyber-desc-path {
-    animation: cyberDescPath 2s ease-in-out 1s both;
-}
-
-@keyframes arrowFade {
-    0% {
-        opacity: 0;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-
-.animateArrow0 { animation: arrowFade 2s ease-in-out 0s both; }
-.animateArrow1 { animation: arrowFade 2s ease-in-out 0.2s both; }
-.animateArrow2 { animation: arrowFade 2s ease-in-out 0.3s both; }
-.animateArrow3 { animation: arrowFade 2s ease-in-out 0.4s both; }
-.animateArrow4 { animation: arrowFade 2s ease-in-out 0.5s both; }
-.animateArrow5 { animation: arrowFade 2s ease-in-out 0.6s both; }
-.animateArrow6 { animation: arrowFade 2s ease-in-out 0.7s both; }
-.animateArrow7 { animation: arrowFade 2s ease-in-out 0.8s both; }
-.animateArrow8 { animation: arrowFade 2s ease-in-out 0.9s both; }
-.animateArrow9 { animation: arrowFade 2s ease-in-out 1s both; }
-.animateArrow10 { animation: arrowFade 2s ease-in-out 1.1s both; }
-.animateArrow11 { animation: arrowFade 2s ease-in-out 1.2s both; }
-.animateArrow12 { animation: arrowFade 2s ease-in-out 1.3s both; }
-.animateArrow13 { animation: arrowFade 2s ease-in-out 1.4s both; }
-
-@keyframes pulsing {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.7;
-    }
-}
-
-.animatePulsing {
-    animation: pulsing 3s ease-in-out infinite;
-}
-
-@keyframes mobilePath {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-
-.animateMobilePath {
-    animation: mobilePath 2s ease-in-out 0.5s both;
-}
-
-@keyframes skillPathFade {
-    0% {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(1);
-    }
-}
-
-.animateSkillPath0 {
-    animation: skillPathFade 2s ease-in-out 0.75s both;
-}
-
-.animateSkillPath2 {
-    animation: skillPathFade 2s ease-in-out 0.5s both;
-}
-
-.animateSkillPath3 {
-    animation: skillPathFade 2s ease-in-out 1s both;
-}
-
-.animateSkillPath4 {
-    animation: skillPathFade 2s ease-in-out 0s both;
-}
-
-.skillTab {
-    display: flex;
-    gap: 8px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    
-    li {
-        cursor: grab;
-        user-select: none;
-        
-        &:active {
-            cursor: grabbing;
-        }
-        
-        &.dragging {
-            opacity: 0.5;
-            transform: scale(0.95);
-        }
-    }
-}
-
-@keyframes cableFlow {
-    0% {
-        stroke-dashoffset: 0;
-        opacity: 0.8;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        stroke-dashoffset: -10;
-        opacity: 0.8;
-    }
-}
-
-@keyframes cableGlow {
-    0%, 100% {
-        filter: brightness(1) contrast(1);
-    }
-    50% {
-        filter: brightness(1.3) contrast(1.2);
-    }
-}
-
-.cableLayer {
-    path {
-        transition: all 0.3s ease-in-out;
-    }
-    
-    g:hover {
-        path {
-            filter: brightness(1.4) contrast(1.1);
-            animation: cableGlow 1s ease-in-out infinite;
-        }
-        
-        path[stroke*="gradient"] {
-            stroke-width: 4;
-        }
-    }
-    
-    g[data-node] {
-        cursor: pointer;
-        
-        &:hover {
-            transform: scale(1.02);
-        }
-    }
-}
-
-@keyframes toolkitPulse {
-    0%, 100% {
-        opacity: 0.8;
-        filter: drop-shadow(0 0 8px #f0265e) drop-shadow(0 0 12px #ff4d7d);
-    }
-    50% {
-        opacity: 1;
-        filter: drop-shadow(0 0 15px #f0265e) drop-shadow(0 0 25px #ff4d7d);
-    }
-}
-
-@keyframes projectsPulse {
-    0%, 100% {
-        opacity: 0.8;
-        filter: drop-shadow(0 0 8px #e91e63) drop-shadow(0 0 12px #f06292);
-    }
-    50% {
-        opacity: 1;
-        filter: drop-shadow(0 0 15px #e91e63) drop-shadow(0 0 25px #f06292);
-    }
-}
-
-@keyframes connectionPulse {
-    0%, 100% {
-        opacity: 0.8;
-        filter: drop-shadow(0 0 8px #c2185b) drop-shadow(0 0 12px #e91e63);
-    }
-    50% {
-        opacity: 1;
-        filter: drop-shadow(0 0 15px #c2185b) drop-shadow(0 0 25px #e91e63);
-    }
-}
-
-@keyframes experiencePulse {
-    0%, 100% {
-        opacity: 0.8;
-        filter: drop-shadow(0 0 8px #ad1457) drop-shadow(0 0 12px #c2185b);
-    }
-    50% {
-        opacity: 1;
-        filter: drop-shadow(0 0 15px #ad1457) drop-shadow(0 0 25px #c2185b);
-    }
-}
-
-@keyframes interestsPulse {
-    0%, 100% {
-        opacity: 0.8;
-        filter: drop-shadow(0 0 8px #880e4f) drop-shadow(0 0 12px #ad1457);
-    }
-    50% {
-        opacity: 1;
-        filter: drop-shadow(0 0 15px #880e4f) drop-shadow(0 0 25px #ad1457);
-    }
-}
-
-@keyframes arrowGlow {
-    0%, 100% {
-        box-shadow: 2px 0 10px rgba(240, 38, 94, 0.2);
-    }
-    50% {
-        box-shadow: 2px 0 15px rgba(240, 38, 94, 0.4);
-    }
-}
-
-@keyframes arrowGlowRight {
-    0%, 100% {
-        box-shadow: -2px 0 10px rgba(240, 38, 94, 0.2);
-    }
-    50% {
-        box-shadow: -2px 0 15px rgba(240, 38, 94, 0.4);
-    }
-}
-
-.cableLayer g[data-node="Toolkit"] {
-    animation: toolkitPulse 3s ease-in-out infinite;
-}
-
-.cableLayer g[data-node="Projects"] {
-    animation: projectsPulse 3s ease-in-out infinite;
-}
-
-.cableLayer g[data-node="Connection"] {
-    animation: connectionPulse 3s ease-in-out infinite;
-}
-
-.cableLayer g[data-node="Experience"] {
-    animation: experiencePulse 3s ease-in-out infinite;
-}
-
-.cableLayer g[data-node="Interests"] {
-    animation: interestsPulse 3s ease-in-out infinite;
-}
-
-.pcb {
-    position: relative;
-    width: 100%;
-    height: 100px;
-    // background-color: #fff;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .connector {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 5px;
-        height: 5px;
-        // background-color: #fff;
-        border-radius: 50%;
-        border: 1px solid #fff;
-
-    }
-
-    .line {
-        position: absolute;
-        bottom: -3px;
-        left: 21px;
-        width: 1px;
-        height: 50px;
-        background-color: #fff;
-        transform: rotate(45deg);
-    }
-
-    .line2 {
-        position: absolute;
-        bottom: 39px;
-        left: 39px;
-        width: 100px;
-        height: 1px;
-        background-color: #fff;
-    }
 }

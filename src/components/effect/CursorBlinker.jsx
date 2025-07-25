@@ -1,10 +1,13 @@
 import React from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import styles from "@/styles/Panel.module.scss";
 
-export default function CursorBlinker() {
+const CursorBlinker = () => {
   const [parentRef] = useAutoAnimate();
   
   return (
-    <div ref={parentRef} className="blink animate-blink" />
+    <div ref={parentRef} className={`${styles.blink} ${styles.animateBlink}`} />
   );
 }
+
+export default CursorBlinker;

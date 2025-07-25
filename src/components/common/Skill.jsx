@@ -66,7 +66,7 @@ export function Skill({ skill, moveRow, index, skillRefs }) {
 
   return (
     <div
-      className={styles.characterSkillWrapper}
+      className={styles.item}
       ref={ref}
       style={{
           opacity: trans,
@@ -74,8 +74,8 @@ export function Skill({ skill, moveRow, index, skillRefs }) {
       }}
       data-handler-id={collectedProps.handlerId}
     >
-      <SkillIcon icon={skill.icon} iconType={skill.iconType} color={skill.color} animation={`${styles.characterSkillIcon} ${skill.animation}`} />
-      <div className={styles.characterSkillLabel}>{skill.label}</div>
+      <SkillIcon icon={skill.icon} iconType={skill.iconType} color={skill.color} animation={`${styles.icon} ${skill.animation}`} />
+      <div className={styles.name}>{skill.label}</div>
     </div>
   );
 }

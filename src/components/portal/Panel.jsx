@@ -1,84 +1,68 @@
-// External Libraries
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
-
-// Components
 import { DropZone } from "@/components/effect/drop-zone";
+import AnimateText from "@/components/effect/AnimateText";
 import LevelBar from "@/components/hud/LevelBar";
 import Name from "@/components/hud/Name";
-
-// Styles
 import styles from "@/styles/Panel.module.scss";
-
-// Data
 import data, { level } from "@/api/data"
 
-const CharacterInfo = () => {
-
+const Panel = () => {
     return (
         <div className={styles.panel}>
             <div className={styles.content}>
-                {/* <div className="character-class-wrapper" augmented-ui="exe">
-                    <AnimateText text={data.preface} />
-                </div> */}
+                <div className={styles.preface} augmented-ui="exe">
+                    <AnimateText text={data.preface} className={styles.text} />
+                </div>
 
-                <div className={styles.horizonWrapper}>
-                    <div className={styles.characterDetailsWrapper}>
-                        <div className={styles.characterNameWrapper}>
-                            <Name className={styles.characterNameHud} />
+                <div className={styles.info}>
+                    <div className={styles.details}>
+                        <div className={styles.hud}>
+                            <Name className={styles.nameHud} />
  
-                            <div className={styles.characterLevelWrapper}>
-                                <LevelBar className={styles.characterLevelBar} />
-                                <div className={styles.characterClassLabel}>Online</div>
-                                <div className={styles.characterLevelLabel}>{level}</div>
+                            <div className={styles.levelHud}>
+                                <LevelBar className={styles.bar} />
+                                <div className={styles.status}>Online</div>
+                                <div className={styles.level}>{level}</div>
                             </div>
-                            </div>
+                        </div>
 
                         <div className={styles.divider}/>
 
-                        <div className={styles.characterDetailsInfoWrapper}>
-                            <div className={styles.characterDetailsInfoGroup}>
-                                <div className={styles.characterDetailsInfo} augmented-ui="exe">Web Dev</div>
-                                <div className={styles.characterDetailsInfo} augmented-ui="exe">Art</div>
-                                <div className={styles.characterDetailsInfo} augmented-ui="exe">DIY</div>
+                        <div className={styles.tags}>
+                            <div className={styles.group}>
+                                <div className={styles.name} augmented-ui="exe">Web Dev</div>
+                                <div className={styles.name} augmented-ui="exe">Art</div>
+                                <div className={styles.name} augmented-ui="exe">DIY</div>
                             </div>
-                            <div className={styles.characterDetailsInfoGroup}>
-                                <div className={styles.characterDetailsInfo} augmented-ui="exe">Music</div>
-                                <div className={styles.characterDetailsInfo} augmented-ui="exe">Plants</div>
-                                <div className={styles.characterDetailsInfo} augmented-ui="exe">Reading</div>
+                            <div className={styles.group}>
+                                <div className={styles.name} augmented-ui="exe">Music</div>
+                                <div className={styles.name} augmented-ui="exe">Plants</div>
+                                <div className={styles.name} augmented-ui="exe">Reading</div>
                             </div>
-                                <div className={styles.characterDetailsInfoGroup}>
-                                <div className={styles.characterDetailsInfo} augmented-ui="exe">Long Walks</div>
-                                <div className={styles.characterDetailsInfo} augmented-ui="exe">Writing</div>
+                            <div className={styles.group}>
+                                <div className={styles.name} augmented-ui="exe">Long Walks</div>
+                                <div className={styles.name} augmented-ui="exe">Writing</div>
                             </div>
                         </div>
                     </div>
 
-                    <div className={styles.characterNodeWrapper}>
-                        
-
-
-                        <div className={styles.characterNodeList}>
-                            {['Toolkit', 'Projects', 'Connection', 'Experience', 'Interests'].map((nodeName) => (
-                                <div 
-                                    key={nodeName}
-                                    className={styles.characterNode}
-                                >
-                                    <div className={styles.characterNodeText}>
-                                        {nodeName}
-                                    </div>   
-                                </div>
-                            ))}
-                        </div>
+                    <div className={styles.tabs}>
+                        {['Toolkit', 'Projects', 'Connection', 'Experience', 'Interests'].map((nodeName) => (
+                            <div 
+                                key={nodeName}
+                                className={styles.tab}
+                            >
+                                <div className={styles.name}>
+                                    {nodeName}
+                                </div>   
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                <div className={styles.characterDetailsWrapper}>
-                    <DropZone skillsData={data.skills} />
-                </div>
+                <DropZone className={styles.list} skillsData={data.skills} />
             </div>
         </div>
     );
 };
 
-export default CharacterInfo;
+export default Panel;
