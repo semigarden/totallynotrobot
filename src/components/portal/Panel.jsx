@@ -1,25 +1,25 @@
-import { DropZone } from "@/components/effect/drop-zone";
+import Drag from "@/components/effect/Drag";
 import AnimateText from "@/components/effect/AnimateText";
 import LevelBar from "@/components/hud/LevelBar";
 import Name from "@/components/hud/Name";
 import styles from "@/styles/Panel.module.scss";
-import data, { level } from "@/api/data"
+import memory, { level, exp } from "@/api/memory"
 
 const Panel = () => {
     return (
         <div className={styles.panel}>
             <div className={styles.content}>
                 <div className={styles.preface} augmented-ui="exe">
-                    <AnimateText text={data.preface} className={styles.text} />
+                    <AnimateText text={memory.preface} className={styles.text} />
                 </div>
 
                 <div className={styles.info}>
                     <div className={styles.details}>
                         <div className={styles.hud}>
-                            <Name className={styles.nameHud} />
+                            <Name className={styles.nameHud} name={memory.name} />
  
                             <div className={styles.levelHud}>
-                                <LevelBar className={styles.bar} />
+                                <LevelBar className={styles.bar} exp={exp} />
                                 <div className={styles.status}>Online</div>
                                 <div className={styles.level}>{level}</div>
                             </div>
@@ -59,7 +59,7 @@ const Panel = () => {
                     </div>
                 </div>
 
-                <DropZone className={styles.list} skillsData={data.skills} />
+                <Drag className={styles.list} itemsData={memory.items} />
             </div>
         </div>
     );

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styles from "@/styles/hud/Name.module.scss";
 
-const Name = ({ className, name = "Faulty Circuit" }) => {
+const Name = ({ className, name = ""}) => {
     const animationRef = useRef(null);
 
     useEffect(() => {

@@ -1,11 +1,10 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Icon from '@mdi/react';
+import MdiIcon from '@mdi/react';
 import { SizeProp } from "@fortawesome/fontawesome-svg-core";
 
-const SkillIcon: React.FC<{ icon: any, iconType: string, color: string, animation: string, size: string }> = ({ icon, iconType, color, animation, size = "1x" }) => {
+const Icon: React.FC<{ icon: any, iconType: string, color: string, animation: string, size: string, className: string }> = ({ icon, iconType, color, animation, size = "1x", className = "" }) => {
   if (iconType === "mdi" && icon && typeof icon === "object" && icon.path) {
-    // Render MDI icon as SVG
     return (
       <svg
         viewBox="0 0 24 24"
@@ -16,31 +15,29 @@ const SkillIcon: React.FC<{ icon: any, iconType: string, color: string, animatio
           display: "inline-block",
           verticalAlign: "-0.125em",
         }}
-        className={animation}
+        className={`${animation} ${className}`}
       >
         <path fill="currentColor" d={icon.path} />
       </svg>
     );
   }
 
-  // Handle custom SVG components
   if (iconType === "svg" && typeof icon === "function") {
     const IconComponent = icon;
-    return <IconComponent color={color} className={animation} />;
+    return <IconComponent color={color} className={`${animation} ${className}`} />;
   }
 
-  // Render FontAwesome icon
   return (
     iconType == "mdi" ? (
-      <Icon path={icon} className={animation} />
+      <MdiIcon path={icon} className={`${animation} ${className}`} />
     ) : (
       <FontAwesomeIcon
         icon={icon}
         style={{ color: color }}
-        className={animation}
+        className={`${animation} ${className}`}
         size={size as SizeProp}
       />
   ));
 };
 
-export default SkillIcon; 
+export default Icon;

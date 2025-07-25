@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from "@/styles/hud/LevelBar.module.scss";
-import { exp } from '@/api/data';
 
-const LevelBar = ({ className }) => {
+const LevelBar = ({ className, exp = 0 }) => {
     const levelBarRef = useRef(null);
     const totalBars = 20;
 

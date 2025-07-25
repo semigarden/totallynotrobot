@@ -1,4 +1,8 @@
-import data from "../api/data";
+import { TouchBackend } from "react-dnd-touch-backend";
+import { HTML5Backend } from "react-dnd-html5-backend";
+
+export const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+export const Backend = isMobile ? TouchBackend : HTML5Backend; 
 
 export const getLevel = (level, year) => {
     const currentYear = new Date().getFullYear();

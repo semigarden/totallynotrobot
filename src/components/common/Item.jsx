@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import SkillIcon from "@/components/common/SkillIcon.tsx";
+import Icon from "@/components/common/Icon.tsx";
 import styles from "@/styles/Panel.module.scss";
 
-export function Skill({ skill, moveRow, index, skillRefs }) {
+const Item = ({ item, moveRow, index, itemRefs }) => {
   const ref = useRef(null);
 
   const [collectedProps, drop] = useDrop({
@@ -47,7 +47,7 @@ export function Skill({ skill, moveRow, index, skillRefs }) {
     type: "dnd-character",
 
     item: () => {
-      return { skill, index };
+      return { item, index };
     },
 
     collect: (monitor) => ({
@@ -60,8 +60,8 @@ export function Skill({ skill, moveRow, index, skillRefs }) {
   drag(drop(ref));
 
   // Store ref for position tracking
-  if (skillRefs && ref.current) {
-    skillRefs.current[skill.label] = ref.current;
+  if (itemRefs && ref.current) {
+    itemRefs.current[item.label] = ref.current;
   }
 
   return (
@@ -74,8 +74,10 @@ export function Skill({ skill, moveRow, index, skillRefs }) {
       }}
       data-handler-id={collectedProps.handlerId}
     >
-      <SkillIcon icon={skill.icon} iconType={skill.iconType} color={skill.color} animation={`${styles.icon} ${skill.animation}`} />
-      <div className={styles.name}>{skill.label}</div>
+      <Icon icon={item.icon} iconType={item.iconType} color={item.color} animation={`${styles.icon} ${item.animation}`} />
+      <div className={styles.name}>{item.label}</div>
     </div>
   );
-}
+};
+
+export default Item;

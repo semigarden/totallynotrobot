@@ -5,21 +5,13 @@ import { mdiNuxt } from '@mdi/js';
 import NextJsIcon from "@/assets/NextJsIcon.jsx";
 import { getLevel, getExp } from "@/utils/utils";
 
-const data = {
-    firstName: "Faulty",
-    lastName: "Circuit",
-    fullName: "Faulty Circuit",
+const memory = {
+    name: "Faulty Circuit",
     preface: "",
     level: 0,
     threshold: 1,
     year: 2024,
-    skillTabs: [
-        {code: "0", label: "Toolkit", color: "#9ca3af"},
-        {code: "1", label: "Projects", color: "#9ca3af"},
-        {code: "2", label: "Experience", color: "#9ca3af"},
-        {code: "3", label: "Interests", color: "#9ca3af"},
-    ],
-    skills: [
+    items: [
         {category: "0", label: "React.js", icon: faReact, iconType: "fontawesome", animation: "fa-spin", color: "#C1FFF2"},
         {category: "0", label: "Next.js", icon: NextJsIcon, iconType: "svg", animation: "fa-fade", color: "#FFF"},
         {category: "0", label: "Vue.js", icon: faVuejs, iconType: "fontawesome", animation: "fa-flip", color: "#7AFDD6"},
@@ -41,7 +33,7 @@ const data = {
     ]
 }
 
-export const level = getLevel(data.level, data.year);
-export const exp = getExp(data.threshold);
+export const level = getLevel(memory.level, memory.year);
+export const exp = getExp(memory.threshold);
 
-export default data;
+export default memory;
