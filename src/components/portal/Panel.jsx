@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Drag from "@/components/effect/Drag";
 import AnimateText from "@/components/effect/AnimateText";
 import LevelBar from "@/components/hud/LevelBar";
@@ -6,6 +7,20 @@ import styles from "@/styles/Panel.module.scss";
 import memory, { level, exp } from "@/api/memory"
 
 const Panel = () => {
+    const [tab, setTab] = useState('Toolkit');
+    
+    const openTab = (tab) => {
+        setTab(tab);
+        history.pushState({ tab: tab }, '', `/${tab.toLowerCase()}`);
+    }
+
+    useEffect(() => {
+        const tab = history.state?.tab;
+        if (tab) {
+            setTab(tab.charAt(0).toUpperCase() + tab.slice(1));
+        }
+    }, []);
+
     return (
         <div className={styles.panel}>
             <div className={styles.content}>
@@ -49,7 +64,9 @@ const Panel = () => {
                         {['Toolkit', 'Projects', 'Connection', 'Experience', 'Interests'].map((nodeName) => (
                             <div 
                                 key={nodeName}
-                                className={styles.tab}
+                                className={`${styles.tab} ${tab === nodeName && styles.active}`}
+                                onClick={() => openTab(nodeName)}
+                                augmented-ui="exe"
                             >
                                 <div className={styles.name}>
                                     {nodeName}
@@ -59,7 +76,7 @@ const Panel = () => {
                     </div>
                 </div>
 
-                <Drag className={styles.list} itemsData={memory.items} />
+                {tab === 'Toolkit' && <Drag className={styles.list} itemsData={memory.items} />}
             </div>
         </div>
     );

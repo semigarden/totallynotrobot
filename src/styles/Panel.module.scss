@@ -212,7 +212,50 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 4px 0;
+                    // padding: 4px 0;
+                    padding: 6px 16px;
+
+                    &.active {
+                        // --aug-border-bg: linear-gradient(90deg, #fff, #000, #fff);
+                        --aug-border-opacity: 1;
+                        --aug-border: 1px;
+                        --aug-inset: 1px;
+                        --aug-border-radius: 10px;
+                        // padding: 6px 16px;
+
+                        display: inline-block;
+                        // width: 110px;
+                        // height: 110px;
+                        margin: 10px;
+
+                        // padding: 10px; /* mind the gap */
+                        text-align: center;
+                        // --aug-border-bg: gold;
+                        // --aug-inset-bg: #ffffff10;
+                        // filter: drop-shadow(0 0 10px #ffffff);
+                        filter: drop-shadow(0 0 2px #fff);
+                        font-weight: bolder;
+                        animation: tabShadow 3s ease-in-out 0.4s infinite alternate;
+                        
+
+                        @keyframes tabShadow {
+                            0% {
+                                filter: drop-shadow(0 0 1px #fff);
+                            }
+                            25% {
+                                filter: drop-shadow(0 0 5px #fff);
+                            }
+                            50% {
+                                filter: drop-shadow(0 0 1px #fff);
+                            }
+                            75% {
+                                filter: drop-shadow(0 0 5px #fff);
+                            }
+                            100% {
+                                filter: drop-shadow(0 0 1px #fff);
+                            }
+                        }
+                    }
 
                     .name {
                         z-index: 2;
