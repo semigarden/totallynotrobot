@@ -40,12 +40,43 @@ export const attachGardenWalkControls = ({
     cameraY,
     initialOffset,
     lookTarget,
+    savedState = null,
+    onPositionChange = null,
     enabled = true,
     rotateSpeed = 0.003,
     panSpeed = 0.004,
     pinchSpeed = 0.014,
 }) => {
-    const state = initWalkState(initialOffset, lookTarget, cameraY);
+    const state =
+        savedState &&
+        Number.isFinite(savedState.x) &&
+        Number.isFinite(savedState.z) &&
+        Number.isFinite(savedState.yaw) &&
+        Number.isFinite(savedState.pitch)
+            ? {
+                  x: savedState.x,
+                  z: savedState.z,
+                  yaw: savedState.yaw,
+                  pitch: savedState.pitch,
+              }
+            : initWalkState(initialOffset, lookTarget, cameraY);
+
+    clampWalkPosition(state);
+
+    const notifyPositionChange = () => {
+        onPositionChange?.({
+            x: state.x,
+            z: state.z,
+            yaw: state.yaw,
+            pitch: state.pitch,
+        });
+    };
+
+    const updateCamera = () => {
+        applyWalkCamera(camera, state, cameraY);
+        notifyPositionChange();
+    };
+
     applyWalkCamera(camera, state, cameraY);
 
     const pointers = new Map();
@@ -76,7 +107,7 @@ export const attachGardenWalkControls = ({
 
         state.x -= panX;
         state.z -= panZ;
-        applyWalkCamera(camera, state, cameraY);
+        updateCamera();
     };
 
     const applyPinchMove = (deltaDistance) => {
@@ -95,7 +126,7 @@ export const attachGardenWalkControls = ({
         state.x += forward.x * step;
         state.z += forward.z * step;
         clampWalkPosition(state);
-        applyWalkCamera(camera, state, cameraY);
+        updateCamera();
     };
 
     const onPointerDown = (event) => {
@@ -193,7 +224,7 @@ export const attachGardenWalkControls = ({
         if (dragMode === "rotate") {
             state.yaw -= dx * rotateSpeed;
             state.pitch -= dy * rotateSpeed;
-            applyWalkCamera(camera, state, cameraY);
+            updateCamera();
             return;
         }
 
@@ -243,7 +274,7 @@ export const attachGardenWalkControls = ({
 
     return {
         getState: () => state,
-        applyCamera: () => applyWalkCamera(camera, state, cameraY),
+        applyCamera: updateCamera,
         dispose: () => {
             domElement.removeEventListener("pointerdown", onPointerDown);
             domElement.removeEventListener("pointermove", onPointerMove);

@@ -23,6 +23,10 @@ import {
 import { createMoon } from "@/utils/moonScene";
 import { createGardenComposer } from "@/utils/gardenPostProcessing";
 import { createGroundRipples } from "@/utils/groundRipples";
+import {
+    createWalkPositionSaver,
+    loadWalkPosition,
+} from "@/api/gardenPosition";
 
 const FLOWERS_ENABLED = false;
 
@@ -138,6 +142,17 @@ const GardenScene = ({
         const mount = mountRef.current;
         if (!mount) return;
 
+        let cancelled = false;
+        let cleanup = () => {};
+
+        const setupScene = async () => {
+        const savedPosition = walkNavigation ? await loadWalkPosition() : null;
+        if (cancelled) return;
+
+        const positionSaver = walkNavigation
+            ? createWalkPositionSaver()
+            : null;
+
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000100);
         scene.fog = new THREE.Fog(0x000100, 32, 80);
@@ -164,6 +179,8 @@ const GardenScene = ({
                 cameraY: cameraOffset.y,
                 initialOffset: cameraOffset,
                 lookTarget: cameraTarget,
+                savedState: savedPosition,
+                onPositionChange: positionSaver?.schedule,
                 enabled: interactive,
                 pinchSpeed: walkSpeed * 3.5,
             });
@@ -276,7 +293,15 @@ const GardenScene = ({
         resizeObserver.observe(mount);
         requestAnimationFrame(() => resize());
 
-        return () => {
+        const onPageHide = () => {
+            positionSaver?.flush();
+        };
+
+        window.addEventListener("pagehide", onPageHide);
+
+        cleanup = () => {
+            window.removeEventListener("pagehide", onPageHide);
+            positionSaver?.flush();
             cancelAnimationFrame(frame);
             resizeObserver.disconnect();
             detachScrollWalk?.();
@@ -299,6 +324,14 @@ const GardenScene = ({
             if (mount.contains(renderer.domElement)) {
                 mount.removeChild(renderer.domElement);
             }
+        };
+        };
+
+        setupScene();
+
+        return () => {
+            cancelled = true;
+            cleanup();
         };
     }, [
         interactive,
