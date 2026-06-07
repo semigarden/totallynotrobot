@@ -13,7 +13,7 @@ import {
 } from "@/utils/flowerBillboard";
 import {
     disposeGrassField,
-    replaceGrassField,
+    syncGrassField,
 } from "@/utils/grassField";
 import {
     attachGardenWalkControls,
@@ -99,17 +99,18 @@ const populateGarden = (scene, plantRoot, flowerRoot, grassRef, plants) => {
     }
 
     if (scene && grassRef) {
-        if (grassRef.current) {
-            scene.remove(grassRef.current);
-        }
-
-        const nextGrass = replaceGrassField(
+        const hadGrass = Boolean(grassRef.current);
+        const nextGrass = syncGrassField(
             grassRef.current,
             gardenPlants,
             layout
         );
-        nextGrass.position.y = 0.02;
-        scene.add(nextGrass);
+
+        if (!hadGrass) {
+            nextGrass.position.y = 0.02;
+            scene.add(nextGrass);
+        }
+
         grassRef.current = nextGrass;
     }
 
@@ -283,7 +284,7 @@ const GardenScene = ({
             frame = requestAnimationFrame(animate);
             controls?.update();
             const elapsed = clock.getElapsedTime();
-            updatePlantSway(plantRoot, elapsed);
+            updatePlantSway(plantRoot, elapsed, camera);
             groundRipples.update(elapsed, camera);
             postProcessing.composer.render();
         };

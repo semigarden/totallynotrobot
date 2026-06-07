@@ -201,3 +201,35 @@ export const replaceGrassField = (previousField, plants = [], plantPositions = [
     disposeGrassField(previousField);
     return createGrassField(plants, plantPositions);
 };
+
+export const appendPlantGrass = (field, plant, anchor) => {
+    if (!field || !plant?.text) return;
+
+    field.add(createLineGrassMesh(plant, anchor));
+};
+
+export const syncGrassField = (field, plants = [], plantPositions = []) => {
+    const gardenPlants = normalizePlants(plants);
+    const layout = normalizePlantPositions(plantPositions);
+
+    if (!field) {
+        const nextField = createGrassField(gardenPlants, layout);
+        nextField.userData.plantIds = new Set(
+            gardenPlants.map((plant) => plant.id)
+        );
+        return nextField;
+    }
+
+    const plantedIds = field.userData.plantIds ?? new Set();
+
+    gardenPlants.forEach((plant, index) => {
+        if (plantedIds.has(plant.id)) return;
+
+        const anchor = layout[index] ?? { x: 0, z: 0 };
+        appendPlantGrass(field, plant, anchor);
+        plantedIds.add(plant.id);
+    });
+
+    field.userData.plantIds = plantedIds;
+    return field;
+};

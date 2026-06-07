@@ -6,6 +6,12 @@ import {
 } from "@/utils/plantDraw";
 
 const CANVAS_TARGET = 256;
+const BASE_WORLD_HEIGHT = 2.6;
+
+export const plantWorldScale = (text, seed = "") => {
+    const hash = hashString(`${text}:${seed}`);
+    return 0.68 + ((hash >> 16) % 88) / 100;
+};
 
 export const renderPlantToCanvas = (plant) => {
     const canvas = document.createElement("canvas");
@@ -39,14 +45,18 @@ export const createPlantBillboard = (text, seed = "") => {
     const material = new THREE.SpriteMaterial({
         map: texture,
         transparent: true,
-        depthWrite: true,
+        alphaTest: 0.02,
+        depthWrite: false,
+        depthTest: true,
     });
 
     const sprite = new THREE.Sprite(material);
     const aspect = plant.width / Math.max(plant.height, 1);
-    const worldHeight = 2.6;
+    const sizeScale = plantWorldScale(text, seed);
+    const worldHeight = BASE_WORLD_HEIGHT * sizeScale;
     sprite.scale.set(worldHeight * aspect, worldHeight, 1);
     sprite.center.set(0.5, 0);
+    sprite.userData.sizeScale = sizeScale;
 
     return sprite;
 };

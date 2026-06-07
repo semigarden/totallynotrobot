@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { plantWorldScale } from "@/utils/plantBillboard";
 import { textToPlant } from "@/utils/lSystem";
 import {
     segmentOpacity,
@@ -8,6 +9,10 @@ import styles from "@/styles/VirtualGarden.module.scss";
 
 const Plant = ({ text, seed, label, active = false }) => {
     const plant = useMemo(() => textToPlant(text, seed), [text, seed]);
+    const sizeScale = useMemo(
+        () => plantWorldScale(text, seed),
+        [text, seed]
+    );
 
     return (
         <div
@@ -17,6 +22,10 @@ const Plant = ({ text, seed, label, active = false }) => {
             <svg
                 className={styles.plantSvg}
                 viewBox={plant.viewBox}
+                style={{
+                    transform: `scale(${sizeScale})`,
+                    transformOrigin: "50% 100%",
+                }}
                 role="img"
                 aria-label={label ?? `plant grown from: ${text}`}
             >
