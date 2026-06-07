@@ -9,8 +9,8 @@ function App() {
             <div className="App">
                 <Routes>
                     <Route path="/immerse" element={<ImmersiveLayout />} />
-                    <Route path="/" element={<ClassicLayout />} />
                     <Route path="/:tab" element={<ClassicLayout />} />
+                    <Route path="/" element={<ImmersiveLayout />} />
                 </Routes>
             </div>
         </BrowserRouter>

@@ -1,4 +1,5 @@
 import GardenControls from "@/components/garden/GardenControls";
+import FullscreenToggle from "@/components/portal/FullscreenToggle";
 import LevelBar from "@/components/hud/LevelBar";
 import Name from "@/components/hud/Name";
 import memory, { level, exp } from "@/api/memory";
@@ -6,6 +7,8 @@ import styles from "@/styles/ImmersiveLayout.module.scss";
 
 const ImmersiveChrome = ({ plants = [], onPlant }) => (
     <>
+        <FullscreenToggle />
+
         <div className={styles.hudDock}>
             <div className={styles.hudImmersive}>
                 <div className={styles.hudStage}>

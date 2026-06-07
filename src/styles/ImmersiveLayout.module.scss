@@ -12,6 +12,66 @@
     pointer-events: none;
 }
 
+.fullscreenDock {
+    position: fixed;
+    // top: max(6px, env(safe-area-inset-top, 0px));
+    // right: max(12px, env(safe-area-inset-right, 0px));
+    top: 0;
+    right: 0;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    opacity: 0;
+
+    &:hover .fullscreenToggle,
+    &:focus-within .fullscreenToggle {
+        opacity: 1;
+    }
+}
+
+.fullscreenToggle {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(0, 1, 0, 0.5);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.32);
+    }
+
+    &:focus-visible {
+        opacity: 1;
+        outline: 1px solid rgba(255, 255, 255, 0.4);
+        outline-offset: 2px;
+    }
+}
+
+.fullscreenIconEnter,
+.fullscreenIconExit {
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin: 0 auto;
+    border: 1.5px solid rgba(255, 255, 255, 0.72);
+}
+
+.fullscreenIconEnter {
+    box-shadow: 3px 3px 0 0 rgba(255, 255, 255, 0.72);
+}
+
+.fullscreenIconExit {
+    border-style: dashed;
+}
+
 .hudDock {
     position: fixed;
     top: max(6px, env(safe-area-inset-top, 0px));
