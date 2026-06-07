@@ -227,3 +227,8 @@ export const buildForestLayout = (plants) => {
 
     return positions;
 };
+
+export const FOREST_FIELD_RADIUS = FOREST_RADIUS;
+
+export const sampleForestDensity = (x, z) =>
+    forestDensity(x, z, FOREST_DENSITY_SEED);
