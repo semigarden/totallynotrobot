@@ -1,0 +1,167 @@
+@keyframes breathe {
+    0% {
+        opacity: 0.14;
+        transform: translate(0, 0.5px) scale(0.984);
+    }
+
+    20% {
+        opacity: 0.26;
+        transform: translate(0.3px, -0.4px) scale(1.006);
+    }
+
+    45% {
+        opacity: 0.4;
+        transform: translate(0, -1.6px) scale(1.018);
+    }
+
+    65% {
+        opacity: 0.52;
+        transform: translate(-0.2px, -2.2px) scale(1.024);
+    }
+
+    80% {
+        opacity: 0.34;
+        transform: translate(0.15px, -0.8px) scale(1.01);
+    }
+
+    100% {
+        opacity: 0.14;
+        transform: translate(0, 0.5px) scale(0.984);
+    }
+}
+
+@keyframes breatheCalm {
+    0%,
+    100% {
+        opacity: calc(0.22 + var(--calm-level, 0) * 0.12);
+        transform: translate(0, 0.3px) scale(0.99);
+    }
+
+    50% {
+        opacity: calc(0.42 + var(--calm-level, 0) * 0.2);
+        transform: translate(0, -0.8px) scale(1.008);
+    }
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    --calm-level: 0;
+}
+
+.root {
+    cursor: text;
+    transition: filter 0.8s ease;
+}
+
+.rootInhale {
+    filter: brightness(1.06);
+}
+
+.rootExhale {
+    filter: brightness(0.96);
+}
+
+.rootCalm .word {
+    animation-name: breatheCalm;
+}
+
+.line {
+    white-space: pre-wrap;
+}
+
+.word {
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.88);
+    animation: breathe var(--breathe-duration, 5.5s) cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    will-change: opacity, transform;
+    transition:
+        opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        letter-spacing 0.35s ease,
+        color 0.35s ease;
+}
+
+.wordVoice_me {
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.wordVoice_app {
+    font-weight: 300;
+    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.52);
+    font-family: "Orbitron", "Sulphur Point", sans-serif;
+}
+
+.wordVoice_user {
+    font-weight: 500;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.wordInhale {
+    animation: none !important;
+    color: rgba(255, 255, 255, calc(0.5 + var(--inhale-strength, 0.5) * 0.45)) !important;
+    transform: scale(calc(1 + var(--inhale-strength, 0.5) * 0.018)) !important;
+    letter-spacing: calc(var(--inhale-strength, 0.5) * 0.03em);
+}
+
+.wordAnchored {
+    animation: none;
+    color: rgba(255, 255, 255, calc(0.35 + var(--anchor-strength, 0.5) * 0.55));
+    transform: none;
+}
+
+.wordFocused {
+    color: #fff !important;
+    transform: none !important;
+}
+
+.wordVoiceLit {
+    opacity: 1 !important;
+    letter-spacing: 0.04em !important;
+}
+
+.wordVoiceLit.wordVoice_app {
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.wordVoiceLit.wordVoice_user {
+    border-bottom-color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.voiceReveal {
+    text-align: center;
+    font-family: "Sulphur Point", sans-serif;
+    animation: voiceIn 0.3s ease;
+}
+
+@keyframes voiceIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.voiceLabel {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.38);
+    margin-bottom: 2px;
+}
+
+.voiceDesc {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.68);
+    font-style: italic;
+}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { prepareWithSegments, layoutWithLines } from "@chenglou/pretext";
-import styles from "@/styles/PretextText.module.scss";
+import styles from "@/styles/PretextTextWake.module.scss";
 
 const FONT = '16px "Sulphur Point", sans-serif';
 const LINE_HEIGHT = 26;
@@ -9,7 +9,7 @@ const FOCUS_RADIUS = 42;
 
 const splitLineWords = (line) => line.match(/\S+\s*/g) ?? [];
 
-const PretextText = ({
+const PretextTextWake = ({
     text,
     wordMeta = [],
     echoLayers = {},
@@ -76,7 +76,10 @@ const PretextText = ({
             if (isEcho && anchored) litLayers.add(echoLayer);
 
             el.classList.toggle(styles.wordAnchored, anchored);
-            el.classList.toggle(styles.wordFocused, focused && !isEcho && !el.dataset.wake);
+            el.classList.toggle(
+                styles.wordFocused,
+                focused && !isEcho && !el.dataset.wake
+            );
             el.classList.toggle(styles.wordEchoLit, isEcho && (anchored || focused));
 
             if (anchored) {
@@ -198,8 +201,8 @@ const PretextText = ({
                                     data-gloss={meta.gloss ?? ""}
                                     className={classNames.join(" ")}
                                     style={{
-                                        animationDelay: `${phase * 0.18}s`,
-                                        "--breathe-duration": `${5 + (phase % 7) * 0.48}s`,
+                                        animationDelay: `${phase * 0.22}s`,
+                                        "--breathe-duration": `${5.2 + (phase % 5) * 0.55}s`,
                                     }}
                                 >
                                     {word}
@@ -237,4 +240,4 @@ const PretextText = ({
     );
 };
 
-export default PretextText;
+export default PretextTextWake;

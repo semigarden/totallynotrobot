@@ -14,6 +14,40 @@
 .manifestoContent {
     width: 100%;
     max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modeSwitch {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.modeButton {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 4px 0;
+    font-family: "Sulphur Point", sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.32);
+    cursor: pointer;
+    transition:
+        color 0.3s ease,
+        border-color 0.3s ease;
+
+    &:hover {
+        color: rgba(255, 255, 255, 0.55);
+    }
+}
+
+.modeButtonActive {
+    color: rgba(255, 255, 255, 0.88);
+    border-bottom-color: rgba(255, 255, 255, 0.55);
 }
 
 .manifestoText {
@@ -23,4 +57,42 @@
     font-size: 14px;
     hyphens: auto;
     color: rgba(255, 255, 255, 0.9);
+}
+
+.replyForm {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.replyLabel {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.replyInput {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 8px 0;
+    font-family: "Sulphur Point", sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.9);
+    outline: none;
+    transition: border-color 0.3s ease;
+
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.28);
+        font-style: italic;
+    }
+
+    &:focus {
+        border-bottom-color: rgba(255, 255, 255, 0.55);
+    }
 }

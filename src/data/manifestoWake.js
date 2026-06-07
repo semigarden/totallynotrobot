@@ -138,7 +138,7 @@ export const MANIFESTO_SEGMENTS = [
     { text: " you were meant to misread." },
 ];
 
-export const buildManifestoModel = (segments, layers = {}) => {
+export const buildWakeModel = (segments, layers = {}) => {
     const wordMeta = [];
     const echoLayers = Object.fromEntries(
         Object.keys(layers).map((id) => [id, ""])
