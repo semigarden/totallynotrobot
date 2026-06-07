@@ -1,0 +1,16 @@
+.background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: #000100;
+    overflow: hidden;
+}
+
+.canvas {
+    position: absolute;
+    inset: 0;
+
+    canvas {
+        display: block;
+    }
+}

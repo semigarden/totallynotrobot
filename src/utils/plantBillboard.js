@@ -64,7 +64,8 @@ export const buildForestLayout = (plants) => {
 
         const recentWindow = Math.min(index, 8);
         const anchorIndex = index - 1 - (hash % recentWindow);
-        const anchor = positions[anchorIndex];
+        const anchor =
+            positions[anchorIndex] ?? positions[index - 1] ?? { x: 0, z: 0 };
 
         const angle = ((hash >> 8) % 628) / 100;
         const distance = 0.65 + ((hash >> 14) % 160) / 100;

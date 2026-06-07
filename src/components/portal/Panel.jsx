@@ -1,27 +1,22 @@
-import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Drag from "@/components/effect/Drag";
 import AnimateText from "@/components/effect/AnimateText";
 import LevelBar from "@/components/hud/LevelBar";
 import Name from "@/components/hud/Name";
 import Manifesto from "@/components/portal/Manifesto";
 import Garden from "@/components/portal/Garden";
+import { tabFromParam } from "@/utils/tabRoute";
 import styles from "@/styles/Panel.module.scss";
-import memory, { level, exp } from "@/api/memory"
+import memory, { level, exp } from "@/api/memory";
 
 const Panel = () => {
-    const [tab, setTab] = useState('Manifesto');
-    
-    const openTab = (tab) => {
-        setTab(tab);
-        history.pushState({ tab: tab }, '', `/${tab.toLowerCase()}`);
-    }
+    const { tab: tabParam } = useParams();
+    const navigate = useNavigate();
+    const tab = tabFromParam(tabParam);
 
-    useEffect(() => {
-        const tab = history.state?.tab;
-        if (tab) {
-            setTab(tab.charAt(0).toUpperCase() + tab.slice(1));
-        }
-    }, []);
+    const openTab = (nextTab) => {
+        navigate(`/${nextTab.toLowerCase()}`);
+    };
 
     return (
         <div className={styles.panel}>
@@ -34,7 +29,7 @@ const Panel = () => {
                     <div className={styles.details}>
                         <div className={styles.hud}>
                             <Name className={styles.nameHud} name={memory.name} />
- 
+
                             <div className={styles.levelHud}>
                                 <LevelBar className={styles.bar} exp={exp} />
                                 <div className={styles.status}>Online</div>
@@ -42,7 +37,7 @@ const Panel = () => {
                             </div>
                         </div>
 
-                        <div className={styles.divider}/>
+                        <div className={styles.divider} />
 
                         <div className={styles.tags}>
                             <div className={styles.group}>
@@ -63,18 +58,18 @@ const Panel = () => {
                     </div>
 
                     <div className={styles.tabs}>
-                        {['Manifesto', 'Garden', 'Toolkit', 'Projects', 'Connection', 'Experience', 'Interests'].map((nodeName) => (
-                            <div 
-                                key={nodeName}
-                                className={`${styles.tab} ${tab === nodeName && styles.active}`}
-                                onClick={() => openTab(nodeName)}
-                                augmented-ui="exe"
-                            >
-                                <div className={styles.name}>
-                                    {nodeName}
-                                </div>   
-                            </div>
-                        ))}
+                        {["Manifesto", "Garden", "Toolkit", "Projects", "Connection", "Experience", "Interests"].map(
+                            (nodeName) => (
+                                <div
+                                    key={nodeName}
+                                    className={`${styles.tab} ${tab === nodeName && styles.active}`}
+                                    onClick={() => openTab(nodeName)}
+                                    augmented-ui="exe"
+                                >
+                                    <div className={styles.name}>{nodeName}</div>
+                                </div>
+                            )
+                        )}
                     </div>
                 </div>
 
