@@ -27,6 +27,13 @@ const initWalkState = (offset, target, cameraY) => {
     };
 };
 
+const pointerDistance = (a, b) =>
+    Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+
+const DOUBLE_TAP_MS = 320;
+const DOUBLE_TAP_DISTANCE = 28;
+const TAP_MOVE_THRESHOLD = 12;
+
 export const attachGardenWalkControls = ({
     camera,
     domElement,
@@ -36,37 +43,152 @@ export const attachGardenWalkControls = ({
     enabled = true,
     rotateSpeed = 0.003,
     panSpeed = 0.004,
+    pinchSpeed = 0.014,
 }) => {
     const state = initWalkState(initialOffset, lookTarget, cameraY);
     applyWalkCamera(camera, state, cameraY);
 
+    const pointers = new Map();
+    const forward = new THREE.Vector3();
     let dragMode = null;
     let lastX = 0;
     let lastY = 0;
+    let pinchDistance = null;
+    let capturedPointerId = null;
+    let lastTap = { time: 0, x: 0, y: 0 };
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchMoved = false;
+
+    const applyPanMove = (dx, dy) => {
+        const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+        right.y = 0;
+        if (right.lengthSq() > 0.0001) right.normalize();
+
+        const panForward = new THREE.Vector3(0, 0, -1).applyQuaternion(
+            camera.quaternion
+        );
+        panForward.y = 0;
+        if (panForward.lengthSq() > 0.0001) panForward.normalize();
+
+        const panX = (right.x * dx - panForward.x * dy) * panSpeed;
+        const panZ = (right.z * dx - panForward.z * dy) * panSpeed;
+
+        state.x -= panX;
+        state.z -= panZ;
+        applyWalkCamera(camera, state, cameraY);
+    };
+
+    const applyPinchMove = (deltaDistance) => {
+        camera.getWorldDirection(forward);
+        forward.y = 0;
+
+        if (forward.lengthSq() < 0.0001) return;
+        forward.normalize();
+
+        const step = THREE.MathUtils.clamp(
+            deltaDistance * pinchSpeed,
+            -0.45,
+            0.45
+        );
+
+        state.x += forward.x * step;
+        state.z += forward.z * step;
+        clampWalkPosition(state);
+        applyWalkCamera(camera, state, cameraY);
+    };
 
     const onPointerDown = (event) => {
         if (!enabled) return;
 
-        if (event.button === 0) {
+        pointers.set(event.pointerId, event);
+
+        if (pointers.size === 2) {
+            dragMode = "pinch";
+            const [first, second] = [...pointers.values()];
+            pinchDistance = pointerDistance(first, second);
+
+            if (capturedPointerId !== null) {
+                domElement.releasePointerCapture(capturedPointerId);
+                capturedPointerId = null;
+            }
+            return;
+        }
+
+        if (pointers.size > 2) return;
+
+        if (event.pointerType === "touch") {
+            const now = performance.now();
+            const isDoubleTap =
+                now - lastTap.time < DOUBLE_TAP_MS &&
+                Math.hypot(
+                    event.clientX - lastTap.x,
+                    event.clientY - lastTap.y
+                ) < DOUBLE_TAP_DISTANCE;
+
+            dragMode = isDoubleTap ? "pan" : "rotate";
+            touchStartX = event.clientX;
+            touchStartY = event.clientY;
+            touchMoved = false;
+        } else if (event.button === 0) {
             dragMode = "rotate";
         } else if (event.button === 1 || event.button === 2) {
             dragMode = "pan";
         } else {
+            pointers.delete(event.pointerId);
             return;
         }
 
         lastX = event.clientX;
         lastY = event.clientY;
         domElement.setPointerCapture(event.pointerId);
+        capturedPointerId = event.pointerId;
     };
 
     const onPointerMove = (event) => {
-        if (!dragMode) return;
+        if (!pointers.has(event.pointerId)) return;
+
+        pointers.set(event.pointerId, event);
+
+        if (dragMode === "pinch" && pointers.size >= 2) {
+            if (event.pointerType === "touch") {
+                event.preventDefault();
+            }
+
+            const [first, second] = [...pointers.values()];
+            const distance = pointerDistance(first, second);
+
+            if (pinchDistance !== null) {
+                const delta = distance - pinchDistance;
+                if (Math.abs(delta) > 0.5) {
+                    applyPinchMove(delta);
+                }
+            }
+
+            pinchDistance = distance;
+            return;
+        }
+
+        if (!dragMode || dragMode === "pinch") return;
 
         const dx = event.clientX - lastX;
         const dy = event.clientY - lastY;
         lastX = event.clientX;
         lastY = event.clientY;
+
+        if (
+            event.pointerType === "touch" &&
+            dragMode === "rotate" &&
+            !touchMoved
+        ) {
+            const totalMove = Math.hypot(
+                event.clientX - touchStartX,
+                event.clientY - touchStartY
+            );
+            if (totalMove > TAP_MOVE_THRESHOLD) {
+                touchMoved = true;
+            }
+        }
 
         if (dragMode === "rotate") {
             state.yaw -= dx * rotateSpeed;
@@ -75,26 +197,39 @@ export const attachGardenWalkControls = ({
             return;
         }
 
-        const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
-        right.y = 0;
-        if (right.lengthSq() > 0.0001) right.normalize();
-
-        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-        forward.y = 0;
-        if (forward.lengthSq() > 0.0001) forward.normalize();
-
-        const panX = (right.x * dx - forward.x * dy) * panSpeed;
-        const panZ = (right.z * dx - forward.z * dy) * panSpeed;
-
-        state.x -= panX;
-        state.z -= panZ;
-        applyWalkCamera(camera, state, cameraY);
+        applyPanMove(dx, dy);
     };
 
     const endDrag = (event) => {
-        dragMode = null;
-        if (event.pointerId !== undefined) {
+        if (
+            event.pointerType === "touch" &&
+            dragMode === "rotate" &&
+            pointers.size === 1 &&
+            !touchMoved
+        ) {
+            lastTap = {
+                time: performance.now(),
+                x: event.clientX,
+                y: event.clientY,
+            };
+        }
+
+        pointers.delete(event.pointerId);
+
+        if (pointers.size < 2) {
+            pinchDistance = null;
+            if (dragMode === "pinch") {
+                dragMode = null;
+            }
+        }
+
+        if (pointers.size === 0) {
+            dragMode = null;
+        }
+
+        if (capturedPointerId === event.pointerId) {
             domElement.releasePointerCapture(event.pointerId);
+            capturedPointerId = null;
         }
     };
 

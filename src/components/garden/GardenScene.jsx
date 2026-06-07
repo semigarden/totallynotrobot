@@ -164,6 +164,7 @@ const GardenScene = ({
                 initialOffset: cameraOffset,
                 lookTarget: cameraTarget,
                 enabled: interactive,
+                pinchSpeed: walkSpeed * 3.5,
             });
 
             if (scrollWalk) {

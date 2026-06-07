@@ -29,9 +29,11 @@ const ImmersiveChrome = ({ plants = [], onPlant }) => (
                 onPlant={onPlant}
                 showHeader={false}
                 showLabel={false}
+                showActionButton
                 inputId="immerse-plant"
                 formClassName={styles.plantForm}
                 inputClassName={styles.plantInput}
+                actionClassName={styles.plantAction}
             />
         </div>
     </>

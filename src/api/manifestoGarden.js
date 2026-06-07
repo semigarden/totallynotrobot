@@ -1,6 +1,14 @@
 const STORAGE_KEY = "digital-garden-manifesto";
 export const GARDEN_PLANTS_UPDATED = "garden-plants-updated";
 
+const createGardenId = () => {
+    if (globalThis.crypto?.randomUUID) {
+        return globalThis.crypto.randomUUID();
+    }
+
+    return `plant-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
+
 export const loadUserLines = () => {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -16,16 +24,20 @@ export const saveUserLine = (text) => {
     const trimmed = text.trim();
     if (!trimmed) return loadUserLines();
 
-    const entry = {
-        id: crypto.randomUUID(),
-        text: trimmed,
-        at: Date.now(),
-    };
+    try {
+        const entry = {
+            id: createGardenId(),
+            text: trimmed,
+            at: Date.now(),
+        };
 
-    const next = [...loadUserLines(), entry];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    window.dispatchEvent(new Event(GARDEN_PLANTS_UPDATED));
-    return next;
+        const next = [...loadUserLines(), entry];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        window.dispatchEvent(new Event(GARDEN_PLANTS_UPDATED));
+        return next;
+    } catch {
+        return loadUserLines();
+    }
 };
 
 export const buildGardenDialogue = (opening, userLines, acknowledgments) => {
