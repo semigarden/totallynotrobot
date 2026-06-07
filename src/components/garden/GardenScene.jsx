@@ -22,6 +22,7 @@ import {
 } from "@/utils/gardenNavigation";
 import { createMoon } from "@/utils/moonScene";
 import { createGardenComposer } from "@/utils/gardenPostProcessing";
+import { createGroundRipples } from "@/utils/groundRipples";
 
 const FLOWERS_ENABLED = false;
 
@@ -225,6 +226,7 @@ const GardenScene = ({
         ground.position.y = -0.01;
         scene.add(ground);
 
+        const groundRipples = createGroundRipples(scene);
         const moonRoot = createMoon(scene);
 
         sceneRef.current = scene;
@@ -263,7 +265,9 @@ const GardenScene = ({
         const animate = () => {
             frame = requestAnimationFrame(animate);
             controls?.update();
-            updatePlantSway(plantRoot, clock.getElapsedTime());
+            const elapsed = clock.getElapsedTime();
+            updatePlantSway(plantRoot, elapsed);
+            groundRipples.update(elapsed, camera);
             postProcessing.composer.render();
         };
         animate();
@@ -282,6 +286,7 @@ const GardenScene = ({
                 scene.remove(grassRef.current);
                 disposeGrassField(grassRef.current);
             }
+            groundRipples.dispose();
             scene.remove(moonRoot);
             disposeObject(moonRoot);
             disposeObject(scene);
