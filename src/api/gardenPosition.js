@@ -1,7 +1,7 @@
 const DB_NAME = "digital-garden";
 const DB_VERSION = 1;
 const STORE_NAME = "walk-position";
-const POSITION_KEY = "immersive";
+const DEFAULT_POSITION_KEY = "immersive";
 
 let dbPromise = null;
 
@@ -32,14 +32,16 @@ export const isWalkPosition = (value) =>
     Number.isFinite(value.yaw) &&
     Number.isFinite(value.pitch);
 
-export const loadWalkPosition = async () => {
+export const loadWalkPosition = async (
+    positionKey = DEFAULT_POSITION_KEY
+) => {
     try {
         const db = await openDb();
 
         return new Promise((resolve) => {
             const transaction = db.transaction(STORE_NAME, "readonly");
             const store = transaction.objectStore(STORE_NAME);
-            const request = store.get(POSITION_KEY);
+            const request = store.get(positionKey);
 
             request.onsuccess = () => {
                 const saved = request.result ?? null;
@@ -52,7 +54,10 @@ export const loadWalkPosition = async () => {
     }
 };
 
-export const saveWalkPosition = async (position) => {
+export const saveWalkPosition = async (
+    position,
+    positionKey = DEFAULT_POSITION_KEY
+) => {
     if (!isWalkPosition(position)) return;
 
     try {
@@ -61,7 +66,7 @@ export const saveWalkPosition = async (position) => {
         await new Promise((resolve) => {
             const transaction = db.transaction(STORE_NAME, "readwrite");
             const store = transaction.objectStore(STORE_NAME);
-            store.put(position, POSITION_KEY);
+            store.put(position, positionKey);
             transaction.oncomplete = () => resolve();
             transaction.onerror = () => resolve();
         });
@@ -70,7 +75,10 @@ export const saveWalkPosition = async (position) => {
     }
 };
 
-export const createWalkPositionSaver = (delay = 450) => {
+export const createWalkPositionSaver = (
+    delay = 450,
+    positionKey = DEFAULT_POSITION_KEY
+) => {
     let timer = null;
     let latest = null;
 
@@ -84,7 +92,7 @@ export const createWalkPositionSaver = (delay = 450) => {
 
         const next = latest;
         latest = null;
-        saveWalkPosition(next);
+        saveWalkPosition(next, positionKey);
     };
 
     const schedule = (position) => {

@@ -1,0 +1,176 @@
+.root {
+    position: relative;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: #000100;
+    color: #f1f1f1;
+}
+
+.scene {
+    position: absolute;
+    inset: 0;
+}
+
+.canvas {
+    width: 100%;
+    height: 100%;
+    min-height: 100dvh;
+}
+
+.panel {
+    position: fixed;
+    top: max(16px, env(safe-area-inset-top, 0px));
+    left: max(16px, env(safe-area-inset-left, 0px));
+    z-index: 20;
+    width: min(360px, calc(100vw - 32px));
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 1, 0, 0.72);
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+}
+
+.header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.eyebrow {
+    margin: 0 0 4px;
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(210, 210, 210, 0.62);
+}
+
+.title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 500;
+}
+
+.backLink {
+    color: #d8d8d8;
+    text-decoration: none;
+    border: 1px solid rgba(216, 216, 216, 0.28);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 0.84rem;
+    white-space: nowrap;
+
+    &:hover {
+        background: rgba(216, 216, 216, 0.08);
+    }
+}
+
+.caption {
+    margin: 0 0 14px;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: rgba(230, 230, 230, 0.72);
+}
+
+.statusRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 0.82rem;
+    color: rgba(230, 230, 230, 0.68);
+
+    button {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        color: inherit;
+        padding: 6px 12px;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+    }
+}
+
+.error {
+    margin: 0 0 12px;
+    color: #cfcfcf;
+    font-size: 0.84rem;
+}
+
+.gardenList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.gardenCard {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.gardenMeta {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 6px;
+
+    strong {
+        font-size: 0.95rem;
+    }
+
+    span {
+        font-size: 0.78rem;
+        color: rgba(230, 230, 230, 0.62);
+    }
+}
+
+.gardenDescription {
+    margin: 0 0 8px;
+    font-size: 0.84rem;
+    line-height: 1.4;
+    color: rgba(230, 230, 230, 0.74);
+}
+
+.gardenLinks {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.78rem;
+
+    a {
+        color: #d8d8d8;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    span {
+        color: rgba(230, 230, 230, 0.5);
+    }
+}
+
+@media (max-width: 720px) {
+    .panel {
+        top: auto;
+        bottom: max(12px, env(safe-area-inset-bottom, 0px));
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-height: 42dvh;
+    }
+}

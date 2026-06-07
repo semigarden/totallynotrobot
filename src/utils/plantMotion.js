@@ -20,8 +20,39 @@ export const initPlantSway = (sprite, seed = "") => {
     };
 };
 
+const syncPlantLabels = (billboard) => {
+    const titleLabel = billboard.userData.titleLabel;
+    if (titleLabel) {
+        titleLabel.position.x = billboard.position.x;
+        titleLabel.position.z = billboard.position.z;
+        titleLabel.position.y = billboard.scale.y + 0.28;
+        titleLabel.rotation.z = billboard.rotation.z * 0.35;
+    }
+
+    const nameLabel = billboard.userData.nameLabel;
+    if (nameLabel) {
+        nameLabel.position.x = billboard.position.x;
+        nameLabel.position.z = billboard.position.z;
+        nameLabel.position.y = 0.18;
+        nameLabel.rotation.z = billboard.rotation.z * 0.2;
+    }
+};
+
+const collectBillboards = (plantRoot) => {
+    const billboards = [];
+
+    plantRoot.traverse((child) => {
+        if (child.userData?.sway) {
+            billboards.push(child);
+        }
+    });
+
+    return billboards;
+};
+
 const sortPlantBillboards = (plantRoot, camera) => {
-    const entries = plantRoot.children.map((sprite) => {
+    const billboards = collectBillboards(plantRoot);
+    const entries = billboards.map((sprite) => {
         sprite.getWorldPosition(sortPoint);
         return {
             sprite,
@@ -33,13 +64,19 @@ const sortPlantBillboards = (plantRoot, camera) => {
 
     entries.forEach((entry, index) => {
         entry.sprite.renderOrder = index;
+        if (entry.sprite.userData.titleLabel) {
+            entry.sprite.userData.titleLabel.renderOrder = index;
+        }
+        if (entry.sprite.userData.nameLabel) {
+            entry.sprite.userData.nameLabel.renderOrder = index;
+        }
     });
 };
 
 export const updatePlantSway = (plantRoot, elapsed, camera) => {
     if (!plantRoot) return;
 
-    plantRoot.children.forEach((sprite) => {
+    collectBillboards(plantRoot).forEach((sprite) => {
         const sway = sprite.userData.sway;
         if (!sway) return;
 
@@ -48,6 +85,7 @@ export const updatePlantSway = (plantRoot, elapsed, camera) => {
         sprite.rotation.z = Math.sin(t) * sway.rollAmp;
         sprite.position.x = sway.baseX + Math.sin(t * 0.85) * sway.offsetAmp;
         sprite.position.z = sway.baseZ + Math.cos(t * 1.05) * sway.offsetAmp;
+        syncPlantLabels(sprite);
     });
 
     if (camera) {

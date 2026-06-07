@@ -1,3 +1,6 @@
+import { buildForestLayout } from "@/utils/plantBillboard";
+import { withChunkFields } from "@/utils/gardenChunks";
+
 const SIM_WORDS = [
     "forest",
     "memory",
@@ -23,12 +26,21 @@ const SIM_WORDS = [
 
 export const createSimulationPlants = (count, runSeed = "sim") => {
     const total = Math.max(0, Math.floor(count));
-
-    return Array.from({ length: total }, (_, index) => ({
+    const basePlants = Array.from({ length: total }, (_, index) => ({
         id: `${runSeed}-${index}`,
         text: SIM_WORDS[index % SIM_WORDS.length],
         at: index,
     }));
+    const layout = buildForestLayout(basePlants);
+
+    return basePlants.map((plant, index) =>
+        withChunkFields({
+            ...plant,
+            x: layout[index]?.x ?? 0,
+            z: layout[index]?.z ?? 0,
+            minSpacing: layout[index]?.minSpacing,
+        })
+    );
 };
 
 export const computeLayoutStats = (layout) => {

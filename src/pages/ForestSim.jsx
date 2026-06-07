@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import GardenScene from "@/components/garden/GardenScene";
 import ForestSimMap from "@/components/garden/ForestSimMap";
-import { buildForestLayout } from "@/utils/plantBillboard";
 import {
     computeLayoutStats,
     createSimulationPlants,
@@ -31,7 +30,15 @@ const ForestSim = () => {
         () => allPlants.slice(0, visibleCount),
         [allPlants, visibleCount]
     );
-    const layout = useMemo(() => buildForestLayout(plants), [plants]);
+    const layout = useMemo(
+        () =>
+            plants.map((plant) => ({
+                x: plant.x,
+                z: plant.z,
+                minSpacing: plant.minSpacing,
+            })),
+        [plants]
+    );
     const stats = useMemo(() => computeLayoutStats(layout), [layout]);
 
     useEffect(() => {
@@ -155,8 +162,8 @@ const ForestSim = () => {
                     <h2>Density map</h2>
                     <p className={styles.caption}>
                         Green trees are spaced correctly. Red marks spacing
-                        violations. Faint rings show each tree&apos;s required
-                        clearance.
+                        violations. Grid lines are chunks; dashed bounds show
+                        where authored content allows movement.
                     </p>
                     <div className={styles.mapWrap}>
                         <ForestSimMap plants={plants} />

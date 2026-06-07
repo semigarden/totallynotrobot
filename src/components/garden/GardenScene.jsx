@@ -2,8 +2,9 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import {
-    buildForestLayout,
     createPlantBillboard,
+    createPlantNameLabel,
+    createPlantTitleLabel,
 } from "@/utils/plantBillboard";
 import { initPlantSway, updatePlantSway } from "@/utils/plantMotion";
 import {
@@ -11,24 +12,30 @@ import {
     createFlowerBillboard,
     flowerCountForLine,
 } from "@/utils/flowerBillboard";
-import {
-    disposeGrassField,
-    syncGrassField,
-} from "@/utils/grassField";
+import { createGrassField } from "@/utils/grassField";
 import {
     attachGardenWalkControls,
     attachScrollWalk,
-    clampWalkPosition,
 } from "@/utils/gardenNavigation";
+import {
+    DEFAULT_VISIBLE_CHUNK_RADIUS,
+    clampPointToBounds,
+    computeAuthoredBounds,
+    groupPlantsByChunk,
+    visibleChunkKeys,
+} from "@/utils/gardenChunks";
 import { createMoon } from "@/utils/moonScene";
 import { createGardenComposer } from "@/utils/gardenPostProcessing";
 import { createGroundRipples } from "@/utils/groundRipples";
+import { createDateTerritories } from "@/utils/dateTerritories";
 import {
     createWalkPositionSaver,
     loadWalkPosition,
 } from "@/api/gardenPosition";
 
 const FLOWERS_ENABLED = false;
+// Temporary: hide post titles, author names, and year labels in-scene.
+const TEMPORARILY_HIDE_SCENE_METADATA = true;
 
 const disposeObject = (object) => {
     object.traverse((node) => {
@@ -50,35 +57,64 @@ const disposeObject = (object) => {
 const normalizePlants = (plants) =>
     Array.isArray(plants) ? plants.filter((plant) => plant?.text) : [];
 
-const populateGarden = (scene, plantRoot, flowerRoot, grassRef, plants) => {
+const plantPosition = (plant) => ({
+    x: Number.isFinite(plant?.x) ? plant.x : 0,
+    z: Number.isFinite(plant?.z) ? plant.z : 0,
+});
+
+const createChunkContent = ({
+    plants,
+    showPlantTitles = true,
+}) => {
     const gardenPlants = normalizePlants(plants);
-    const layout = buildForestLayout(gardenPlants);
+    const group = new THREE.Group();
+    const plantGroup = new THREE.Group();
+    const positions = gardenPlants.map(plantPosition);
 
-    if (plantRoot) {
-        while (plantRoot.children.length > 0) {
-            const child = plantRoot.children[0];
-            plantRoot.remove(child);
-            disposeObject(child);
-        }
-
-        gardenPlants.forEach((plant, index) => {
-            const billboard = createPlantBillboard(plant.text, plant.id);
-            const position = layout[index];
-            billboard.position.set(position.x, 0, position.z);
-            initPlantSway(billboard, plant.id ?? plant.text);
-            plantRoot.add(billboard);
+    gardenPlants.forEach((plant) => {
+        const billboard = createPlantBillboard(plant.text, plant.id, {
+            gardenId: plant.gardenId,
+            pubDate: plant.pubDate,
+            at: plant.at,
         });
-    }
+        const position = plantPosition(plant);
+        billboard.position.set(position.x, 0, position.z);
+        initPlantSway(billboard, plant.id ?? plant.text);
 
-    if (FLOWERS_ENABLED && flowerRoot) {
-        while (flowerRoot.children.length > 0) {
-            const child = flowerRoot.children[0];
-            flowerRoot.remove(child);
-            disposeObject(child);
+        if (showPlantTitles && !TEMPORARILY_HIDE_SCENE_METADATA) {
+            const label = createPlantTitleLabel(
+                plant.blogTitle ?? plant.title,
+                plant.id ?? plant.text,
+                plant.pubDate ?? plant.at
+            );
+
+            if (label) {
+                label.position.set(position.x, billboard.scale.y + 0.28, position.z);
+                billboard.userData.titleLabel = label;
+                plantGroup.add(label);
+            }
+
+            const nameLabel = createPlantNameLabel(
+                plant.gardenName,
+                plant.gardenId ?? plant.id ?? plant.text
+            );
+
+            if (nameLabel) {
+                nameLabel.position.set(position.x, 0.18, position.z);
+                billboard.userData.nameLabel = nameLabel;
+                plantGroup.add(nameLabel);
+            }
         }
 
+        plantGroup.add(billboard);
+    });
+
+    group.add(plantGroup);
+
+    if (FLOWERS_ENABLED) {
+        const flowerGroup = new THREE.Group();
         gardenPlants.forEach((plant, index) => {
-            const anchor = layout[index] ?? { x: 0, z: 0 };
+            const anchor = positions[index] ?? { x: 0, z: 0 };
             const flowerTotal = flowerCountForLine(plant.text, plant.id);
 
             for (let flowerIndex = 0; flowerIndex < flowerTotal; flowerIndex++) {
@@ -93,28 +129,87 @@ const populateGarden = (scene, plantRoot, flowerRoot, grassRef, plants) => {
                     flowerPosition.scale
                 );
                 flower.position.set(flowerPosition.x, 0, flowerPosition.z);
-                flowerRoot.add(flower);
+                flowerGroup.add(flower);
             }
         });
+        group.add(flowerGroup);
     }
 
-    if (scene && grassRef) {
-        const hadGrass = Boolean(grassRef.current);
-        const nextGrass = syncGrassField(
-            grassRef.current,
-            gardenPlants,
-            layout
-        );
+    const grass = createGrassField(gardenPlants, positions, {
+        includeBaseGrass: false,
+    });
+    grass.position.y = 0.02;
+    group.add(grass);
 
-        if (!hadGrass) {
-            nextGrass.position.y = 0.02;
-            scene.add(nextGrass);
+    return group;
+};
+
+const syncGardenChunks = ({
+    plantRoot,
+    loadedChunks,
+    plants,
+    cameraPosition,
+    chunkRadius = DEFAULT_VISIBLE_CHUNK_RADIUS,
+    showPlantTitles = true,
+}) => {
+    if (!plantRoot) return;
+
+    const chunks = groupPlantsByChunk(plants);
+    const visibleKeys = visibleChunkKeys(cameraPosition, chunkRadius);
+    const desiredKeys = new Set(
+        [...visibleKeys].filter((key) => chunks.has(key))
+    );
+
+    loadedChunks.forEach((chunk, key) => {
+        if (desiredKeys.has(key)) return;
+
+        plantRoot.remove(chunk.group);
+        disposeObject(chunk.group);
+        loadedChunks.delete(key);
+    });
+
+    desiredKeys.forEach((key) => {
+        const chunkPlants = chunks.get(key) ?? [];
+        const existing = loadedChunks.get(key);
+        const showLabels =
+            showPlantTitles && !TEMPORARILY_HIDE_SCENE_METADATA;
+        const plantIds = `${showLabels ? "t" : "n"}:${chunkPlants
+            .map((plant) => plant.id)
+            .join("|")}`;
+
+        if (existing?.plantIds === plantIds) return;
+
+        if (existing) {
+            plantRoot.remove(existing.group);
+            disposeObject(existing.group);
+            loadedChunks.delete(key);
         }
 
-        grassRef.current = nextGrass;
+        const group = createChunkContent({
+            plants: chunkPlants,
+            showPlantTitles: showLabels,
+        });
+        plantRoot.add(group);
+        loadedChunks.set(key, { group, plantIds });
+    });
+};
+
+const syncDateTerritories = ({ scene, territoryRef, plants, enabled }) => {
+    if (!scene || !territoryRef) return;
+
+    if (territoryRef.current) {
+        scene.remove(territoryRef.current);
+        disposeObject(territoryRef.current);
+        territoryRef.current = null;
     }
 
-    return layout;
+    if (!enabled) return;
+
+    const nextTerritories = createDateTerritories(plants, {
+        showLabels: !TEMPORARILY_HIDE_SCENE_METADATA,
+    });
+    scene.add(nextTerritories);
+    territoryRef.current = nextTerritories;
 };
 
 const GardenScene = ({
@@ -129,15 +224,26 @@ const GardenScene = ({
     scrollWalk = true,
     walkSpeed = 0.004,
     walkNavigation = false,
+    walkPositionKey = "immersive",
+    showPlantTitles = true,
+    showDateTerritories = false,
+    onWalkStateChange = null,
 }) => {
     const mountRef = useRef(null);
     const sceneRef = useRef(null);
+    const cameraRef = useRef(null);
     const plantRootRef = useRef(null);
-    const flowerRootRef = useRef(null);
-    const grassRef = useRef(null);
+    const territoryRef = useRef(null);
+    const loadedChunksRef = useRef(new Map());
+    const movementBoundsRef = useRef(computeAuthoredBounds(plants));
     const plantsRef = useRef(plants);
+    const showPlantTitlesRef = useRef(showPlantTitles);
+    const showDateTerritoriesRef = useRef(showDateTerritories);
 
     plantsRef.current = plants;
+    showPlantTitlesRef.current = showPlantTitles;
+    showDateTerritoriesRef.current = showDateTerritories;
+    movementBoundsRef.current = computeAuthoredBounds(plants);
 
     useEffect(() => {
         const mount = mountRef.current;
@@ -147,11 +253,13 @@ const GardenScene = ({
         let cleanup = () => {};
 
         const setupScene = async () => {
-        const savedPosition = walkNavigation ? await loadWalkPosition() : null;
+        const savedPosition = walkNavigation
+            ? await loadWalkPosition(walkPositionKey)
+            : null;
         if (cancelled) return;
 
         const positionSaver = walkNavigation
-            ? createWalkPositionSaver()
+            ? createWalkPositionSaver(450, walkPositionKey)
             : null;
 
         const scene = new THREE.Scene();
@@ -160,6 +268,7 @@ const GardenScene = ({
 
         const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
         camera.position.set(cameraOffset.x, cameraOffset.y, cameraOffset.z);
+        cameraRef.current = camera;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -172,6 +281,12 @@ const GardenScene = ({
         let controls = null;
         let walkControls = null;
         let detachScrollWalk = null;
+        const constrainPosition = (state) =>
+            clampPointToBounds(state, movementBoundsRef.current);
+        const handleWalkPositionChange = (state) => {
+            positionSaver?.schedule(state);
+            onWalkStateChange?.(state);
+        };
 
         if (walkNavigation) {
             walkControls = attachGardenWalkControls({
@@ -181,7 +296,8 @@ const GardenScene = ({
                 initialOffset: cameraOffset,
                 lookTarget: cameraTarget,
                 savedState: savedPosition,
-                onPositionChange: positionSaver?.schedule,
+                onPositionChange: handleWalkPositionChange,
+                constrainPosition,
                 enabled: interactive,
                 pinchSpeed: walkSpeed * 3.5,
             });
@@ -195,7 +311,7 @@ const GardenScene = ({
                         const state = walkControls.getState();
                         state.x += move.x;
                         state.z += move.z;
-                        clampWalkPosition(state);
+                        constrainPosition(state);
                         walkControls.applyCamera();
                     },
                 });
@@ -223,21 +339,15 @@ const GardenScene = ({
                         camera.position.add(move);
                         target.add(move);
 
-                        const dist = Math.hypot(camera.position.x, camera.position.z);
-                        if (dist > 36) {
-                            const scale = 36 / dist;
-                            camera.position.x *= scale;
-                            camera.position.z *= scale;
-                            target.x *= scale;
-                            target.z *= scale;
-                        }
+                        clampPointToBounds(camera.position, movementBoundsRef.current);
+                        clampPointToBounds(target, movementBoundsRef.current);
                     },
                 });
             }
         }
 
         const ground = new THREE.Mesh(
-            new THREE.PlaneGeometry(80, 80),
+            new THREE.PlaneGeometry(160, 160),
             new THREE.MeshBasicMaterial({ color: 0x070807 })
         );
         ground.rotation.x = -Math.PI / 2;
@@ -253,19 +363,19 @@ const GardenScene = ({
         scene.add(plantRoot);
         plantRootRef.current = plantRoot;
 
-        const flowerRoot = FLOWERS_ENABLED ? new THREE.Group() : null;
-        if (flowerRoot) {
-            scene.add(flowerRoot);
-        }
-        flowerRootRef.current = flowerRoot;
-
-        populateGarden(
-            scene,
+        syncGardenChunks({
             plantRoot,
-            flowerRoot,
-            grassRef,
-            normalizePlants(plantsRef.current)
-        );
+            loadedChunks: loadedChunksRef.current,
+            plants: normalizePlants(plantsRef.current),
+            cameraPosition: camera.position,
+            showPlantTitles: showPlantTitlesRef.current,
+        });
+        syncDateTerritories({
+            scene,
+            territoryRef,
+            plants: normalizePlants(plantsRef.current),
+            enabled: showDateTerritoriesRef.current,
+        });
 
         const resize = () => {
             const width = mount.clientWidth;
@@ -284,6 +394,15 @@ const GardenScene = ({
             frame = requestAnimationFrame(animate);
             controls?.update();
             const elapsed = clock.getElapsedTime();
+            ground.position.x = camera.position.x;
+            ground.position.z = camera.position.z;
+            syncGardenChunks({
+                plantRoot,
+                loadedChunks: loadedChunksRef.current,
+                plants: normalizePlants(plantsRef.current),
+                cameraPosition: camera.position,
+                showPlantTitles: showPlantTitlesRef.current,
+            });
             updatePlantSway(plantRoot, elapsed, camera);
             groundRipples.update(elapsed, camera);
             postProcessing.composer.render();
@@ -308,9 +427,15 @@ const GardenScene = ({
             detachScrollWalk?.();
             walkControls?.dispose();
             controls?.dispose();
-            if (grassRef.current) {
-                scene.remove(grassRef.current);
-                disposeGrassField(grassRef.current);
+            loadedChunksRef.current.forEach((chunk) => {
+                plantRoot.remove(chunk.group);
+                disposeObject(chunk.group);
+            });
+            loadedChunksRef.current.clear();
+            if (territoryRef.current) {
+                scene.remove(territoryRef.current);
+                disposeObject(territoryRef.current);
+                territoryRef.current = null;
             }
             groundRipples.dispose();
             scene.remove(moonRoot);
@@ -319,9 +444,8 @@ const GardenScene = ({
             postProcessing.dispose();
             renderer.dispose();
             sceneRef.current = null;
+            cameraRef.current = null;
             plantRootRef.current = null;
-            flowerRootRef.current = null;
-            grassRef.current = null;
             if (mount.contains(renderer.domElement)) {
                 mount.removeChild(renderer.domElement);
             }
@@ -347,17 +471,28 @@ const GardenScene = ({
         cameraTarget.z,
         minDistance,
         maxDistance,
+        walkPositionKey,
+        showPlantTitles,
+        showDateTerritories,
+        onWalkStateChange,
     ]);
 
     useEffect(() => {
-        populateGarden(
-            sceneRef.current,
-            plantRootRef.current,
-            flowerRootRef.current,
-            grassRef,
-            plants
-        );
-    }, [plants]);
+        movementBoundsRef.current = computeAuthoredBounds(plants);
+        syncGardenChunks({
+            plantRoot: plantRootRef.current,
+            loadedChunks: loadedChunksRef.current,
+            plants: normalizePlants(plants),
+            cameraPosition: cameraRef.current?.position ?? { x: 0, z: 0 },
+            showPlantTitles,
+        });
+        syncDateTerritories({
+            scene: sceneRef.current,
+            territoryRef,
+            plants: normalizePlants(plants),
+            enabled: showDateTerritories,
+        });
+    }, [plants, showPlantTitles, showDateTerritories]);
 
     return (
         <div className={className}>

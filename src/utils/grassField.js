@@ -170,12 +170,18 @@ const createLineGrassMesh = (plant, anchor) => {
 const normalizePlants = (plants) =>
     Array.isArray(plants) ? plants.filter((plant) => plant?.text) : [];
 
-export const createGrassField = (plants = [], plantPositions = []) => {
+export const createGrassField = (
+    plants = [],
+    plantPositions = [],
+    { includeBaseGrass = true } = {}
+) => {
     const gardenPlants = normalizePlants(plants);
     const layout = normalizePlantPositions(plantPositions);
     const field = new THREE.Group();
 
-    field.add(createBaseGrassMesh(layout));
+    if (includeBaseGrass) {
+        field.add(createBaseGrassMesh(layout));
+    }
 
     gardenPlants.forEach((plant, index) => {
         const anchor = layout[index] ?? { x: 0, z: 0 };

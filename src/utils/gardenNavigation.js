@@ -42,6 +42,7 @@ export const attachGardenWalkControls = ({
     lookTarget,
     savedState = null,
     onPositionChange = null,
+    constrainPosition = clampWalkPosition,
     enabled = true,
     rotateSpeed = 0.003,
     panSpeed = 0.004,
@@ -61,7 +62,7 @@ export const attachGardenWalkControls = ({
               }
             : initWalkState(initialOffset, lookTarget, cameraY);
 
-    clampWalkPosition(state);
+    constrainPosition?.(state);
 
     const notifyPositionChange = () => {
         onPositionChange?.({
@@ -107,6 +108,7 @@ export const attachGardenWalkControls = ({
 
         state.x -= panX;
         state.z -= panZ;
+        constrainPosition?.(state);
         updateCamera();
     };
 
@@ -125,7 +127,7 @@ export const attachGardenWalkControls = ({
 
         state.x += forward.x * step;
         state.z += forward.z * step;
-        clampWalkPosition(state);
+        constrainPosition?.(state);
         updateCamera();
     };
 

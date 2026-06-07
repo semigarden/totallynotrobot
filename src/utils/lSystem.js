@@ -24,9 +24,50 @@ const PRESETS = [
         rules: { F: "F[+F]F[-F+F]" },
         angle: 28,
     },
+    {
+        axiom: "F",
+        rules: { F: "F[+F][-F]FF" },
+        angle: 19,
+    },
+    {
+        axiom: "F",
+        rules: { F: "FF+[+F-F-F]-[-F+F+F]" },
+        angle: 16,
+    },
+    {
+        axiom: "X",
+        rules: { X: "F[+X]F[-X]+X", F: "FF" },
+        angle: 24,
+    },
+    {
+        axiom: "X",
+        rules: { X: "F[-X][X]F[-X]+FX", F: "FF" },
+        angle: 21,
+    },
+    {
+        axiom: "F",
+        rules: { F: "F[+F]F[-F]F[+F][-F]" },
+        angle: 32,
+    },
+    {
+        axiom: "F",
+        rules: { F: "F[+F-F]F[-F+F]" },
+        angle: 35,
+    },
+    {
+        axiom: "X",
+        rules: { X: "F+[[X]-X]-F[-FX]+X", F: "F" },
+        angle: 29,
+    },
+    {
+        axiom: "F",
+        rules: { F: "FF[+F][-F][++F][--F]" },
+        angle: 14,
+    },
 ];
 
 const MAX_INSTRUCTIONS = 12000;
+const SAFE_FALLBACK_PRESET = 0;
 
 export const hashString = (text) => {
     let hash = 2166136261;
@@ -126,15 +167,45 @@ export const normalizeSegments = (segments, padding = 8) => {
         viewBox: `0 0 ${width} ${height}`,
         width,
         height,
+        rootX: -offsetX,
+        rootY: -offsetY,
     };
 };
 
-export const textToPlant = (text, seed = "") => {
+const hasRootedShape = (plant) => {
+    if (!plant.segments || plant.segments.length < 8) return false;
+    if (plant.height < 24) return false;
+
+    const aspect = plant.width / Math.max(plant.height, 1);
+    if (aspect > 1.85) return false;
+
+    const rootDepth = plant.rootY / Math.max(plant.height, 1);
+    if (rootDepth < 0.58) return false;
+
+    const trunkSegments = plant.segments.filter((segment) => segment.depth === 0);
+    const highestTrunkY = trunkSegments.reduce(
+        (top, segment) => Math.min(top, segment.y1, segment.y2),
+        plant.rootY
+    );
+    const trunkReach = plant.rootY - highestTrunkY;
+
+    return trunkReach > plant.height * 0.24;
+};
+
+const buildPlantFromPreset = ({
+    text,
+    seed,
+    phenotype,
+    presetIndex,
+    iterations,
+    angleJitter,
+    segmentLength,
+}) => {
     const hash = hashString(`${text}:${seed}`);
-    const preset = PRESETS[hash % PRESETS.length];
-    const iterations = 3 + (hash % 3);
-    const angle = preset.angle + ((hash >> 4) % 11) - 5;
-    const segmentLength = 5 + (hash % 5);
+    const preset = PRESETS[presetIndex % PRESETS.length];
+    const angle =
+        preset.angle +
+        (angleJitter ?? ((hash >> 4) % 11) - 5);
     const instructions = expandLSystem(preset.axiom, preset.rules, iterations);
     const segments = interpretLSystem(instructions, angle, segmentLength);
     const normalized = normalizeSegments(segments);
@@ -144,5 +215,35 @@ export const textToPlant = (text, seed = "") => {
         hash,
         iterations,
         angle,
+        phenotype,
     };
+};
+
+export const textToPlant = (text, seed = "", phenotype = null) => {
+    const hash = hashString(`${text}:${seed}`);
+    const candidate = buildPlantFromPreset({
+        text,
+        seed,
+        phenotype,
+        presetIndex: phenotype?.presetIndex ?? hash % PRESETS.length,
+        iterations: phenotype?.iterations ?? 3 + (hash % 2),
+        angleJitter: phenotype?.angleJitter,
+        segmentLength: phenotype?.segmentLength ?? 5 + (hash % 5),
+    });
+
+    if (hasRootedShape(candidate)) return candidate;
+
+    return buildPlantFromPreset({
+        text,
+        seed,
+        phenotype: {
+            ...phenotype,
+            presetIndex: SAFE_FALLBACK_PRESET,
+            iterations: 3,
+        },
+        presetIndex: SAFE_FALLBACK_PRESET,
+        iterations: 3,
+        angleJitter: ((hash >> 4) % 7) - 3,
+        segmentLength: 6 + (hash % 3),
+    });
 };

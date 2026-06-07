@@ -6,6 +6,7 @@ const GardenSpace = ({ plants = [] }) => (
         plants={plants}
         className={styles.space}
         canvasClassName={styles.canvas}
+        showPlantTitles={false}
     />
 );
 

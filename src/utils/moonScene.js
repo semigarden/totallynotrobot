@@ -12,7 +12,7 @@ const createMoonSurfaceTexture = () => {
 
     const center = size / 2;
     const radius = size * 0.48;
-    const edgeColor = "#d4d0c6";
+    const edgeColor = "#d4d4d4";
 
     ctx.clearRect(0, 0, size, size);
 
@@ -29,8 +29,8 @@ const createMoonSurfaceTexture = () => {
         center,
         radius
     );
-    body.addColorStop(0, "#f4f0e6");
-    body.addColorStop(0.65, "#e6e2d8");
+    body.addColorStop(0, "#f4f4f4");
+    body.addColorStop(0.65, "#e6e6e6");
     body.addColorStop(1, edgeColor);
 
     ctx.fillStyle = body;
@@ -94,33 +94,33 @@ export const createMoon = (scene) => {
     const moonRoot = new THREE.Group();
 
     const innerGlowTexture = createGlowTexture([
-        [0, "rgba(255, 248, 235, 0.9)"],
-        [0.12, "rgba(245, 238, 220, 0.45)"],
-        [0.28, "rgba(210, 220, 240, 0.12)"],
-        [0.5, "rgba(170, 190, 230, 0.03)"],
-        [1, "rgba(120, 140, 200, 0)"],
+        [0, "rgba(255, 255, 255, 0.9)"],
+        [0.12, "rgba(235, 235, 235, 0.45)"],
+        [0.28, "rgba(210, 210, 210, 0.12)"],
+        [0.5, "rgba(170, 170, 170, 0.03)"],
+        [1, "rgba(120, 120, 120, 0)"],
     ]);
     moonRoot.add(
         createGlowSprite(innerGlowTexture, 10, 0.85, THREE.AdditiveBlending, 1)
     );
 
     const outerGlowTexture = createGlowTexture([
-        [0, "rgba(220, 230, 255, 0.08)"],
-        [0.2, "rgba(180, 200, 240, 0.05)"],
-        [0.45, "rgba(140, 170, 220, 0.025)"],
-        [0.72, "rgba(100, 130, 190, 0.01)"],
-        [1, "rgba(60, 80, 140, 0)"],
+        [0, "rgba(230, 230, 230, 0.08)"],
+        [0.2, "rgba(200, 200, 200, 0.05)"],
+        [0.45, "rgba(165, 165, 165, 0.025)"],
+        [0.72, "rgba(120, 120, 120, 0.01)"],
+        [1, "rgba(70, 70, 70, 0)"],
     ]);
     moonRoot.add(
         createGlowSprite(outerGlowTexture, 34, 0.7, THREE.AdditiveBlending, 1)
     );
 
     const coronaTexture = createGlowTexture([
-        [0, "rgba(160, 180, 230, 0)"],
-        [0.35, "rgba(130, 155, 210, 0.015)"],
-        [0.6, "rgba(100, 130, 190, 0.008)"],
-        [0.82, "rgba(80, 110, 170, 0.004)"],
-        [1, "rgba(50, 70, 120, 0)"],
+        [0, "rgba(180, 180, 180, 0)"],
+        [0.35, "rgba(155, 155, 155, 0.015)"],
+        [0.6, "rgba(130, 130, 130, 0.008)"],
+        [0.82, "rgba(110, 110, 110, 0.004)"],
+        [1, "rgba(70, 70, 70, 0)"],
     ]);
     moonRoot.add(
         createGlowSprite(coronaTexture, 58, 0.55, THREE.AdditiveBlending, 1)
@@ -141,13 +141,13 @@ export const createMoon = (scene) => {
     moonDisk.renderOrder = 2;
     moonRoot.add(moonDisk);
 
-    const moonLight = new THREE.DirectionalLight(0xa8bdd8, 0.62);
+    const moonLight = new THREE.DirectionalLight(0xc8c8c8, 0.62);
     moonLight.position.copy(MOON_POSITION);
     moonLight.target.position.set(0, 0, 0);
     moonRoot.add(moonLight);
     moonRoot.add(moonLight.target);
 
-    const ambient = new THREE.AmbientLight(0x101828, 0.28);
+    const ambient = new THREE.AmbientLight(0x181818, 0.28);
     moonRoot.add(ambient);
 
     scene.add(moonRoot);

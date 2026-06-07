@@ -12,17 +12,17 @@ const memory = {
     threshold: 1,
     year: 2024,
     items: [
-        {category: "0", label: "React.js", icon: faReact, iconType: "fontawesome", animation: "fa-spin", color: "#C1FFF2"},
+        {category: "0", label: "React.js", icon: faReact, iconType: "fontawesome", animation: "fa-spin", color: "#F2F2F2"},
         {category: "0", label: "Next.js", icon: NextJsIcon, iconType: "svg", animation: "fa-fade", color: "#FFF"},
-        {category: "0", label: "Vue.js", icon: faVuejs, iconType: "fontawesome", animation: "fa-flip", color: "#7AFDD6"},
-        {category: "0", label: "Nuxt.js", icon: mdiNuxt, iconType: "mdi", animation: "fa-fade", color: "#7AFDD6"},
-        {category: "0", label: "HTML", icon: faHtml5, iconType: "fontawesome", animation: "fa-beat-fade", color: "#EF8354"},
-        {category: "0", label: "JavaScript", icon: faJs, iconType: "fontawesome", animation: "fa-beat-fade", color: "#FDE74C"},
-        {category: "0", label: "CSS", icon: faCss3Alt, iconType: "fontawesome", animation: "fa-beat-fade", color: "#63ADF2"},
-        {category: "0", label: "Node.js", icon: faNode, iconType: "fontawesome", animation: "fa-fade", color: "#40F99B"},
-        {category: "0", label: "Laravel", icon: faLaravel, iconType: "fontawesome", animation: "fa-fade", color: "#FF6F7A"},
-        {category: "0", label: "PHP", icon: faPhp, iconType: "fontawesome", animation: "fa-fade", color: "#9B5DE5"},
-        {category: "0", label: "Python", icon: faPython, iconType: "fontawesome", animation: "fa-fade", color: "#FDE74C"},
+        {category: "0", label: "Vue.js", icon: faVuejs, iconType: "fontawesome", animation: "fa-flip", color: "#DADADA"},
+        {category: "0", label: "Nuxt.js", icon: mdiNuxt, iconType: "mdi", animation: "fa-fade", color: "#DADADA"},
+        {category: "0", label: "HTML", icon: faHtml5, iconType: "fontawesome", animation: "fa-beat-fade", color: "#BEBEBE"},
+        {category: "0", label: "JavaScript", icon: faJs, iconType: "fontawesome", animation: "fa-beat-fade", color: "#E8E8E8"},
+        {category: "0", label: "CSS", icon: faCss3Alt, iconType: "fontawesome", animation: "fa-beat-fade", color: "#C8C8C8"},
+        {category: "0", label: "Node.js", icon: faNode, iconType: "fontawesome", animation: "fa-fade", color: "#D0D0D0"},
+        {category: "0", label: "Laravel", icon: faLaravel, iconType: "fontawesome", animation: "fa-fade", color: "#B8B8B8"},
+        {category: "0", label: "PHP", icon: faPhp, iconType: "fontawesome", animation: "fa-fade", color: "#C4C4C4"},
+        {category: "0", label: "Python", icon: faPython, iconType: "fontawesome", animation: "fa-fade", color: "#E0E0E0"},
         
         
         
