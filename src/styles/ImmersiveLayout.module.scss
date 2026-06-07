@@ -74,7 +74,7 @@
 
 .hudDock {
     position: fixed;
-    top: max(6px, env(safe-area-inset-top, 0px));
+    top: max(12px, env(safe-area-inset-top, 0px));
     left: max(12px, env(safe-area-inset-left, 0px));
     z-index: 2;
     pointer-events: auto;
@@ -83,7 +83,7 @@
 .hudImmersive {
     position: relative;
     width: 320px;
-    height: 158px;
+    height: 120px;
     overflow: visible;
 }
 
