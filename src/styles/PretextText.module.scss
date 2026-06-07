@@ -1,0 +1,256 @@
+@keyframes echoBreathe {
+    0%,
+    100% {
+        opacity: 0.38;
+    }
+
+    50% {
+        opacity: 0.82;
+    }
+}
+
+@keyframes wakeBreathe {
+    0%,
+    100% {
+        opacity: 0.28;
+        letter-spacing: 0.02em;
+        transform: skewX(-3deg) translateY(0.5px);
+    }
+
+    50% {
+        opacity: 0.62;
+        letter-spacing: 0.07em;
+        transform: skewX(2deg) translateY(-1.5px);
+    }
+}
+
+@keyframes breathe {
+    0% {
+        opacity: 0.14;
+        transform: translate(0, 0.5px) scale(0.984);
+    }
+
+    20% {
+        opacity: 0.26;
+        transform: translate(0.3px, -0.4px) scale(1.006);
+    }
+
+    45% {
+        opacity: 0.4;
+        transform: translate(0, -1.6px) scale(1.018);
+    }
+
+    65% {
+        opacity: 0.52;
+        transform: translate(-0.2px, -2.2px) scale(1.024);
+    }
+
+    80% {
+        opacity: 0.34;
+        transform: translate(0.15px, -0.8px) scale(1.01);
+    }
+
+    100% {
+        opacity: 0.14;
+        transform: translate(0, 0.5px) scale(0.984);
+    }
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.root {
+    cursor: text;
+}
+
+.line {
+    white-space: pre-wrap;
+}
+
+.word {
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.88);
+    animation: breathe var(--breathe-duration, 5.5s) cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    will-change: opacity, transform;
+    transition:
+        opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        letter-spacing 0.35s ease,
+        color 0.35s ease,
+        border-color 0.35s ease;
+}
+
+.wordWake {
+    animation-name: wakeBreathe;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.42);
+}
+
+.wordAnchored {
+    animation: none;
+    color: rgba(255, 255, 255, calc(0.35 + var(--anchor-strength, 0.5) * 0.55));
+    transform: none;
+}
+
+.wordFocused {
+    color: #fff !important;
+    transform: none !important;
+}
+
+.wordEcho {
+    animation-name: echoBreathe;
+    border-bottom: 1px solid transparent;
+}
+
+.wordEcho_dream {
+    color: rgba(255, 255, 255, 0.48);
+    border-bottom-color: rgba(255, 255, 255, 0.18);
+    font-weight: 300;
+}
+
+.wordEcho_river {
+    color: rgba(255, 255, 255, 0.58);
+    border-bottom-style: dashed;
+    border-bottom-color: rgba(255, 255, 255, 0.28);
+    font-weight: 400;
+}
+
+.wordEcho_root {
+    color: rgba(255, 255, 255, 0.4);
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(255, 255, 255, 0.22);
+    font-weight: 500;
+}
+
+.wordEcho_becoming {
+    color: rgba(255, 255, 255, 0.68);
+    border-bottom-style: dotted;
+    border-bottom-color: rgba(255, 255, 255, 0.34);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.wordEcho_static {
+    color: rgba(255, 255, 255, 0.32);
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+    font-weight: 300;
+    font-style: italic;
+}
+
+.wordEchoLit {
+    animation: none !important;
+    color: #fff !important;
+    opacity: 1 !important;
+    transform: none !important;
+    letter-spacing: 0.05em !important;
+    border-bottom-color: rgba(255, 255, 255, 0.72) !important;
+    border-bottom-width: 2px !important;
+}
+
+.glossReveal {
+    text-align: center;
+    font-family: "Sulphur Point", sans-serif;
+    font-size: 11px;
+    line-height: 1.45;
+    animation: glossIn 0.3s ease;
+}
+
+@keyframes glossIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.glossLabel {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.32);
+    margin-bottom: 3px;
+}
+
+.glossText {
+    color: rgba(255, 255, 255, 0.72);
+    font-style: italic;
+}
+
+.echoTracks {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.echoTrack {
+    opacity: 0.08;
+    transform: translateY(4px);
+    transition:
+        opacity 0.45s ease,
+        transform 0.45s ease;
+    pointer-events: none;
+    text-align: center;
+    font-family: "Sulphur Point", sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.echoTrackVisible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.echoLabel {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.28);
+}
+
+.echoSentence {
+    color: rgba(255, 255, 255, 0.62);
+    font-style: italic;
+}
+
+.echoTrackVisible .echoLabel {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.echoTrackVisible .echoSentence {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.echoTrack_dream.echoTrackVisible .echoSentence {
+    font-weight: 300;
+}
+
+.echoTrack_river.echoTrackVisible .echoSentence {
+    font-weight: 400;
+}
+
+.echoTrack_root.echoTrackVisible .echoSentence {
+    font-weight: 500;
+}
+
+.echoTrack_becoming.echoTrackVisible .echoSentence {
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.echoTrack_static.echoTrackVisible .echoSentence {
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.78);
+}

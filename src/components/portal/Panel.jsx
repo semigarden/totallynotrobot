@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
 import Drag from "@/components/effect/Drag";
 import AnimateText from "@/components/effect/AnimateText";
+import PretextText from "@/components/effect/PretextText";
 import LevelBar from "@/components/hud/LevelBar";
 import Name from "@/components/hud/Name";
 import styles from "@/styles/Panel.module.scss";
+import manifestoStyles from "@/styles/Manifesto.module.scss";
 import memory, { level, exp } from "@/api/memory"
+import {
+    MANIFESTO_LAYERS,
+    MANIFESTO_SEGMENTS,
+    buildManifestoModel,
+} from "@/data/manifesto"
 
 const Panel = () => {
-    const [tab, setTab] = useState('Toolkit');
+    const [tab, setTab] = useState('Manifesto');
     
     const openTab = (tab) => {
         setTab(tab);
@@ -61,7 +68,7 @@ const Panel = () => {
                     </div>
 
                     <div className={styles.tabs}>
-                        {['Toolkit', 'Projects', 'Connection', 'Experience', 'Interests'].map((nodeName) => (
+                        {['Manifesto', 'Toolkit', 'Projects', 'Connection', 'Experience', 'Interests'].map((nodeName) => (
                             <div 
                                 key={nodeName}
                                 className={`${styles.tab} ${tab === nodeName && styles.active}`}
@@ -76,7 +83,25 @@ const Panel = () => {
                     </div>
                 </div>
 
+                {tab === 'Manifesto' && <Manifesto />}
                 {tab === 'Toolkit' && <Drag className={styles.list} itemsData={memory.items} />}
+            </div>
+        </div>
+    );
+};
+
+const manifesto = buildManifestoModel(MANIFESTO_SEGMENTS, MANIFESTO_LAYERS);
+
+const Manifesto = () => {
+    return (
+        <div className={manifestoStyles.manifesto}>
+            <div className={manifestoStyles.manifestoContent}>
+                <PretextText
+                    text={manifesto.text}
+                    wordMeta={manifesto.wordMeta}
+                    echoLayers={manifesto.echoLayers}
+                    className={manifestoStyles.manifestoText}
+                />
             </div>
         </div>
     );
