@@ -1,3 +1,6 @@
+$assemble-ease: cubic-bezier(0.22, 1.2, 0.36, 1);
+$assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
+
 .name {
     position: relative;
     width: 100%;
@@ -291,6 +294,185 @@
             }
         }
     }
+
+    &.assembling {
+        .circle {
+            animation: circleAssemble 0.45s $assemble-snap 0s both;
+
+            .circleGlow {
+                animation: glowIgnite 0.35s ease-out 0.15s both,
+                    pulsing 3s ease-in-out 1.5s infinite;
+            }
+        }
+
+        .circleLine {
+            animation: circleLineAssemble 0.5s $assemble-ease 0.12s both;
+
+            .line0 {
+                transform-origin: left bottom;
+                animation: lineGrow 0.35s $assemble-ease 0.25s both;
+            }
+
+            .line1 {
+                transform-origin: left center;
+                animation: lineGrow 0.3s $assemble-ease 0.38s both;
+            }
+        }
+
+        .square {
+            transform-origin: center center;
+            animation: squareAssemble 0.55s $assemble-snap 0.28s both;
+
+            .squareGlow {
+                animation: glowIgnite 0.35s ease-out 0.55s both,
+                    pulsing 3s ease-in-out 1.5s infinite;
+            }
+        }
+
+        .frame {
+            animation: frameAssemble 0.6s $assemble-ease 0.42s both;
+
+            .frameTop > * {
+                animation: framePieceFromTop 0.4s $assemble-ease both;
+            }
+
+            @for $i from 1 through 5 {
+                .frameTop > *:nth-child(#{$i}) {
+                    animation-delay: #{0.52 + $i * 0.07}s;
+                }
+            }
+
+            .frameMain {
+                transform-origin: left center;
+                animation: frameMainAssemble 0.45s $assemble-ease 0.58s both;
+
+                .text {
+                    animation: nameAppear 0.8s $assemble-ease 4.5s both;
+                }
+            }
+
+            .frameBottom > * {
+                animation: framePieceFromBottom 0.38s $assemble-snap both;
+            }
+
+            @for $i from 1 through 5 {
+                .frameBottom > *:nth-child(#{$i}) {
+                    animation-delay: #{0.68 + $i * 0.06}s;
+                }
+            }
+        }
+    }
+}
+
+@keyframes circleAssemble {
+    0% {
+        opacity: 0;
+        transform: translateZ(0) scale(0) translateX(-12px);
+        box-shadow: 0 0 0 0 transparent;
+    }
+    60% {
+        box-shadow: 0 0 18px 2px #fff;
+    }
+    100% {
+        opacity: 1;
+        transform: translateZ(0) scale(1) translateX(0);
+        box-shadow: 0 0 10px 0 #fff;
+    }
+}
+
+@keyframes circleLineAssemble {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes lineGrow {
+    0% {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+@keyframes squareAssemble {
+    0% {
+        opacity: 0;
+        transform: rotate(-45deg) scale(0) translate(-8px, 8px);
+        box-shadow: 0 0 0 0 transparent;
+    }
+    70% {
+        box-shadow: 0 0 16px 2px #fff;
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(-45deg) scale(1) translate(0, 0);
+        box-shadow: 0 0 10px 0 #fff;
+    }
+}
+
+@keyframes frameAssemble {
+    0% {
+        opacity: 0;
+        transform: translateX(48px) skewX(-6deg);
+        filter: brightness(2);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) skewX(0);
+        filter: brightness(1);
+    }
+}
+
+@keyframes frameMainAssemble {
+    0% {
+        opacity: 0;
+        transform: scaleX(0.15);
+        clip-path: inset(0 100% 0 0);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleX(1);
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+@keyframes framePieceFromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-14px) scaleX(0.4);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scaleX(1);
+    }
+}
+
+@keyframes framePieceFromBottom {
+    0% {
+        opacity: 0;
+        transform: translateY(12px) scaleX(0.3);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scaleX(1);
+    }
+}
+
+@keyframes glowIgnite {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 @keyframes arrowFade {
@@ -309,10 +491,14 @@
     0% {
         opacity: 0;
         transform: scale(0.9);
+        letter-spacing: 8px;
+        filter: blur(4px);
     }
     100% {
         opacity: 1;
         transform: scale(1);
+        letter-spacing: 1px;
+        filter: blur(0);
     }
 }
 

@@ -6,7 +6,7 @@ import NextJsIcon from "@/assets/NextJsIcon.jsx";
 import { getLevel, getExp } from "@/utils/utils";
 
 const memory = {
-    name: "Faulty Circuit",
+    name: "Digital Garden",
     preface: "",
     level: 0,
     threshold: 1,

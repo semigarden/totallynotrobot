@@ -1,20 +1,25 @@
 import { useEffect, useRef } from 'react';
 import styles from "@/styles/hud/Name.module.scss";
 
-const Name = ({ className, name = ""}) => {
+const ASSEMBLE_DELAY = 1.2;
+const ARROW_STAGGER = 0.08;
+
+const Name = ({ className, name = "", animate = true }) => {
     const animationRef = useRef(null);
 
     useEffect(() => {
+        if (!animate) return;
+
         const arrows = animationRef.current?.querySelectorAll(`.${styles.arrow}`);
         if (arrows) {
             arrows.forEach((arrow, index) => {
-                arrow.style.animationDelay = `${index * 0.1}s`;
+                arrow.style.animationDelay = `${ASSEMBLE_DELAY + index * ARROW_STAGGER}s`;
             });
         }
-    }, []);
+    }, [animate]);
 
     return (
-        <div className={`${styles.name} ${className}`}>
+        <div className={`${styles.name} ${animate ? styles.assembling : ""} ${className}`}>
             <div className={styles.circle}>
                 <div className={styles.circleGlow}/>
             </div>
