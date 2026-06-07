@@ -33,6 +33,23 @@ const pointerDistance = (a, b) =>
 const DOUBLE_TAP_MS = 320;
 const DOUBLE_TAP_DISTANCE = 28;
 const TAP_MOVE_THRESHOLD = 12;
+const CLICK_MOVE_THRESHOLD = 6;
+const DEFAULT_MOVE_SPEED = 10;
+
+const pointerToGround = (camera, domElement, clientX, clientY, target) => {
+    const rect = domElement.getBoundingClientRect();
+    if (!rect.width || !rect.height) return false;
+
+    const ndc = new THREE.Vector2(
+        ((clientX - rect.left) / rect.width) * 2 - 1,
+        -((clientY - rect.top) / rect.height) * 2 + 1
+    );
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(ndc, camera);
+
+    const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    return raycaster.ray.intersectPlane(groundPlane, target);
+};
 
 export const attachGardenWalkControls = ({
     camera,
@@ -47,6 +64,7 @@ export const attachGardenWalkControls = ({
     rotateSpeed = 0.003,
     panSpeed = 0.004,
     pinchSpeed = 0.014,
+    moveSpeed = DEFAULT_MOVE_SPEED,
 }) => {
     const state =
         savedState &&
@@ -82,6 +100,9 @@ export const attachGardenWalkControls = ({
 
     const pointers = new Map();
     const forward = new THREE.Vector3();
+    const moveTarget = new THREE.Vector3();
+    const groundHit = new THREE.Vector3();
+    let hasMoveTarget = false;
     let dragMode = null;
     let lastX = 0;
     let lastY = 0;
@@ -91,8 +112,30 @@ export const attachGardenWalkControls = ({
     let touchStartX = 0;
     let touchStartY = 0;
     let touchMoved = false;
+    let clickStartX = 0;
+    let clickStartY = 0;
+    let clickCancelled = false;
+
+    const clearMoveTarget = () => {
+        hasMoveTarget = false;
+    };
+
+    const setMoveTarget = (x, z) => {
+        moveTarget.set(x, 0, z);
+        hasMoveTarget = true;
+    };
+
+    const moveToScreenPoint = (clientX, clientY) => {
+        if (!pointerToGround(camera, domElement, clientX, clientY, groundHit)) {
+            return false;
+        }
+
+        setMoveTarget(groundHit.x, groundHit.z);
+        return true;
+    };
 
     const applyPanMove = (dx, dy) => {
+        clearMoveTarget();
         const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
         right.y = 0;
         if (right.lengthSq() > 0.0001) right.normalize();
@@ -113,6 +156,7 @@ export const attachGardenWalkControls = ({
     };
 
     const applyPinchMove = (deltaDistance) => {
+        clearMoveTarget();
         camera.getWorldDirection(forward);
         forward.y = 0;
 
@@ -164,8 +208,13 @@ export const attachGardenWalkControls = ({
             touchStartY = event.clientY;
             touchMoved = false;
         } else if (event.button === 0) {
+            dragMode = "click";
+            clickStartX = event.clientX;
+            clickStartY = event.clientY;
+            clickCancelled = false;
+        } else if (event.button === 2) {
             dragMode = "rotate";
-        } else if (event.button === 1 || event.button === 2) {
+        } else if (event.button === 1) {
             dragMode = "pan";
         } else {
             pointers.delete(event.pointerId);
@@ -174,8 +223,15 @@ export const attachGardenWalkControls = ({
 
         lastX = event.clientX;
         lastY = event.clientY;
-        domElement.setPointerCapture(event.pointerId);
-        capturedPointerId = event.pointerId;
+
+        if (dragMode === "pan") {
+            clearMoveTarget();
+            domElement.setPointerCapture(event.pointerId);
+            capturedPointerId = event.pointerId;
+        } else if (dragMode === "rotate") {
+            domElement.setPointerCapture(event.pointerId);
+            capturedPointerId = event.pointerId;
+        }
     };
 
     const onPointerMove = (event) => {
@@ -209,6 +265,17 @@ export const attachGardenWalkControls = ({
         lastX = event.clientX;
         lastY = event.clientY;
 
+        if (dragMode === "click") {
+            const totalMove = Math.hypot(
+                event.clientX - clickStartX,
+                event.clientY - clickStartY
+            );
+            if (totalMove > CLICK_MOVE_THRESHOLD) {
+                clickCancelled = true;
+            }
+            return;
+        }
+
         if (
             event.pointerType === "touch" &&
             dragMode === "rotate" &&
@@ -233,19 +300,28 @@ export const attachGardenWalkControls = ({
         applyPanMove(dx, dy);
     };
 
-    const endDrag = (event) => {
+    const finishPointer = (event) => {
+        if (dragMode === "click" && !clickCancelled) {
+            moveToScreenPoint(event.clientX, event.clientY);
+        }
+
         if (
             event.pointerType === "touch" &&
             dragMode === "rotate" &&
             pointers.size === 1 &&
             !touchMoved
         ) {
+            moveToScreenPoint(event.clientX, event.clientY);
             lastTap = {
                 time: performance.now(),
                 x: event.clientX,
                 y: event.clientY,
             };
         }
+    };
+
+    const endDrag = (event) => {
+        finishPointer(event);
 
         pointers.delete(event.pointerId);
 
@@ -274,9 +350,34 @@ export const attachGardenWalkControls = ({
     domElement.addEventListener("pointercancel", endDrag);
     domElement.addEventListener("contextmenu", onContextMenu);
 
+    const update = (delta = 0) => {
+        if (!hasMoveTarget || delta <= 0) return;
+
+        const dx = moveTarget.x - state.x;
+        const dz = moveTarget.z - state.z;
+        const distance = Math.hypot(dx, dz);
+
+        if (distance < 0.08) {
+            state.x = moveTarget.x;
+            state.z = moveTarget.z;
+            clearMoveTarget();
+            constrainPosition?.(state);
+            updateCamera();
+            return;
+        }
+
+        const step = Math.min(distance, moveSpeed * delta);
+        state.x += (dx / distance) * step;
+        state.z += (dz / distance) * step;
+        constrainPosition?.(state);
+        updateCamera();
+    };
+
     return {
         getState: () => state,
         applyCamera: updateCamera,
+        cancelMoveTarget: clearMoveTarget,
+        update,
         dispose: () => {
             domElement.removeEventListener("pointerdown", onPointerDown);
             domElement.removeEventListener("pointermove", onPointerMove);

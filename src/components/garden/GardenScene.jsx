@@ -308,6 +308,7 @@ const GardenScene = ({
                     domElement: renderer.domElement,
                     speed: walkSpeed,
                     onMove: (move) => {
+                        walkControls.cancelMoveTarget?.();
                         const state = walkControls.getState();
                         state.x += move.x;
                         state.z += move.z;
@@ -393,7 +394,9 @@ const GardenScene = ({
         const animate = () => {
             frame = requestAnimationFrame(animate);
             controls?.update();
+            const delta = clock.getDelta();
             const elapsed = clock.getElapsedTime();
+            walkControls?.update(delta);
             ground.position.x = camera.position.x;
             ground.position.z = camera.position.z;
             syncGardenChunks({
