@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { hashString } from "@/utils/lSystem";
 
 const sortPoint = new THREE.Vector3();
+const cameraRight = new THREE.Vector3();
+const cameraUp = new THREE.Vector3();
 
 export const initPlantSway = (sprite, seed = "") => {
     const hash = hashString(seed);
@@ -50,6 +52,24 @@ const collectBillboards = (plantRoot) => {
     return billboards;
 };
 
+const updatePlantAtlases = (plantRoot, elapsed, camera) => {
+    if (!camera) return;
+
+    cameraRight.set(1, 0, 0).applyQuaternion(camera.quaternion);
+    cameraUp.set(0, 1, 0).applyQuaternion(camera.quaternion);
+
+    plantRoot.traverse((child) => {
+        if (!child.userData?.plantAtlas) return;
+
+        const uniforms = child.material?.uniforms;
+        if (!uniforms) return;
+
+        uniforms.time.value = elapsed;
+        uniforms.cameraRight.value.copy(cameraRight);
+        uniforms.cameraUp.value.copy(cameraUp);
+    });
+};
+
 const sortPlantBillboards = (plantRoot, camera) => {
     const billboards = collectBillboards(plantRoot);
     const entries = billboards.map((sprite) => {
@@ -75,6 +95,8 @@ const sortPlantBillboards = (plantRoot, camera) => {
 
 export const updatePlantSway = (plantRoot, elapsed, camera) => {
     if (!plantRoot) return;
+
+    updatePlantAtlases(plantRoot, elapsed, camera);
 
     collectBillboards(plantRoot).forEach((sprite) => {
         const sway = sprite.userData.sway;

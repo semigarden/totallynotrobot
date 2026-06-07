@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import { hashString, textToPlant } from "@/utils/lSystem";
 import {
+    applyGardenTextureQuality,
+    applyPlantTextureQuality,
+} from "@/utils/gardenRenderer";
+import {
     segmentStrokeColor,
     segmentStrokeWidth,
 } from "@/utils/plantDraw";
@@ -33,15 +37,18 @@ const phenotypeStrokeColor = (segment, phenotype) => {
     return `rgba(${channel}, ${channel}, ${channel}, ${opacity})`;
 };
 
-export const renderPlantToCanvas = (plant) => {
+export const renderPlantToCanvas = (plant, canvasTarget = CANVAS_TARGET) => {
     const canvas = document.createElement("canvas");
-    const scale = CANVAS_TARGET / Math.max(plant.width, plant.height, 1);
+    const scale = canvasTarget / Math.max(plant.width, plant.height, 1);
     canvas.width = Math.max(1, Math.ceil(plant.width * scale));
     canvas.height = Math.max(1, Math.ceil(plant.height * scale));
 
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = "high";
     context.lineCap = "round";
+    context.lineJoin = "round";
 
     plant.segments.forEach((segment) => {
         context.strokeStyle = phenotypeStrokeColor(segment, plant.phenotype);
@@ -67,28 +74,51 @@ export const createPlantBillboard = (text, seed = "", options = {}) => {
         at: options.at,
     });
     const plant = textToPlant(text, seed, phenotype);
+    const sizeScale = phenotype.sizeScale ?? plantWorldScale(text, seed);
+    const worldHeight = BASE_WORLD_HEIGHT * sizeScale;
     const canvas = renderPlantToCanvas(plant);
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
+    applyPlantTextureQuality(texture);
     texture.needsUpdate = true;
 
     const material = new THREE.SpriteMaterial({
         map: texture,
         transparent: true,
-        alphaTest: 0.02,
+        alphaTest: 0.008,
         depthWrite: false,
         depthTest: true,
     });
 
     const sprite = new THREE.Sprite(material);
     const aspect = plant.width / Math.max(plant.height, 1);
-    const sizeScale = phenotype.sizeScale ?? plantWorldScale(text, seed);
-    const worldHeight = BASE_WORLD_HEIGHT * sizeScale;
     sprite.scale.set(worldHeight * aspect, worldHeight, 1);
     sprite.center.set(0.5, 0);
     sprite.userData.sizeScale = sizeScale;
 
     return sprite;
+};
+
+export const createPlantRenderAsset = (text, seed = "", options = {}) => {
+    const phenotype = buildPlantPhenotype({
+        text,
+        id: seed,
+        gardenId: options.gardenId,
+        pubDate: options.pubDate,
+        at: options.at,
+    });
+    const plant = textToPlant(text, seed, phenotype);
+    const sizeScale = phenotype.sizeScale ?? plantWorldScale(text, seed);
+    const worldHeight = BASE_WORLD_HEIGHT * sizeScale;
+    const canvas = renderPlantToCanvas(plant);
+    const aspect = plant.width / Math.max(plant.height, 1);
+
+    return {
+        canvas,
+        sizeScale,
+        worldWidth: worldHeight * aspect,
+        worldHeight,
+    };
 };
 
 const wrapLabelLines = (context, text, maxWidth, maxLines = 3) => {
@@ -186,6 +216,7 @@ export const createPlantTitleLabel = (title, seed = "", date = null) => {
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
+    applyGardenTextureQuality(texture);
     texture.needsUpdate = true;
 
     const material = new THREE.SpriteMaterial({
@@ -236,6 +267,7 @@ export const createPlantNameLabel = (name, seed = "") => {
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
+    applyGardenTextureQuality(texture);
     texture.needsUpdate = true;
 
     const material = new THREE.SpriteMaterial({

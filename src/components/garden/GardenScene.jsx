@@ -6,6 +6,7 @@ import {
     createPlantNameLabel,
     createPlantTitleLabel,
 } from "@/utils/plantBillboard";
+import { createPlantAtlasBillboards } from "@/utils/plantAtlasBillboard";
 import { initPlantSway, updatePlantSway } from "@/utils/plantMotion";
 import {
     buildFlowerPosition,
@@ -26,6 +27,11 @@ import {
 } from "@/utils/gardenChunks";
 import { createMoon } from "@/utils/moonScene";
 import { createGardenComposer } from "@/utils/gardenPostProcessing";
+import {
+    createGardenRenderer,
+    gardenPixelRatio,
+    setGardenTextureRenderer,
+} from "@/utils/gardenRenderer";
 import { createGroundRipples } from "@/utils/groundRipples";
 import { createDateTerritories } from "@/utils/dateTerritories";
 import {
@@ -38,17 +44,21 @@ const FLOWERS_ENABLED = false;
 const TEMPORARILY_HIDE_SCENE_METADATA = true;
 
 const disposeObject = (object) => {
+    const disposeMaterial = (material) => {
+        if (material.map) material.map.dispose();
+        Object.values(material.uniforms ?? {}).forEach((uniform) => {
+            if (uniform?.value?.isTexture) uniform.value.dispose();
+        });
+        material.dispose();
+    };
+
     object.traverse((node) => {
         if (node.geometry) node.geometry.dispose();
         if (node.material) {
-            if (node.material.map) node.material.map.dispose();
             if (Array.isArray(node.material)) {
-                node.material.forEach((material) => {
-                    if (material.map) material.map.dispose();
-                    material.dispose();
-                });
+                node.material.forEach(disposeMaterial);
             } else {
-                node.material.dispose();
+                disposeMaterial(node.material);
             }
         }
     });
@@ -71,6 +81,10 @@ const createChunkContent = ({
     const plantGroup = new THREE.Group();
     const positions = gardenPlants.map(plantPosition);
 
+    if (!showPlantTitles) {
+        plantGroup.add(createPlantAtlasBillboards(gardenPlants));
+        group.add(plantGroup);
+    } else {
     gardenPlants.forEach((plant) => {
         const billboard = createPlantBillboard(plant.text, plant.id, {
             gardenId: plant.gardenId,
@@ -110,6 +124,7 @@ const createChunkContent = ({
     });
 
     group.add(plantGroup);
+    }
 
     if (FLOWERS_ENABLED) {
         const flowerGroup = new THREE.Group();
@@ -270,10 +285,9 @@ const GardenScene = ({
         camera.position.set(cameraOffset.x, cameraOffset.y, cameraOffset.z);
         cameraRef.current = camera;
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1;
+        const renderer = createGardenRenderer();
+        renderer.setPixelRatio(gardenPixelRatio());
+        setGardenTextureRenderer(renderer);
         mount.appendChild(renderer.domElement);
 
         const postProcessing = createGardenComposer(renderer, scene, camera);
@@ -449,6 +463,7 @@ const GardenScene = ({
             sceneRef.current = null;
             cameraRef.current = null;
             plantRootRef.current = null;
+            setGardenTextureRenderer(null);
             if (mount.contains(renderer.domElement)) {
                 mount.removeChild(renderer.domElement);
             }

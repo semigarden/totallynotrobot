@@ -27,6 +27,10 @@ const initWalkState = (offset, target, cameraY) => {
     };
 };
 
+const isMobileLikePointer = () =>
+    window.matchMedia("(pointer: coarse)").matches ||
+    window.matchMedia("(hover: none)").matches;
+
 const pointerDistance = (a, b) =>
     Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
 
@@ -80,6 +84,10 @@ export const attachGardenWalkControls = ({
               }
             : initWalkState(initialOffset, lookTarget, cameraY);
 
+    if (isMobileLikePointer()) {
+        state.pitch = initWalkState(initialOffset, lookTarget, cameraY).pitch;
+    }
+
     constrainPosition?.(state);
 
     const notifyPositionChange = () => {
@@ -107,14 +115,15 @@ export const attachGardenWalkControls = ({
     let lastX = 0;
     let lastY = 0;
     let pinchDistance = null;
+    let lastPinchCenter = null;
     let capturedPointerId = null;
     let lastTap = { time: 0, x: 0, y: 0 };
     let touchStartX = 0;
     let touchStartY = 0;
-    let touchMoved = false;
     let clickStartX = 0;
     let clickStartY = 0;
     let clickCancelled = false;
+    let suppressClickUntil = 0;
 
     const clearMoveTarget = () => {
         hasMoveTarget = false;
@@ -184,6 +193,10 @@ export const attachGardenWalkControls = ({
             dragMode = "pinch";
             const [first, second] = [...pointers.values()];
             pinchDistance = pointerDistance(first, second);
+            lastPinchCenter = {
+                x: (first.clientX + second.clientX) / 2,
+                y: (first.clientY + second.clientY) / 2,
+            };
 
             if (capturedPointerId !== null) {
                 domElement.releasePointerCapture(capturedPointerId);
@@ -203,19 +216,21 @@ export const attachGardenWalkControls = ({
                     event.clientY - lastTap.y
                 ) < DOUBLE_TAP_DISTANCE;
 
-            dragMode = isDoubleTap ? "pan" : "rotate";
+            dragMode = isDoubleTap ? "pan" : "click";
             touchStartX = event.clientX;
             touchStartY = event.clientY;
-            touchMoved = false;
+            clickStartX = event.clientX;
+            clickStartY = event.clientY;
+            clickCancelled = false;
         } else if (event.button === 0) {
             dragMode = "click";
             clickStartX = event.clientX;
             clickStartY = event.clientY;
             clickCancelled = false;
         } else if (event.button === 2) {
-            dragMode = "rotate";
-        } else if (event.button === 1) {
             dragMode = "pan";
+        } else if (event.button === 1) {
+            dragMode = "rotate";
         } else {
             pointers.delete(event.pointerId);
             return;
@@ -246,6 +261,18 @@ export const attachGardenWalkControls = ({
 
             const [first, second] = [...pointers.values()];
             const distance = pointerDistance(first, second);
+            const center = {
+                x: (first.clientX + second.clientX) / 2,
+                y: (first.clientY + second.clientY) / 2,
+            };
+
+            if (lastPinchCenter) {
+                const panDx = center.x - lastPinchCenter.x;
+                const panDy = center.y - lastPinchCenter.y;
+                if (Math.hypot(panDx, panDy) > 0.5) {
+                    applyPanMove(panDx, panDy);
+                }
+            }
 
             if (pinchDistance !== null) {
                 const delta = distance - pinchDistance;
@@ -255,6 +282,7 @@ export const attachGardenWalkControls = ({
             }
 
             pinchDistance = distance;
+            lastPinchCenter = center;
             return;
         }
 
@@ -272,21 +300,11 @@ export const attachGardenWalkControls = ({
             );
             if (totalMove > CLICK_MOVE_THRESHOLD) {
                 clickCancelled = true;
-            }
-            return;
-        }
-
-        if (
-            event.pointerType === "touch" &&
-            dragMode === "rotate" &&
-            !touchMoved
-        ) {
-            const totalMove = Math.hypot(
-                event.clientX - touchStartX,
-                event.clientY - touchStartY
-            );
-            if (totalMove > TAP_MOVE_THRESHOLD) {
-                touchMoved = true;
+                dragMode = "rotate";
+                domElement.setPointerCapture(event.pointerId);
+                capturedPointerId = event.pointerId;
+            } else {
+                return;
             }
         }
 
@@ -301,33 +319,45 @@ export const attachGardenWalkControls = ({
     };
 
     const finishPointer = (event) => {
+        if (performance.now() < suppressClickUntil) return;
+
         if (dragMode === "click" && !clickCancelled) {
             moveToScreenPoint(event.clientX, event.clientY);
-        }
-
-        if (
-            event.pointerType === "touch" &&
-            dragMode === "rotate" &&
-            pointers.size === 1 &&
-            !touchMoved
-        ) {
-            moveToScreenPoint(event.clientX, event.clientY);
-            lastTap = {
-                time: performance.now(),
-                x: event.clientX,
-                y: event.clientY,
-            };
+            if (event.pointerType === "touch") {
+                lastTap = {
+                    time: performance.now(),
+                    x: event.clientX,
+                    y: event.clientY,
+                };
+            }
         }
     };
 
     const endDrag = (event) => {
+        const endingPinch = dragMode === "pinch";
+
         finishPointer(event);
 
         pointers.delete(event.pointerId);
 
+        if (endingPinch) {
+            suppressClickUntil = performance.now() + 320;
+        }
+
         if (pointers.size < 2) {
             pinchDistance = null;
-            if (dragMode === "pinch") {
+            lastPinchCenter = null;
+            if (dragMode === "pinch" && pointers.size === 1) {
+                const remaining = [...pointers.values()][0];
+                dragMode = "rotate";
+                lastX = remaining.clientX;
+                lastY = remaining.clientY;
+                clickCancelled = true;
+                touchStartX = remaining.clientX;
+                touchStartY = remaining.clientY;
+                domElement.setPointerCapture(remaining.pointerId);
+                capturedPointerId = remaining.pointerId;
+            } else if (dragMode === "pinch") {
                 dragMode = null;
             }
         }
@@ -344,10 +374,10 @@ export const attachGardenWalkControls = ({
 
     const onContextMenu = (event) => event.preventDefault();
 
-    domElement.addEventListener("pointerdown", onPointerDown);
-    domElement.addEventListener("pointermove", onPointerMove);
-    domElement.addEventListener("pointerup", endDrag);
-    domElement.addEventListener("pointercancel", endDrag);
+    domElement.addEventListener("pointerdown", onPointerDown, { passive: false });
+    domElement.addEventListener("pointermove", onPointerMove, { passive: false });
+    domElement.addEventListener("pointerup", endDrag, { passive: false });
+    domElement.addEventListener("pointercancel", endDrag, { passive: false });
     domElement.addEventListener("contextmenu", onContextMenu);
 
     const update = (delta = 0) => {

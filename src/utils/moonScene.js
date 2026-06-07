@@ -1,10 +1,11 @@
 import * as THREE from "three";
+import { applyGardenTextureQuality } from "@/utils/gardenRenderer";
 
 const MOON_POSITION = new THREE.Vector3(16, 42, -24);
 const MOON_DISK_SIZE = 4.7;
 
 const createMoonSurfaceTexture = () => {
-    const size = 256;
+    const size = 512;
     const canvas = document.createElement("canvas");
     canvas.width = size;
     canvas.height = size;
@@ -42,11 +43,12 @@ const createMoonSurfaceTexture = () => {
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.wrapS = THREE.ClampToEdgeWrapping;
     texture.wrapT = THREE.ClampToEdgeWrapping;
+    applyGardenTextureQuality(texture);
     return texture;
 };
 
 const createGlowTexture = (stops) => {
-    const size = 512;
+    const size = 1024;
     const canvas = document.createElement("canvas");
     canvas.width = size;
     canvas.height = size;
@@ -69,6 +71,7 @@ const createGlowTexture = (stops) => {
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
+    applyGardenTextureQuality(texture);
     return texture;
 };
 

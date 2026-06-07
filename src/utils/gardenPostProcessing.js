@@ -4,6 +4,7 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { FilmPass } from "three/addons/postprocessing/FilmPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { gardenPixelRatio } from "@/utils/gardenRenderer";
 
 export const createGardenComposer = (renderer, scene, camera) => {
     const composer = new EffectComposer(renderer);
@@ -28,8 +29,13 @@ export const createGardenComposer = (renderer, scene, camera) => {
         bloomPass,
         noisePass,
         resize: (width, height) => {
+            const nextPixelRatio = gardenPixelRatio();
+            renderer.setPixelRatio(nextPixelRatio);
             composer.setSize(width, height);
-            bloomPass.resolution.set(width, height);
+            bloomPass.resolution.set(
+                width * nextPixelRatio,
+                height * nextPixelRatio
+            );
         },
         dispose: () => {
             composer.dispose();
