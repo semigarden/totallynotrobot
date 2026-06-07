@@ -62,21 +62,21 @@ export const buildForestLayout = (plants) => {
             return;
         }
 
-        const recentWindow = Math.min(index, 8);
+        const recentWindow = Math.min(index, 10);
         const anchorIndex = index - 1 - (hash % recentWindow);
         const anchor =
             positions[anchorIndex] ?? positions[index - 1] ?? { x: 0, z: 0 };
 
         const angle = ((hash >> 8) % 628) / 100;
-        const distance = 0.65 + ((hash >> 14) % 160) / 100;
+        const distance = 1.4 + ((hash >> 14) % 220) / 100;
 
         let x = anchor.x + Math.cos(angle) * distance;
         let z = anchor.z + Math.sin(angle) * distance;
 
         const distFromCenter = Math.hypot(x, z);
-        const shell = Math.sqrt(index) * 0.55;
+        const shell = Math.sqrt(index) * 0.9;
         if (distFromCenter > shell && index > 2) {
-            const pull = 0.18;
+            const pull = 0.08;
             x -= (x / distFromCenter) * pull;
             z -= (z / distFromCenter) * pull;
         }

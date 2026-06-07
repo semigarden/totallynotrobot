@@ -5,6 +5,7 @@ import {
     buildForestLayout,
     createPlantBillboard,
 } from "@/utils/plantBillboard";
+import { initPlantSway, updatePlantSway } from "@/utils/plantMotion";
 import {
     buildFlowerPosition,
     createFlowerBillboard,
@@ -20,6 +21,7 @@ import {
     clampWalkPosition,
 } from "@/utils/gardenNavigation";
 import { createMoon } from "@/utils/moonScene";
+import { createGardenComposer } from "@/utils/gardenPostProcessing";
 
 const FLOWERS_ENABLED = false;
 
@@ -58,6 +60,7 @@ const populateGarden = (scene, plantRoot, flowerRoot, grassRef, plants) => {
             const billboard = createPlantBillboard(plant.text, plant.id);
             const position = layout[index];
             billboard.position.set(position.x, 0, position.z);
+            initPlantSway(billboard, plant.id ?? plant.text);
             plantRoot.add(billboard);
         });
     }
@@ -143,7 +146,11 @@ const GardenScene = ({
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1;
         mount.appendChild(renderer.domElement);
+
+        const postProcessing = createGardenComposer(renderer, scene, camera);
 
         let controls = null;
         let walkControls = null;
@@ -247,13 +254,16 @@ const GardenScene = ({
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height, false);
+            postProcessing.resize(width, height);
         };
 
+        const clock = new THREE.Clock();
         let frame = 0;
         const animate = () => {
             frame = requestAnimationFrame(animate);
             controls?.update();
-            renderer.render(scene, camera);
+            updatePlantSway(plantRoot, clock.getElapsedTime());
+            postProcessing.composer.render();
         };
         animate();
 
@@ -274,6 +284,7 @@ const GardenScene = ({
             scene.remove(moonRoot);
             disposeObject(moonRoot);
             disposeObject(scene);
+            postProcessing.dispose();
             renderer.dispose();
             sceneRef.current = null;
             plantRootRef.current = null;
