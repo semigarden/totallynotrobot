@@ -1,4 +1,5 @@
 import GardenScene from "@/components/garden/GardenScene";
+import { computeMoonFramedLookTarget } from "@/utils/moonScene";
 import styles from "@/styles/GardenBackground.module.scss";
 
 const GROUND_CAMERA = {
@@ -8,6 +9,8 @@ const GROUND_CAMERA = {
     maxDistance: 28,
 };
 
+const FRESH_SPAWN_LOOK = computeMoonFramedLookTarget(GROUND_CAMERA.offset);
+
 const GardenBackground = ({ plants = [], onWalkStateChange, gardenActionsRef }) => (
     <GardenScene
         plants={plants}
@@ -15,6 +18,7 @@ const GardenBackground = ({ plants = [], onWalkStateChange, gardenActionsRef }) 
         canvasClassName={styles.canvas}
         cameraOffset={GROUND_CAMERA.offset}
         cameraTarget={GROUND_CAMERA.target}
+        freshSpawnLookTarget={FRESH_SPAWN_LOOK}
         minDistance={GROUND_CAMERA.minDistance}
         maxDistance={GROUND_CAMERA.maxDistance}
         scrollWalk

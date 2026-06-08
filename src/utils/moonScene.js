@@ -1,8 +1,11 @@
 import * as THREE from "three";
 import { applyGardenTextureQuality } from "@/utils/gardenRenderer";
 
-const MOON_POSITION = new THREE.Vector3(16, 42, -24);
+export const MOON_POSITION = new THREE.Vector3(16, 42, -24);
 const MOON_DISK_SIZE = 4.7;
+const MOON_SCREEN_ANCHOR = { x: -0.3, y: 0.3 };
+const WALK_PITCH_UP = -1.45;
+const WALK_PITCH_DOWN = 0.75;
 
 const createMoonSurfaceTexture = () => {
     const size = 512;
@@ -156,4 +159,82 @@ export const createMoon = (scene) => {
     scene.add(moonRoot);
 
     return moonRoot;
+};
+
+export const computeMoonFramedLookTarget = (
+    cameraPosition,
+    {
+        moonPosition = MOON_POSITION,
+        screenAnchor = MOON_SCREEN_ANCHOR,
+        fov = 48,
+        aspect = 16 / 9,
+    } = {}
+) => {
+    const cam = new THREE.Vector3(
+        cameraPosition.x ?? 0,
+        cameraPosition.y ?? 0,
+        cameraPosition.z ?? 0
+    );
+    const moon = moonPosition.clone();
+    const helperCam = new THREE.PerspectiveCamera(fov, aspect, 0.1, 100);
+    const moonProbe = new THREE.Vector3();
+    let best = null;
+
+    const projectMoon = (targetX, targetY, targetZ) => {
+        helperCam.position.copy(cam);
+        helperCam.lookAt(targetX, targetY, targetZ);
+        const euler = new THREE.Euler().setFromQuaternion(
+            helperCam.quaternion,
+            "YXZ"
+        );
+        const pitch = THREE.MathUtils.clamp(euler.x, WALK_PITCH_UP, WALK_PITCH_DOWN);
+        helperCam.quaternion.setFromEuler(
+            new THREE.Euler(pitch, euler.y, 0, "YXZ")
+        );
+        helperCam.updateMatrixWorld(true);
+        moonProbe.copy(moon).project(helperCam);
+        return moonProbe;
+    };
+
+    for (let targetX = cam.x - 12; targetX <= cam.x + 22; targetX += 1) {
+        for (let targetY = -2; targetY <= 20; targetY += 1) {
+            for (let targetZ = cam.z - 28; targetZ <= cam.z + 4; targetZ += 1) {
+                const projected = projectMoon(targetX, targetY, targetZ);
+                if (projected.z > 1) continue;
+
+                const score = Math.hypot(
+                    projected.x - screenAnchor.x,
+                    projected.y - screenAnchor.y
+                );
+                if (
+                    projected.x >= 0 ||
+                    projected.y <= 0 ||
+                    (best && score >= best.score)
+                ) {
+                    continue;
+                }
+
+                best = {
+                    score,
+                    x: targetX,
+                    y: targetY,
+                    z: targetZ,
+                };
+            }
+        }
+    }
+
+    if (!best) {
+        return {
+            x: moon.x,
+            y: moon.y,
+            z: moon.z,
+        };
+    }
+
+    return {
+        x: best.x,
+        y: best.y,
+        z: best.z,
+    };
 };
