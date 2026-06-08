@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { wrapPointToBounds } from "@/utils/gardenChunks";
 
 const parsePlantDate = (plant) => {
     const value = plant?.pubDate ?? plant?.at;
@@ -208,6 +209,377 @@ const createTerritoryMesh = (key, plants, area, { showLabel = true } = {}) => {
     }
     return root;
 };
+
+const boundsFromBoundary = (boundary) => {
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minZ = Infinity;
+    let maxZ = -Infinity;
+
+    boundary.forEach((point) => {
+        minX = Math.min(minX, point.x);
+        maxX = Math.max(maxX, point.x);
+        minZ = Math.min(minZ, point.z);
+        maxZ = Math.max(maxZ, point.z);
+    });
+
+    return { minX, maxX, minZ, maxZ };
+};
+
+export const pointInPolygon = (point, polygon) => {
+    if (!polygon?.length) return true;
+
+    let inside = false;
+
+    for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
+        const current = polygon[index];
+        const prior = polygon[previous];
+        const intersects =
+            current.z > point.z !== prior.z > point.z &&
+            point.x <
+                ((prior.x - current.x) * (point.z - current.z)) /
+                    (prior.z - current.z) +
+                    current.x;
+
+        if (intersects) inside = !inside;
+    }
+
+    return inside;
+};
+
+const WRAP_ENTRY_EPSILON = 0.2;
+
+const segmentIntersection = (from, to, edgeStart, edgeEnd) => {
+    const denom =
+        (to.x - from.x) * (edgeEnd.z - edgeStart.z) -
+        (to.z - from.z) * (edgeEnd.x - edgeStart.x);
+
+    if (Math.abs(denom) < 1e-9) return null;
+
+    const startOffsetX = edgeStart.x - from.x;
+    const startOffsetZ = edgeStart.z - from.z;
+    const t =
+        (startOffsetX * (edgeEnd.z - edgeStart.z) -
+            startOffsetZ * (edgeEnd.x - edgeStart.x)) /
+        denom;
+    const u =
+        (startOffsetX * (to.z - from.z) - startOffsetZ * (to.x - from.x)) /
+        denom;
+
+    if (t < 0 || t > 1 || u < 0 || u > 1) return null;
+
+    return {
+        x: from.x + t * (to.x - from.x),
+        z: from.z + t * (to.z - from.z),
+        t,
+    };
+};
+
+const findBoundaryCrossing = (from, to, polygon) => {
+    const fromInside = pointInPolygon(from, polygon);
+    const toInside = pointInPolygon(to, polygon);
+    let crossing = null;
+
+    for (let index = 0; index < polygon.length; index++) {
+        const edgeStart = polygon[index];
+        const edgeEnd = polygon[(index + 1) % polygon.length];
+        const hit = segmentIntersection(from, to, edgeStart, edgeEnd);
+
+        if (!hit) continue;
+
+        if (fromInside && !toInside) {
+            if (!crossing || hit.t < crossing.t) {
+                crossing = hit;
+            }
+            continue;
+        }
+
+        if (!fromInside && toInside) {
+            if (!crossing || hit.t > crossing.t) {
+                crossing = hit;
+            }
+            continue;
+        }
+
+        if (!crossing || hit.t > crossing.t) {
+            crossing = hit;
+        }
+    }
+
+    return crossing;
+};
+
+const closestPointOnSegment = (point, start, end) => {
+    const dx = end.x - start.x;
+    const dz = end.z - start.z;
+    const lengthSq = dx * dx + dz * dz;
+
+    if (lengthSq < 1e-9) {
+        return {
+            point: { x: start.x, z: start.z },
+            distance: Math.hypot(point.x - start.x, point.z - start.z),
+        };
+    }
+
+    const t = Math.max(
+        0,
+        Math.min(
+            1,
+            ((point.x - start.x) * dx + (point.z - start.z) * dz) / lengthSq
+        )
+    );
+
+    const projected = {
+        x: start.x + dx * t,
+        z: start.z + dz * t,
+    };
+
+    return {
+        point: projected,
+        distance: Math.hypot(point.x - projected.x, point.z - projected.z),
+    };
+};
+
+const closestBoundaryPoint = (point, boundary) => {
+    let closest = null;
+    let closestDistance = Infinity;
+
+    for (let index = 0; index < boundary.length; index++) {
+        const start = boundary[index];
+        const end = boundary[(index + 1) % boundary.length];
+        const hit = closestPointOnSegment(point, start, end);
+
+        if (hit.distance < closestDistance) {
+            closestDistance = hit.distance;
+            closest = hit.point;
+        }
+    }
+
+    return closest;
+};
+
+const nearestAabbEdge = (contact, bounds) => {
+    const west = contact.x - bounds.minX;
+    const east = bounds.maxX - contact.x;
+    const south = contact.z - bounds.minZ;
+    const north = bounds.maxZ - contact.z;
+    const nearest = Math.min(west, east, south, north);
+
+    if (nearest === east) return "east";
+    if (nearest === west) return "west";
+    if (nearest === north) return "north";
+    return "south";
+};
+
+const oppositeTorusEntry = (contact, bounds) => {
+    const edge = nearestAabbEdge(contact, bounds);
+
+    if (edge === "east") {
+        return {
+            edge,
+            x: bounds.minX + (bounds.maxX - contact.x),
+            z: contact.z,
+        };
+    }
+    if (edge === "west") {
+        return {
+            edge,
+            x: bounds.maxX - (contact.x - bounds.minX),
+            z: contact.z,
+        };
+    }
+    if (edge === "north") {
+        return {
+            edge,
+            x: contact.x,
+            z: bounds.minZ + (bounds.maxZ - contact.z),
+        };
+    }
+    return {
+        edge,
+        x: contact.x,
+        z: bounds.maxZ - (contact.z - bounds.minZ),
+    };
+};
+
+export const reverseFacingForWrap = (state, motion = null) => {
+    const motionLength = Math.hypot(motion?.dx ?? 0, motion?.dz ?? 0);
+
+    if (motionLength > 1e-6) {
+        state.yaw = Math.atan2(motion.dx, motion.dz) + Math.PI;
+    } else if (Number.isFinite(state?.yaw)) {
+        state.yaw += Math.PI;
+    }
+
+    if (Number.isFinite(state?.yaw)) {
+        state.yaw = Math.atan2(Math.sin(state.yaw), Math.cos(state.yaw));
+    }
+};
+
+const stepInsideAlongMotion = (point, boundary, motionX, motionZ) => {
+    const length = Math.hypot(motionX, motionZ);
+    if (length < 1e-6) return false;
+
+    const directionX = motionX / length;
+    const directionZ = motionZ / length;
+
+    for (let step = WRAP_ENTRY_EPSILON; step <= 2.5; step += 0.1) {
+        const candidate = {
+            x: point.x + directionX * step,
+            z: point.z + directionZ * step,
+        };
+
+        if (pointInPolygon(candidate, boundary)) {
+            point.x = candidate.x;
+            point.z = candidate.z;
+            return true;
+        }
+    }
+
+    return false;
+};
+
+const wrapAtBoundaryContact = (point, territory, previous, contact) => {
+    const { bounds, boundary } = territory;
+    if (!bounds || !boundary?.length || !contact || !previous) return null;
+
+    const beforeX = point.x;
+    const beforeZ = point.z;
+    const entry = oppositeTorusEntry(contact, bounds);
+    const motionX = point.x - previous.x;
+    const motionZ = point.z - previous.z;
+
+    point.x = entry.x;
+    point.z = entry.z;
+
+    if (!stepInsideAlongMotion(point, boundary, motionX, motionZ)) {
+        point.x = entry.x + motionX;
+        point.z = entry.z + motionZ;
+
+        if (!pointInPolygon(point, boundary)) {
+            point.x = entry.x;
+            point.z = entry.z;
+            stepInsideAlongMotion(point, boundary, motionX, motionZ);
+        }
+    }
+
+    if (Math.hypot(point.x - beforeX, point.z - beforeZ) < 0.05) {
+        return null;
+    }
+
+    return entry.edge;
+};
+
+export const wrapPointToTerritory = (point, territory, previous = null) => {
+    const bounds = territory?.bounds;
+    const boundary = territory?.boundary;
+
+    if (!bounds) return null;
+
+    if (!boundary?.length || boundary.length < 3) {
+        const beforeX = point.x;
+        const beforeZ = point.z;
+        wrapPointToBounds(point, bounds);
+        if (Math.hypot(point.x - beforeX, point.z - beforeZ) < 0.05) {
+            return null;
+        }
+        const centerX = (bounds.minX + bounds.maxX) / 2;
+        return point.x >= centerX ? "east" : "west";
+    }
+
+    if (!previous) return null;
+
+    const crossing = findBoundaryCrossing(previous, point, boundary);
+    const contact =
+        crossing ??
+        (!pointInPolygon(point, boundary)
+            ? closestBoundaryPoint(point, boundary)
+            : null);
+
+    if (!contact) return null;
+
+    return wrapAtBoundaryContact(point, territory, previous, contact);
+};
+
+export const constrainTerritoryMovement = (
+    point,
+    territory,
+    wasInsideRef,
+    previousRef,
+    motion = null
+) => {
+    const boundary = territory?.boundary;
+    const bounds = territory?.bounds;
+
+    if (!bounds) return false;
+
+    if (!boundary?.length || boundary.length < 3) {
+        const wrapEdge = wrapPointToTerritory(point, territory, previousRef?.current);
+        wasInsideRef.current = true;
+        if (wrapEdge) {
+            reverseFacingForWrap(point, motion);
+        }
+        if (previousRef) {
+            previousRef.current = { x: point.x, z: point.z };
+        }
+        return Boolean(wrapEdge);
+    }
+
+    const previous = previousRef?.current ?? null;
+    const inside = pointInPolygon(point, boundary);
+    let wrapEdge = null;
+    const travel =
+        motion ??
+        (previous
+            ? { dx: point.x - previous.x, dz: point.z - previous.z }
+            : null);
+
+    if (wasInsideRef.current === null) {
+        wasInsideRef.current = inside;
+    } else if (wasInsideRef.current && previous) {
+        const crossing = findBoundaryCrossing(previous, point, boundary);
+        if (crossing || !inside) {
+            wrapEdge = wrapPointToTerritory(point, territory, previous);
+            if (wrapEdge) {
+                reverseFacingForWrap(point, travel);
+            }
+        }
+        wasInsideRef.current = pointInPolygon(point, boundary);
+    } else if (inside) {
+        wasInsideRef.current = true;
+    }
+
+    if (previousRef) {
+        previousRef.current = { x: point.x, z: point.z };
+    }
+
+    return Boolean(wrapEdge);
+};
+
+export const computeOutermostTerritory = (plants = []) => {
+    const groups = groupedByYear(plants);
+    if (groups.size === 0) return null;
+
+    const areas = yearRingAreas(groups);
+    const outerYear = [...groups.keys()]
+        .sort((left, right) => left.localeCompare(right))
+        .at(-1);
+    const groupPlants = groups.get(outerYear);
+    const area = areas.get(outerYear);
+
+    if (!groupPlants?.length || !area) return null;
+
+    const boundary = naturalBoundary(groupPlants, area);
+    if (!boundary.length) return null;
+
+    return {
+        boundary,
+        bounds: boundsFromBoundary(boundary),
+    };
+};
+
+export const computeOutermostTerritoryBounds = (plants = []) =>
+    computeOutermostTerritory(plants)?.bounds ?? null;
 
 export const createDateTerritories = (plants = [], { showLabels = true } = {}) => {
     const root = new THREE.Group();

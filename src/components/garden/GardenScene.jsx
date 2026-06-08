@@ -22,6 +22,7 @@ import {
     DEFAULT_VISIBLE_CHUNK_RADIUS,
     clampPointToBounds,
     computeAuthoredBounds,
+    wrappedPointDelta,
     groupPlantsByChunk,
     visibleChunkKeys,
 } from "@/utils/gardenChunks";
@@ -33,7 +34,11 @@ import {
     setGardenTextureRenderer,
 } from "@/utils/gardenRenderer";
 import { createGroundRipples } from "@/utils/groundRipples";
-import { createDateTerritories } from "@/utils/dateTerritories";
+import {
+    computeOutermostTerritory,
+    constrainTerritoryMovement,
+    createDateTerritories,
+} from "@/utils/dateTerritories";
 import {
     createWalkPositionSaver,
     loadWalkPosition,
@@ -66,6 +71,22 @@ const disposeObject = (object) => {
 
 const normalizePlants = (plants) =>
     Array.isArray(plants) ? plants.filter((plant) => plant?.text) : [];
+
+const computeMovementTerritory = (plants, wrapMovement) => {
+    const gardenPlants = normalizePlants(plants);
+    if (wrapMovement) {
+        return (
+            computeOutermostTerritory(gardenPlants) ?? {
+                bounds: computeAuthoredBounds(gardenPlants),
+                boundary: null,
+            }
+        );
+    }
+    return {
+        bounds: computeAuthoredBounds(gardenPlants),
+        boundary: null,
+    };
+};
 
 const plantPosition = (plant) => ({
     x: Number.isFinite(plant?.x) ? plant.x : 0,
@@ -239,6 +260,7 @@ const GardenScene = ({
     scrollWalk = true,
     walkSpeed = 0.004,
     walkNavigation = false,
+    wrapMovement = false,
     walkPositionKey = "immersive",
     showPlantTitles = true,
     showDateTerritories = false,
@@ -252,7 +274,11 @@ const GardenScene = ({
     const plantRootRef = useRef(null);
     const territoryRef = useRef(null);
     const loadedChunksRef = useRef(new Map());
-    const movementBoundsRef = useRef(computeAuthoredBounds(plants));
+    const movementTerritoryRef = useRef(
+        computeMovementTerritory(plants, wrapMovement)
+    );
+    const wasInsideTerritoryRef = useRef(null);
+    const previousTerritoryPositionRef = useRef(null);
     const plantsRef = useRef(plants);
     const showPlantTitlesRef = useRef(showPlantTitles);
     const showDateTerritoriesRef = useRef(showDateTerritories);
@@ -260,7 +286,10 @@ const GardenScene = ({
     plantsRef.current = plants;
     showPlantTitlesRef.current = showPlantTitles;
     showDateTerritoriesRef.current = showDateTerritories;
-    movementBoundsRef.current = computeAuthoredBounds(plants);
+    movementTerritoryRef.current = computeMovementTerritory(
+        plants,
+        wrapMovement
+    );
 
     useEffect(() => {
         const mount = mountRef.current;
@@ -270,6 +299,9 @@ const GardenScene = ({
         let cleanup = () => {};
 
         const setupScene = async () => {
+        wasInsideTerritoryRef.current = null;
+        previousTerritoryPositionRef.current = null;
+
         const savedPosition = walkNavigation
             ? await loadWalkPosition(walkPositionKey)
             : null;
@@ -305,8 +337,20 @@ const GardenScene = ({
         let controls = null;
         let walkControls = null;
         let detachScrollWalk = null;
-        const constrainPosition = (state) =>
-            clampPointToBounds(state, movementBoundsRef.current);
+        const constrainPosition = (state, motion = null) => {
+            const territory = movementTerritoryRef.current;
+            if (wrapMovement) {
+                return constrainTerritoryMovement(
+                    state,
+                    territory,
+                    wasInsideTerritoryRef,
+                    previousTerritoryPositionRef,
+                    motion
+                );
+            }
+            clampPointToBounds(state, territory.bounds);
+            return false;
+        };
         const handleWalkPositionChange = (state) => {
             positionSaver?.schedule(state);
             onWalkStateChange?.(state);
@@ -322,6 +366,14 @@ const GardenScene = ({
                 savedState: savedPosition,
                 onPositionChange: handleWalkPositionChange,
                 constrainPosition,
+                resolveMovementDelta: wrapMovement
+                    ? (state, target) =>
+                          wrappedPointDelta(
+                              state,
+                              target,
+                              movementTerritoryRef.current.bounds
+                          )
+                    : null,
                 enabled: interactive,
                 pinchSpeed: walkSpeed * 3.5,
             });
@@ -336,8 +388,9 @@ const GardenScene = ({
                         const state = walkControls.getState();
                         state.x += move.x;
                         state.z += move.z;
-                        constrainPosition(state);
-                        walkControls.applyCamera();
+                        if (!walkControls.applyPositionConstraint?.()) {
+                            walkControls.applyCamera();
+                        }
                     },
                 });
             }
@@ -364,8 +417,14 @@ const GardenScene = ({
                         camera.position.add(move);
                         target.add(move);
 
-                        clampPointToBounds(camera.position, movementBoundsRef.current);
-                        clampPointToBounds(target, movementBoundsRef.current);
+                        clampPointToBounds(
+                            camera.position,
+                            movementTerritoryRef.current.bounds
+                        );
+                        clampPointToBounds(
+                            target,
+                            movementTerritoryRef.current.bounds
+                        );
                     },
                 });
             }
@@ -495,6 +554,7 @@ const GardenScene = ({
         scrollWalk,
         walkSpeed,
         walkNavigation,
+        wrapMovement,
         cameraOffset.x,
         cameraOffset.y,
         cameraOffset.z,
@@ -512,7 +572,12 @@ const GardenScene = ({
     ]);
 
     useEffect(() => {
-        movementBoundsRef.current = computeAuthoredBounds(plants);
+        movementTerritoryRef.current = computeMovementTerritory(
+            plants,
+            wrapMovement
+        );
+        wasInsideTerritoryRef.current = null;
+        previousTerritoryPositionRef.current = null;
         syncGardenChunks({
             plantRoot: plantRootRef.current,
             loadedChunks: loadedChunksRef.current,
@@ -526,7 +591,7 @@ const GardenScene = ({
             plants: normalizePlants(plants),
             enabled: showDateTerritories,
         });
-    }, [plants, showPlantTitles, showDateTerritories]);
+    }, [plants, showPlantTitles, showDateTerritories, wrapMovement]);
 
     return (
         <div className={className}>

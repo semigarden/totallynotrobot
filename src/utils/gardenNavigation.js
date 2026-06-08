@@ -64,6 +64,7 @@ export const attachGardenWalkControls = ({
     savedState = null,
     onPositionChange = null,
     constrainPosition = clampWalkPosition,
+    resolveMovementDelta = null,
     enabled = true,
     rotateSpeed = 0.003,
     panSpeed = 0.004,
@@ -129,6 +130,15 @@ export const attachGardenWalkControls = ({
         hasMoveTarget = false;
     };
 
+    const applyPositionConstraint = (motion = null) => {
+        const wrapped = Boolean(constrainPosition?.(state, motion));
+        if (wrapped) {
+            clearMoveTarget();
+            updateCamera();
+        }
+        return wrapped;
+    };
+
     const setMoveTarget = (x, z) => {
         moveTarget.set(x, 0, z);
         hasMoveTarget = true;
@@ -160,8 +170,9 @@ export const attachGardenWalkControls = ({
 
         state.x -= panX;
         state.z -= panZ;
-        constrainPosition?.(state);
-        updateCamera();
+        if (!applyPositionConstraint()) {
+            updateCamera();
+        }
     };
 
     const applyPinchMove = (deltaDistance) => {
@@ -180,8 +191,9 @@ export const attachGardenWalkControls = ({
 
         state.x += forward.x * step;
         state.z += forward.z * step;
-        constrainPosition?.(state);
-        updateCamera();
+        if (!applyPositionConstraint()) {
+            updateCamera();
+        }
     };
 
     const onPointerDown = (event) => {
@@ -383,29 +395,38 @@ export const attachGardenWalkControls = ({
     const update = (delta = 0) => {
         if (!hasMoveTarget || delta <= 0) return;
 
-        const dx = moveTarget.x - state.x;
-        const dz = moveTarget.z - state.z;
+        const { dx, dz } = resolveMovementDelta
+            ? resolveMovementDelta(state, moveTarget)
+            : {
+                  dx: moveTarget.x - state.x,
+                  dz: moveTarget.z - state.z,
+              };
         const distance = Math.hypot(dx, dz);
 
         if (distance < 0.08) {
+            const motion = { dx, dz };
             state.x = moveTarget.x;
             state.z = moveTarget.z;
             clearMoveTarget();
-            constrainPosition?.(state);
-            updateCamera();
+            if (!applyPositionConstraint(motion)) {
+                updateCamera();
+            }
             return;
         }
 
         const step = Math.min(distance, moveSpeed * delta);
-        state.x += (dx / distance) * step;
-        state.z += (dz / distance) * step;
-        constrainPosition?.(state);
-        updateCamera();
+        const motion = { dx: (dx / distance) * step, dz: (dz / distance) * step };
+        state.x += motion.dx;
+        state.z += motion.dz;
+        if (!applyPositionConstraint(motion)) {
+            updateCamera();
+        }
     };
 
     return {
         getState: () => state,
         applyCamera: updateCamera,
+        applyPositionConstraint,
         cancelMoveTarget: clearMoveTarget,
         update,
         dispose: () => {

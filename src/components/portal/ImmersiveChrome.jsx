@@ -9,7 +9,7 @@ const ImmersiveChrome = ({ plants = [], onPlant }) => (
     <>
         <FullscreenToggle />
 
-        <div className={styles.hudDock}>
+        {/* <div className={styles.hudDock}>
             <div className={styles.hudImmersive}>
                 <div className={styles.hudStage}>
                     <Name name={memory.name} />
@@ -21,7 +21,7 @@ const ImmersiveChrome = ({ plants = [], onPlant }) => (
                     </div>
                 </div>
             </div>
-        </div>
+        </div> */}
 
         <div className={styles.inputDock}>
             <GardenControls

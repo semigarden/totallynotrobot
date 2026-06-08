@@ -106,3 +106,45 @@ export const clampPointToBounds = (point, bounds) => {
     point.z = Math.max(bounds.minZ, Math.min(bounds.maxZ, point.z));
     return point;
 };
+
+const axisSpan = (min, max) => Math.max(max - min, 0);
+
+const wrapAxis = (value, min, max) => {
+    const span = axisSpan(min, max);
+    if (span <= 0) return value;
+
+    const offset = ((value - min) % span + span) % span;
+    return min + offset;
+};
+
+export const wrappedAxisDelta = (from, to, min, max) => {
+    const span = axisSpan(min, max);
+    if (span <= 0) return to - from;
+
+    let delta = to - from;
+    if (delta > span / 2) delta -= span;
+    else if (delta < -span / 2) delta += span;
+    return delta;
+};
+
+export const wrappedPointDelta = (from, to, bounds) => {
+    if (!bounds) {
+        return {
+            dx: to.x - from.x,
+            dz: to.z - from.z,
+        };
+    }
+
+    return {
+        dx: wrappedAxisDelta(from.x, to.x, bounds.minX, bounds.maxX),
+        dz: wrappedAxisDelta(from.z, to.z, bounds.minZ, bounds.maxZ),
+    };
+};
+
+export const wrapPointToBounds = (point, bounds) => {
+    if (!bounds) return point;
+
+    point.x = wrapAxis(point.x, bounds.minX, bounds.maxX);
+    point.z = wrapAxis(point.z, bounds.minZ, bounds.maxZ);
+    return point;
+};

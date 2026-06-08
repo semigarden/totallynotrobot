@@ -20,7 +20,9 @@ const GardenBackground = ({ plants = [], onWalkStateChange }) => (
         scrollWalk
         walkSpeed={0.005}
         walkNavigation
+        wrapMovement
         showPlantTitles={false}
+        showDateTerritories
         onWalkStateChange={onWalkStateChange}
     />
 );
