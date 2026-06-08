@@ -22,7 +22,6 @@ const GardenBackground = ({ plants = [], onWalkStateChange }) => (
         walkNavigation
         wrapMovement
         showPlantTitles={false}
-        showDateTerritories
         onWalkStateChange={onWalkStateChange}
     />
 );

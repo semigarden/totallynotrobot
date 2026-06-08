@@ -75,7 +75,7 @@ const GardenControls = ({
                     onChange={(event) => setDraft(event.target.value)}
                     onKeyDown={onInputKeyDown}
                     onSearch={onInputSearch}
-                    placeholder="type a line · it grows here"
+                    placeholder="type a line"
                     maxLength={160}
                     autoComplete="off"
                     autoCorrect="off"
