@@ -8,7 +8,7 @@ const GROUND_CAMERA = {
     maxDistance: 28,
 };
 
-const GardenBackground = ({ plants = [], onWalkStateChange }) => (
+const GardenBackground = ({ plants = [], onWalkStateChange, gardenActionsRef }) => (
     <GardenScene
         plants={plants}
         className={styles.background}
@@ -23,6 +23,7 @@ const GardenBackground = ({ plants = [], onWalkStateChange }) => (
         wrapMovement
         showPlantTitles={false}
         onWalkStateChange={onWalkStateChange}
+        gardenActionsRef={gardenActionsRef}
     />
 );
 

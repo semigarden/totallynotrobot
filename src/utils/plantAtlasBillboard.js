@@ -14,6 +14,7 @@ attribute vec3 instancePosition;
 attribute vec2 instanceScale;
 attribute vec4 instanceUvRect;
 attribute vec4 instanceSway;
+attribute float instanceGrow;
 
 uniform float time;
 uniform vec3 cameraRight;
@@ -27,7 +28,10 @@ void main() {
     float c = cos(roll);
     float s = sin(roll);
 
-    vec2 local = vec2(position.x * instanceScale.x, position.y * instanceScale.y);
+    vec2 local = vec2(
+        position.x * instanceScale.x,
+        position.y * instanceScale.y * instanceGrow
+    );
     vec2 rotated = vec2(
         local.x * c - local.y * s,
         local.x * s + local.y * c
@@ -102,9 +106,11 @@ const createInstancedGeometry = (count) => {
     return geometry;
 };
 
-export const createPlantAtlasBillboards = (plants = []) => {
+export const createPlantAtlasBillboards = (plants = [], options = {}) => {
     const group = new THREE.Group();
     if (plants.length === 0) return group;
+
+    const getInitialGrow = options.getInitialGrow ?? (() => 1);
 
     const tileSize = atlasTileSize(plants.length);
     const columns = Math.max(1, Math.ceil(Math.sqrt(plants.length)));
@@ -122,6 +128,7 @@ export const createPlantAtlasBillboards = (plants = []) => {
     const instanceScales = new Float32Array(plants.length * 2);
     const instanceUvRects = new Float32Array(plants.length * 4);
     const instanceSways = new Float32Array(plants.length * 4);
+    const instanceGrows = new Float32Array(plants.length);
 
     plants.forEach((plant, index) => {
         const asset = createPlantRenderAsset(plant.text, plant.id, {
@@ -161,6 +168,7 @@ export const createPlantAtlasBillboards = (plants = []) => {
             [sway.phase, sway.speed, sway.rollAmp, sway.offsetAmp],
             index * 4
         );
+        instanceGrows[index] = getInitialGrow(plant);
     });
 
     const texture = new THREE.CanvasTexture(atlas);
@@ -186,6 +194,10 @@ export const createPlantAtlasBillboards = (plants = []) => {
         "instanceSway",
         new THREE.InstancedBufferAttribute(instanceSways, 4)
     );
+    geometry.setAttribute(
+        "instanceGrow",
+        new THREE.InstancedBufferAttribute(instanceGrows, 1)
+    );
 
     const material = new THREE.ShaderMaterial({
         uniforms: {
@@ -204,6 +216,7 @@ export const createPlantAtlasBillboards = (plants = []) => {
     const mesh = new THREE.Mesh(geometry, material);
     mesh.frustumCulled = false;
     mesh.userData.plantAtlas = true;
+    mesh.userData.plantIds = plants.map((plant) => plant.id);
     group.add(mesh);
 
     return group;

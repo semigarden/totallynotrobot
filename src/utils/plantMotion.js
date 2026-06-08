@@ -1,6 +1,17 @@
 import * as THREE from "three";
 import { hashString } from "@/utils/lSystem";
 
+export const PLANT_GROW_DURATION_MS = 2600;
+
+const easeOutCubic = (t) => 1 - (1 - t) ** 3;
+
+export const plantGrowFactor = (startedAt, now = performance.now()) => {
+    if (!Number.isFinite(startedAt)) return 1;
+
+    const progress = Math.min(1, (now - startedAt) / PLANT_GROW_DURATION_MS);
+    return easeOutCubic(progress);
+};
+
 const sortPoint = new THREE.Vector3();
 const cameraRight = new THREE.Vector3();
 const cameraUp = new THREE.Vector3();
@@ -20,6 +31,11 @@ export const initPlantSway = (sprite, seed = "") => {
         baseX: sprite.position.x,
         baseZ: sprite.position.z,
     };
+
+    if (sprite.userData.baseScale) {
+        sprite.userData.sway.baseScaleX = sprite.userData.baseScale.x;
+        sprite.userData.sway.baseScaleY = sprite.userData.baseScale.y;
+    }
 };
 
 const syncPlantLabels = (billboard) => {
@@ -70,6 +86,60 @@ const updatePlantAtlases = (plantRoot, elapsed, camera) => {
     });
 };
 
+export const updatePlantGrow = (plantRoot, growingPlants, now = performance.now()) => {
+    if (!plantRoot || !growingPlants?.size) return;
+
+    plantRoot.traverse((child) => {
+        if (child.userData?.plantAtlas) {
+            const growAttribute = child.geometry?.getAttribute("instanceGrow");
+            const plantIds = child.userData.plantIds;
+            if (!growAttribute || !Array.isArray(plantIds)) return;
+
+            let changed = false;
+
+            plantIds.forEach((plantId, index) => {
+                const startedAt = growingPlants.get(plantId);
+                if (!startedAt) return;
+
+                const grow = plantGrowFactor(startedAt, now);
+                if (growAttribute.getX(index) === grow) return;
+
+                growAttribute.setX(index, grow);
+                changed = true;
+
+                if (grow >= 1) {
+                    growingPlants.delete(plantId);
+                }
+            });
+
+            if (changed) {
+                growAttribute.needsUpdate = true;
+            }
+            return;
+        }
+
+        const plantId = child.userData?.plantId;
+        const startedAt = plantId ? growingPlants.get(plantId) : null;
+        if (!startedAt) return;
+
+        const baseScale = child.userData.baseScale;
+        const sway = child.userData.sway;
+        if (!baseScale) return;
+
+        const grow = plantGrowFactor(startedAt, now);
+        child.scale.set(baseScale.x * grow, baseScale.y * grow, 1);
+
+        if (sway) {
+            sway.baseScaleX = baseScale.x * grow;
+            sway.baseScaleY = baseScale.y * grow;
+        }
+
+        if (grow >= 1) {
+            growingPlants.delete(plantId);
+        }
+    });
+};
+
 const sortPlantBillboards = (plantRoot, camera) => {
     const billboards = collectBillboards(plantRoot);
     const entries = billboards.map((sprite) => {
@@ -93,9 +163,10 @@ const sortPlantBillboards = (plantRoot, camera) => {
     });
 };
 
-export const updatePlantSway = (plantRoot, elapsed, camera) => {
+export const updatePlantSway = (plantRoot, elapsed, camera, growingPlants = null) => {
     if (!plantRoot) return;
 
+    updatePlantGrow(plantRoot, growingPlants);
     updatePlantAtlases(plantRoot, elapsed, camera);
 
     collectBillboards(plantRoot).forEach((sprite) => {

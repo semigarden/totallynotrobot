@@ -3,6 +3,21 @@ import * as THREE from "three";
 const FIELD_RADIUS = 36;
 const PITCH_UP = -1.45;
 const PITCH_DOWN = 0.75;
+const lookCameraHelper = new THREE.PerspectiveCamera();
+
+const walkAnglesToward = (x, z, cameraY, targetX, targetY, targetZ) => {
+    lookCameraHelper.position.set(x, cameraY, z);
+    lookCameraHelper.lookAt(targetX, targetY, targetZ);
+    const euler = new THREE.Euler().setFromQuaternion(
+        lookCameraHelper.quaternion,
+        "YXZ"
+    );
+
+    return {
+        yaw: euler.y,
+        pitch: euler.x,
+    };
+};
 
 const applyWalkCamera = (camera, state, cameraY) => {
     state.pitch = THREE.MathUtils.clamp(state.pitch, PITCH_UP, PITCH_DOWN);
@@ -13,17 +28,20 @@ const applyWalkCamera = (camera, state, cameraY) => {
 };
 
 const initWalkState = (offset, target, cameraY) => {
-    const direction = new THREE.Vector3(
-        target.x - offset.x,
-        target.y - cameraY,
-        target.z - offset.z
-    ).normalize();
+    const angles = walkAnglesToward(
+        offset.x,
+        offset.z,
+        cameraY,
+        target.x,
+        target.y,
+        target.z
+    );
 
     return {
         x: offset.x,
         z: offset.z,
-        yaw: Math.atan2(direction.x, direction.z),
-        pitch: Math.asin(THREE.MathUtils.clamp(direction.y, -1, 1)),
+        yaw: angles.yaw,
+        pitch: angles.pitch,
     };
 };
 
@@ -39,6 +57,26 @@ const DOUBLE_TAP_DISTANCE = 28;
 const TAP_MOVE_THRESHOLD = 12;
 const CLICK_MOVE_THRESHOLD = 6;
 const DEFAULT_MOVE_SPEED = 10;
+const DEFAULT_LOOK_AT_DURATION = 1.35;
+
+const easeOutCubic = (t) => 1 - (1 - t) ** 3;
+
+const lerpAngle = (from, to, t) => {
+    let delta = to - from;
+    while (delta > Math.PI) delta -= Math.PI * 2;
+    while (delta < -Math.PI) delta += Math.PI * 2;
+    return from + delta * t;
+};
+
+const lookAnglesToward = (state, cameraY, targetX, targetY, targetZ) => {
+    const dx = targetX - state.x;
+    const dy = targetY - cameraY;
+    const dz = targetZ - state.z;
+
+    if (dx * dx + dy * dy + dz * dz < 0.0001) return null;
+
+    return walkAnglesToward(state.x, state.z, cameraY, targetX, targetY, targetZ);
+};
 
 const pointerToGround = (camera, domElement, clientX, clientY, target) => {
     const rect = domElement.getBoundingClientRect();
@@ -125,9 +163,25 @@ export const attachGardenWalkControls = ({
     let clickStartY = 0;
     let clickCancelled = false;
     let suppressClickUntil = 0;
+    let lookAtAnimation = null;
 
     const clearMoveTarget = () => {
         hasMoveTarget = false;
+    };
+
+    const startLookAt = (targetX, targetY, targetZ, duration = DEFAULT_LOOK_AT_DURATION) => {
+        const angles = lookAnglesToward(state, cameraY, targetX, targetY, targetZ);
+        if (!angles) return;
+
+        clearMoveTarget();
+        lookAtAnimation = {
+            startYaw: state.yaw,
+            startPitch: state.pitch,
+            targetYaw: angles.yaw,
+            targetPitch: angles.pitch,
+            elapsed: 0,
+            duration: Math.max(0.2, duration),
+        };
     };
 
     const applyPositionConstraint = (motion = null) => {
@@ -393,6 +447,31 @@ export const attachGardenWalkControls = ({
     domElement.addEventListener("contextmenu", onContextMenu);
 
     const update = (delta = 0) => {
+        if (lookAtAnimation && delta > 0) {
+            lookAtAnimation.elapsed += delta;
+            const progress = Math.min(
+                1,
+                lookAtAnimation.elapsed / lookAtAnimation.duration
+            );
+            const eased = easeOutCubic(progress);
+
+            state.yaw = lerpAngle(
+                lookAtAnimation.startYaw,
+                lookAtAnimation.targetYaw,
+                eased
+            );
+            state.pitch = THREE.MathUtils.lerp(
+                lookAtAnimation.startPitch,
+                lookAtAnimation.targetPitch,
+                eased
+            );
+            updateCamera();
+
+            if (progress >= 1) {
+                lookAtAnimation = null;
+            }
+        }
+
         if (!hasMoveTarget || delta <= 0) return;
 
         const { dx, dz } = resolveMovementDelta
@@ -428,6 +507,7 @@ export const attachGardenWalkControls = ({
         applyCamera: updateCamera,
         applyPositionConstraint,
         cancelMoveTarget: clearMoveTarget,
+        startLookAt,
         update,
         dispose: () => {
             domElement.removeEventListener("pointerdown", onPointerDown);
