@@ -1,0 +1,47 @@
+import { ShaderMaterial, UniformsUtils } from "three";
+import { Pass, FullScreenQuad } from "three/addons/postprocessing/Pass.js";
+import { GardenGlitchShader } from "@/utils/gardenGlitchShader";
+
+/**
+ * Always-on glitch: tinted shift + noise only (no tear bands or displacement).
+ */
+export class ConstantGlitchPass extends Pass {
+    constructor(amount = 0.035) {
+        super();
+
+        this.amount = amount;
+        this.uniforms = UniformsUtils.clone(GardenGlitchShader.uniforms);
+        this.material = new ShaderMaterial({
+            uniforms: this.uniforms,
+            vertexShader: GardenGlitchShader.vertexShader,
+            fragmentShader: GardenGlitchShader.fragmentShader,
+        });
+
+        this._fsQuad = new FullScreenQuad(this.material);
+    }
+
+    advance(elapsed = 0) {
+        this.uniforms.byp.value = 0;
+        this.uniforms.amount.value = this.amount;
+        this.uniforms.seed.value = (Math.sin(elapsed * 7.3) + 1) * 0.5;
+        this.uniforms.angle.value = Math.sin(elapsed * 0.9) * 0.35;
+    }
+
+    render(renderer, writeBuffer, readBuffer) {
+        this.uniforms.tDiffuse.value = readBuffer.texture;
+
+        if (this.renderToScreen) {
+            renderer.setRenderTarget(null);
+            this._fsQuad.render(renderer);
+        } else {
+            renderer.setRenderTarget(writeBuffer);
+            if (this.clear) renderer.clear();
+            this._fsQuad.render(renderer);
+        }
+    }
+
+    dispose() {
+        this.material.dispose();
+        this._fsQuad.dispose();
+    }
+}

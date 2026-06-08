@@ -422,6 +422,7 @@ const GardenScene = ({
             });
             updatePlantSway(plantRoot, elapsed, camera);
             groundRipples.update(elapsed, camera);
+            postProcessing.update(elapsed);
             postProcessing.composer.render();
         };
         animate();
