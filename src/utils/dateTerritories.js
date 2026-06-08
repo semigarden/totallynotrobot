@@ -416,17 +416,26 @@ export const reverseFacingForWrap = (state, motion = null) => {
     }
 };
 
-const stepInsideAlongMotion = (point, boundary, motionX, motionZ) => {
-    const length = Math.hypot(motionX, motionZ);
+const polygonCentroid = (polygon) =>
+    polygon.reduce(
+        (center, vertex) => ({
+            x: center.x + vertex.x / polygon.length,
+            z: center.z + vertex.z / polygon.length,
+        }),
+        { x: 0, z: 0 }
+    );
+
+const stepAlongDirection = (point, boundary, directionX, directionZ, maxDistance = 4) => {
+    const length = Math.hypot(directionX, directionZ);
     if (length < 1e-6) return false;
 
-    const directionX = motionX / length;
-    const directionZ = motionZ / length;
+    const normX = directionX / length;
+    const normZ = directionZ / length;
 
-    for (let step = WRAP_ENTRY_EPSILON; step <= 2.5; step += 0.1) {
+    for (let step = WRAP_ENTRY_EPSILON; step <= maxDistance; step += 0.08) {
         const candidate = {
-            x: point.x + directionX * step,
-            z: point.z + directionZ * step,
+            x: point.x + normX * step,
+            z: point.z + normZ * step,
         };
 
         if (pointInPolygon(candidate, boundary)) {
@@ -436,6 +445,58 @@ const stepInsideAlongMotion = (point, boundary, motionX, motionZ) => {
         }
     }
 
+    return false;
+};
+
+const inwardDirectionForEdge = (edge) => {
+    if (edge === "west") return { x: 1, z: 0 };
+    if (edge === "east") return { x: -1, z: 0 };
+    if (edge === "north") return { x: 0, z: 1 };
+    return { x: 0, z: -1 };
+};
+
+const settleInsideTerritory = (point, boundary, bounds, edge, motionX, motionZ) => {
+    if (pointInPolygon(point, boundary)) {
+        return true;
+    }
+
+    const startX = point.x;
+    const startZ = point.z;
+    const inward = inwardDirectionForEdge(edge);
+    const centerX = (bounds.minX + bounds.maxX) / 2;
+    const centerZ = (bounds.minZ + bounds.maxZ) / 2;
+    const centroid = polygonCentroid(boundary);
+    const strategies = [
+        () => stepAlongDirection(point, boundary, inward.x, inward.z),
+        () => stepAlongDirection(point, boundary, -motionX, -motionZ),
+        () => stepAlongDirection(point, boundary, motionX, motionZ),
+        () => stepAlongDirection(point, boundary, centerX - startX, centerZ - startZ, 8),
+        () =>
+            stepAlongDirection(
+                point,
+                boundary,
+                centroid.x - startX,
+                centroid.z - startZ,
+                8
+            ),
+    ];
+
+    for (const strategy of strategies) {
+        point.x = startX;
+        point.z = startZ;
+        if (strategy()) {
+            return true;
+        }
+    }
+
+    if (pointInPolygon(centroid, boundary)) {
+        point.x = centroid.x;
+        point.z = centroid.z;
+        return true;
+    }
+
+    point.x = startX;
+    point.z = startZ;
     return false;
 };
 
@@ -452,15 +513,19 @@ const wrapAtBoundaryContact = (point, territory, previous, contact) => {
     point.x = entry.x;
     point.z = entry.z;
 
-    if (!stepInsideAlongMotion(point, boundary, motionX, motionZ)) {
-        point.x = entry.x + motionX;
-        point.z = entry.z + motionZ;
-
-        if (!pointInPolygon(point, boundary)) {
-            point.x = entry.x;
-            point.z = entry.z;
-            stepInsideAlongMotion(point, boundary, motionX, motionZ);
-        }
+    if (
+        !settleInsideTerritory(
+            point,
+            boundary,
+            bounds,
+            entry.edge,
+            motionX,
+            motionZ
+        )
+    ) {
+        point.x = beforeX;
+        point.z = beforeZ;
+        return null;
     }
 
     if (Math.hypot(point.x - beforeX, point.z - beforeZ) < 0.05) {
@@ -540,8 +605,10 @@ export const constrainTerritoryMovement = (
         const crossing = findBoundaryCrossing(previous, point, boundary);
         if (crossing || !inside) {
             wrapEdge = wrapPointToTerritory(point, territory, previous);
-            if (wrapEdge) {
+            if (wrapEdge && pointInPolygon(point, boundary)) {
                 reverseFacingForWrap(point, travel);
+            } else {
+                wrapEdge = null;
             }
         }
         wasInsideRef.current = pointInPolygon(point, boundary);
