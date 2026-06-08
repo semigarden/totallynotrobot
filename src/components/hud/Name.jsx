@@ -32,7 +32,7 @@ const Name = ({ className, name = "", animate = true }) => {
             </div>
             <div className={styles.frame}>
                 <div className={styles.frameTop}>
-                    <div className={styles.frame1} augmented-ui="tl-clip exe"/>
+                    <div className={styles.frame1} augmented-ui="tl-clip br-clip exe"/>
                     <div className={styles.line1} augmented-ui="tl-clip exe"/>
                     <div className={styles.line2}/>
                     <div className={styles.frame2} augmented-ui="br-clip exe"/>

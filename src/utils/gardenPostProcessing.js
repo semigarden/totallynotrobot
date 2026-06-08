@@ -9,21 +9,76 @@ import { gardenPixelRatio } from "@/utils/gardenRenderer";
 import { GardenExperimentShader } from "@/utils/gardenExperimentShader";
 import { ConstantGlitchPass } from "@/utils/gardenConstantGlitchPass";
 import { GardenAfterimagePass } from "@/utils/gardenAfterimagePass";
+import { GardenFeedbackPass } from "@/utils/gardenFeedbackPass";
+import { GardenWarpShader } from "@/utils/gardenWarpShader";
+import { GardenTearShader } from "@/utils/gardenTearShader";
+import { GardenHalftoneShader } from "@/utils/gardenHalftoneShader";
 import {
     GARDEN_SHIFT_SHADES,
     applyGardenShiftColors,
 } from "@/utils/gardenShiftColors";
 
+/** Toggleable post-processing effect ids (render/output passes are always on). */
+export const GARDEN_EFFECTS = {
+    afterimage: "afterimage",
+    feedback: "feedback",
+    bloom: "bloom",
+    experiment: "experiment",
+    warp: "warp",
+    halftone: "halftone",
+    film: "film",
+    glitch: "glitch",
+    tear: "tear",
+};
+
+export const GARDEN_DEFAULT_EFFECTS = {
+    [GARDEN_EFFECTS.afterimage]: true,
+    [GARDEN_EFFECTS.feedback]: true,
+    [GARDEN_EFFECTS.bloom]: true,
+    [GARDEN_EFFECTS.experiment]: false,
+    [GARDEN_EFFECTS.warp]: false,
+    [GARDEN_EFFECTS.halftone]: true,
+    [GARDEN_EFFECTS.film]: true,
+    [GARDEN_EFFECTS.glitch]: true,
+    [GARDEN_EFFECTS.tear]: false,
+};
+
+const resolveGardenEffects = (preset = {}) => {
+    const effects = {
+        ...GARDEN_DEFAULT_EFFECTS,
+        ...(preset.effects ?? {}),
+    };
+
+    if (preset.glitchEnabled === false) {
+        effects[GARDEN_EFFECTS.glitch] = false;
+    } else if (preset.glitchEnabled === true) {
+        effects[GARDEN_EFFECTS.glitch] = true;
+    }
+
+    return effects;
+};
+
 export const GARDEN_EXPERIMENTAL_PRESET = {
     afterimageDamp: 0.89,
     afterimageMoveTrail: 0.045,
     afterimageYawTrail: 0.022,
+    feedbackDamp: 0.8,
+    feedbackMix: 0.32,
+    feedbackMoveSmear: 0.028,
+    feedbackYawSmear: 0.014,
+    feedbackZoom: 1.0014,
     bloomStrength: 0.52,
     bloomRadius: 0.38,
     bloomThreshold: 0.68,
+    warpRipple: 0.014,
+    warpSwirl: 0.1,
+    halftoneStrength: 0.24,
+    halftoneScale: 1.4,
     filmNoise: 0.28,
-    glitchEnabled: true,
     glitchAmount: 0.035,
+    tearAmount: 0.055,
+    tearBandCount: 8,
+    effects: { ...GARDEN_DEFAULT_EFFECTS },
 };
 
 export const createGardenComposer = (
@@ -38,6 +93,13 @@ export const createGardenComposer = (
 
     const afterimagePass = new GardenAfterimagePass(preset.afterimageDamp);
     composer.addPass(afterimagePass);
+
+    const feedbackPass = new GardenFeedbackPass(
+        preset.feedbackDamp,
+        preset.feedbackMix
+    );
+    feedbackPass.setZoom(preset.feedbackZoom);
+    composer.addPass(feedbackPass);
 
     const prevPosition = new THREE.Vector3().copy(camera.position);
     const worldDelta = new THREE.Vector3();
@@ -66,6 +128,24 @@ export const createGardenComposer = (
         warp: GardenExperimentShader.uniforms.warp.value,
     };
 
+    const warpPass = new ShaderPass(GardenWarpShader);
+    warpPass.uniforms.ripple.value = preset.warpRipple;
+    warpPass.uniforms.swirl.value = preset.warpSwirl;
+    applyGardenShiftColors(
+        warpPass.uniforms,
+        preset.shiftShades ?? GARDEN_SHIFT_SHADES
+    );
+    composer.addPass(warpPass);
+
+    const halftonePass = new ShaderPass(GardenHalftoneShader);
+    halftonePass.uniforms.strength.value = preset.halftoneStrength;
+    halftonePass.uniforms.scale.value = preset.halftoneScale;
+    applyGardenShiftColors(
+        halftonePass.uniforms,
+        preset.shiftShades ?? GARDEN_SHIFT_SHADES
+    );
+    composer.addPass(halftonePass);
+
     const noisePass = new FilmPass(preset.filmNoise, false);
     composer.addPass(noisePass);
 
@@ -74,23 +154,79 @@ export const createGardenComposer = (
         glitchPass.uniforms,
         preset.shiftShades ?? GARDEN_SHIFT_SHADES
     );
-    glitchPass.enabled = preset.glitchEnabled;
     composer.addPass(glitchPass);
 
+    const tearPass = new ShaderPass(GardenTearShader);
+    tearPass.uniforms.amount.value = preset.tearAmount;
+    tearPass.uniforms.bandCount.value = preset.tearBandCount;
+    applyGardenShiftColors(
+        tearPass.uniforms,
+        preset.shiftShades ?? GARDEN_SHIFT_SHADES
+    );
+    composer.addPass(tearPass);
+
     composer.addPass(new OutputPass());
+
+    const effectPasses = {
+        [GARDEN_EFFECTS.afterimage]: afterimagePass,
+        [GARDEN_EFFECTS.feedback]: feedbackPass,
+        [GARDEN_EFFECTS.bloom]: bloomPass,
+        [GARDEN_EFFECTS.experiment]: experimentPass,
+        [GARDEN_EFFECTS.warp]: warpPass,
+        [GARDEN_EFFECTS.halftone]: halftonePass,
+        [GARDEN_EFFECTS.film]: noisePass,
+        [GARDEN_EFFECTS.glitch]: glitchPass,
+        [GARDEN_EFFECTS.tear]: tearPass,
+    };
+
+    const initialEffects = resolveGardenEffects(preset);
+    Object.entries(effectPasses).forEach(([name, pass]) => {
+        pass.enabled = initialEffects[name] !== false;
+    });
+
+    const setEffectEnabled = (name, enabled = true) => {
+        const pass = effectPasses[name];
+        if (!pass) return false;
+        pass.enabled = enabled;
+        return true;
+    };
+
+    const isEffectEnabled = (name) => effectPasses[name]?.enabled ?? false;
+
+    const setEffects = (next = {}) => {
+        Object.entries(next).forEach(([name, enabled]) => {
+            if (name in effectPasses) {
+                setEffectEnabled(name, enabled);
+            }
+        });
+    };
+
+    const getEffects = () =>
+        Object.fromEntries(
+            Object.keys(effectPasses).map((name) => [
+                name,
+                isEffectEnabled(name),
+            ])
+        );
+
+    const toggleEffect = (name) => {
+        if (!(name in effectPasses)) return null;
+        const next = !isEffectEnabled(name);
+        setEffectEnabled(name, next);
+        return next;
+    };
 
     const resize = (width, height) => {
         const nextPixelRatio = gardenPixelRatio();
         renderer.setPixelRatio(nextPixelRatio);
         composer.setSize(width, height);
-        afterimagePass.setSize(
-            width * nextPixelRatio,
-            height * nextPixelRatio
-        );
-        bloomPass.resolution.set(
-            width * nextPixelRatio,
-            height * nextPixelRatio
-        );
+        const bufferWidth = width * nextPixelRatio;
+        const bufferHeight = height * nextPixelRatio;
+
+        afterimagePass.setSize(bufferWidth, bufferHeight);
+        feedbackPass.setSize(bufferWidth, bufferHeight);
+        bloomPass.resolution.set(bufferWidth, bufferHeight);
+        halftonePass.uniforms.resolution.value.set(bufferWidth, bufferHeight);
     };
 
     const update = (elapsed = 0) => {
@@ -120,26 +256,73 @@ export const createGardenComposer = (
             yawDelta * preset.afterimageYawTrail;
         const trailY = -moveY * preset.afterimageMoveTrail;
 
-        afterimagePass.setTrailOffset(trailX, trailY);
+        if (afterimagePass.enabled) {
+            afterimagePass.setTrailOffset(trailX, trailY);
+        }
 
-        experimentPass.uniforms.time.value = elapsed;
+        if (feedbackPass.enabled) {
+            const smearX =
+                -moveX * preset.feedbackMoveSmear +
+                yawDelta * preset.feedbackYawSmear;
+            const smearY = -moveY * preset.feedbackMoveSmear;
+            feedbackPass.setSmearOffset(smearX, smearY);
+        }
 
         const breathe = 0.5 + Math.sin(elapsed * 0.35) * 0.5;
-        experimentPass.uniforms.chroma.value =
-            experimentBase.chroma * (0.85 + breathe * 0.3);
-        experimentPass.uniforms.warp.value =
-            experimentBase.warp * (0.9 + breathe * 0.2);
+        const surge = 0.5 + Math.sin(elapsed * 1.1) * 0.5;
 
-        glitchPass.advance(elapsed);
+        if (experimentPass.enabled) {
+            experimentPass.uniforms.time.value = elapsed;
+            experimentPass.uniforms.chroma.value =
+                experimentBase.chroma * (0.85 + breathe * 0.3);
+            experimentPass.uniforms.warp.value =
+                experimentBase.warp * (0.9 + breathe * 0.2);
+        }
+
+        if (warpPass.enabled) {
+            warpPass.uniforms.time.value = elapsed;
+            warpPass.uniforms.ripple.value =
+                preset.warpRipple * (0.75 + surge * 0.55);
+            warpPass.uniforms.swirl.value =
+                preset.warpSwirl * (0.8 + breathe * 0.35);
+        }
+
+        if (halftonePass.enabled) {
+            halftonePass.uniforms.time.value = elapsed;
+        }
+
+        if (tearPass.enabled) {
+            tearPass.uniforms.time.value = elapsed;
+            tearPass.uniforms.amount.value =
+                preset.tearAmount * (0.7 + surge * 0.6);
+        }
+
+        if (glitchPass.enabled) {
+            glitchPass.advance(elapsed);
+        }
+    };
+
+    const effectsApi = {
+        names: GARDEN_EFFECTS,
+        setEnabled: setEffectEnabled,
+        isEnabled: isEffectEnabled,
+        set: setEffects,
+        get: getEffects,
+        toggle: toggleEffect,
     };
 
     return {
         composer,
+        effects: effectsApi,
         afterimagePass,
+        feedbackPass,
         bloomPass,
         experimentPass,
+        warpPass,
+        halftonePass,
         noisePass,
         glitchPass,
+        tearPass,
         resize,
         update,
         dispose: () => {

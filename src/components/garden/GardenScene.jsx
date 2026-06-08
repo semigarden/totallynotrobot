@@ -243,6 +243,8 @@ const GardenScene = ({
     showPlantTitles = true,
     showDateTerritories = false,
     onWalkStateChange = null,
+    postProcessingPreset = null,
+    postProcessingRef = null,
 }) => {
     const mountRef = useRef(null);
     const sceneRef = useRef(null);
@@ -290,7 +292,15 @@ const GardenScene = ({
         setGardenTextureRenderer(renderer);
         mount.appendChild(renderer.domElement);
 
-        const postProcessing = createGardenComposer(renderer, scene, camera);
+        const postProcessing = createGardenComposer(
+            renderer,
+            scene,
+            camera,
+            postProcessingPreset ?? undefined
+        );
+        if (postProcessingRef) {
+            postProcessingRef.current = postProcessing.effects;
+        }
 
         let controls = null;
         let walkControls = null;
@@ -459,6 +469,9 @@ const GardenScene = ({
             scene.remove(moonRoot);
             disposeObject(moonRoot);
             disposeObject(scene);
+            if (postProcessingRef) {
+                postProcessingRef.current = null;
+            }
             postProcessing.dispose();
             renderer.dispose();
             sceneRef.current = null;
@@ -494,6 +507,8 @@ const GardenScene = ({
         showPlantTitles,
         showDateTerritories,
         onWalkStateChange,
+        postProcessingPreset,
+        postProcessingRef,
     ]);
 
     useEffect(() => {
