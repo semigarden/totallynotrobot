@@ -10,9 +10,8 @@ const ImmersiveLayout = () => {
 
     const handlePlant = useCallback(
         (text) => {
-            const isFirstPlant = plants.length === 0;
             const next = plantLine(text);
-            if (!isFirstPlant || next.length === 0) return;
+            if (next.length === 0) return;
 
             const plant = next[next.length - 1];
             const x = Number.isFinite(plant.x) ? plant.x : 0;
@@ -22,7 +21,7 @@ const ImmersiveLayout = () => {
                 gardenActionsRef.current?.lookAt?.(x, 1.15, z);
             });
         },
-        [plants.length, plantLine]
+        [plantLine]
     );
 
     return (
