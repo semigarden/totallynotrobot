@@ -7,7 +7,12 @@ import {
     createPlantTitleLabel,
 } from "@/utils/plantBillboard";
 import { createPlantAtlasBillboards } from "@/utils/plantAtlasBillboard";
-import { initPlantSway, plantGrowFactor, updatePlantSway } from "@/utils/plantMotion";
+import {
+    initPlantSway,
+    plantGrowFactor,
+    plantShrinkFactor,
+    updatePlantSway,
+} from "@/utils/plantMotion";
 import {
     buildFlowerPosition,
     createFlowerBillboard,
@@ -71,6 +76,23 @@ const disposeObject = (object) => {
 
 const normalizePlants = (plants) =>
     Array.isArray(plants) ? plants.filter((plant) => plant?.text) : [];
+
+const mergeShrinkingPlants = (plants, shrinkingPlants) => {
+    const base = normalizePlants(plants);
+    const baseIds = new Set(base.map((plant) => plant.id));
+    const ghosts = [];
+
+    shrinkingPlants.forEach((entry) => {
+        const plant = entry.plant;
+        if (plant?.id && !baseIds.has(plant.id)) {
+            ghosts.push(plant);
+        }
+    });
+
+    if (ghosts.length === 0) return base;
+
+    return [...base, ...ghosts].sort((a, b) => a.id.localeCompare(b.id));
+};
 
 const computeMovementTerritory = (plants, wrapMovement) => {
     const gardenPlants = normalizePlants(plants);
@@ -301,12 +323,26 @@ const GardenScene = ({
     const showDateTerritoriesRef = useRef(showDateTerritories);
     const knownPlantIdsRef = useRef(new Set());
     const growingPlantsRef = useRef(new Map());
+    const shrinkingPlantsRef = useRef(new Map());
     const hasInitializedPlantsRef = useRef(false);
 
-    const getInitialGrow = (plant) => {
+    const getPlantMotionFactor = (plant) => {
+        const shrinking = shrinkingPlantsRef.current.get(plant.id);
+        if (shrinking) {
+            return plantShrinkFactor(shrinking);
+        }
+
         const startedAt = growingPlantsRef.current.get(plant.id);
         return startedAt ? plantGrowFactor(startedAt) : 1;
     };
+
+    const getInitialGrow = (plant) => getPlantMotionFactor(plant);
+
+    const getRenderablePlants = () =>
+        mergeShrinkingPlants(
+            plantsRef.current,
+            shrinkingPlantsRef.current
+        );
 
     plantsRef.current = plants;
     showPlantTitlesRef.current = showPlantTitles;
@@ -475,7 +511,7 @@ const GardenScene = ({
         syncGardenChunks({
             plantRoot,
             loadedChunks: loadedChunksRef.current,
-            plants: normalizePlants(plantsRef.current),
+            plants: getRenderablePlants(),
             cameraPosition: camera.position,
             showPlantTitles: showPlantTitlesRef.current,
             getInitialGrow,
@@ -511,7 +547,7 @@ const GardenScene = ({
             syncGardenChunks({
                 plantRoot,
                 loadedChunks: loadedChunksRef.current,
-                plants: normalizePlants(plantsRef.current),
+                plants: getRenderablePlants(),
                 cameraPosition: camera.position,
                 showPlantTitles: showPlantTitlesRef.current,
                 getInitialGrow,
@@ -520,7 +556,8 @@ const GardenScene = ({
                 plantRoot,
                 elapsed,
                 camera,
-                growingPlantsRef.current
+                growingPlantsRef.current,
+                shrinkingPlantsRef.current
             );
             groundRipples.update(elapsed, camera);
             postProcessing.update(elapsed);
@@ -542,6 +579,27 @@ const GardenScene = ({
             gardenActionsRef.current = {
                 lookAt: (x, y, z, duration) => {
                     walkControls?.startLookAt?.(x, y, z, duration);
+                },
+                shrinkPlant: (plant, onComplete) => {
+                    const plantId = plant?.id;
+                    if (!plantId || shrinkingPlantsRef.current.has(plantId)) {
+                        return;
+                    }
+
+                    let initialGrow = 1;
+                    const growingStartedAt =
+                        growingPlantsRef.current.get(plantId);
+                    if (growingStartedAt) {
+                        initialGrow = plantGrowFactor(growingStartedAt);
+                        growingPlantsRef.current.delete(plantId);
+                    }
+
+                    shrinkingPlantsRef.current.set(plantId, {
+                        plant,
+                        startedAt: performance.now(),
+                        initialGrow,
+                        onComplete,
+                    });
                 },
             };
         }
@@ -626,6 +684,17 @@ const GardenScene = ({
         wasInsideTerritoryRef.current = null;
         previousTerritoryPositionRef.current = null;
 
+        const currentPlantIds = new Set(
+            normalizePlants(plants).map((plant) => plant.id)
+        );
+
+        knownPlantIdsRef.current.forEach((plantId) => {
+            if (currentPlantIds.has(plantId)) return;
+
+            knownPlantIdsRef.current.delete(plantId);
+            growingPlantsRef.current.delete(plantId);
+        });
+
         normalizePlants(plants).forEach((plant) => {
             if (knownPlantIdsRef.current.has(plant.id)) return;
 
@@ -640,7 +709,7 @@ const GardenScene = ({
         syncGardenChunks({
             plantRoot: plantRootRef.current,
             loadedChunks: loadedChunksRef.current,
-            plants: normalizePlants(plants),
+            plants: getRenderablePlants(),
             cameraPosition: cameraRef.current?.position ?? { x: 0, z: 0 },
             showPlantTitles,
             getInitialGrow,

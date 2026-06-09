@@ -19,11 +19,12 @@ const ImmersiveLayout = () => {
     const { plants, plantLine, plantRandomLine, removeLastPlant } =
         useGardenPlants();
     const gardenActionsRef = useRef(null);
+    const plantsRef = useRef(plants);
+    plantsRef.current = plants;
 
-    const lookAtLatestPlant = useCallback((next) => {
-        if (next.length === 0) return;
+    const lookAtPlant = useCallback((plant) => {
+        if (!plant) return;
 
-        const plant = next[next.length - 1];
         const x = Number.isFinite(plant.x) ? plant.x : 0;
         const z = Number.isFinite(plant.z) ? plant.z : 0;
 
@@ -31,6 +32,14 @@ const ImmersiveLayout = () => {
             gardenActionsRef.current?.lookAt?.(x, 1.15, z);
         });
     }, []);
+
+    const lookAtLatestPlant = useCallback(
+        (next) => {
+            if (next.length === 0) return;
+            lookAtPlant(next[next.length - 1]);
+        },
+        [lookAtPlant]
+    );
 
     const handlePlant = useCallback(
         (text) => {
@@ -46,8 +55,16 @@ const ImmersiveLayout = () => {
     }, [plantRandomLine, lookAtLatestPlant]);
 
     const handleDeleteLastPlant = useCallback(() => {
-        removeLastPlant();
-    }, [removeLastPlant]);
+        const current = plantsRef.current;
+        if (current.length === 0) return;
+
+        const plant = current[current.length - 1];
+        lookAtPlant(plant);
+        gardenActionsRef.current?.shrinkPlant?.(plant);
+
+        const next = removeLastPlant();
+        plantsRef.current = next;
+    }, [lookAtPlant, removeLastPlant]);
 
     useEffect(() => {
         const onKeyDown = (event) => {

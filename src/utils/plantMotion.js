@@ -12,6 +12,16 @@ export const plantGrowFactor = (startedAt, now = performance.now()) => {
     return easeOutCubic(progress);
 };
 
+export const plantShrinkFactor = (
+    { startedAt, initialGrow = 1 },
+    now = performance.now()
+) => {
+    if (!Number.isFinite(startedAt)) return 0;
+
+    const progress = Math.min(1, (now - startedAt) / PLANT_GROW_DURATION_MS);
+    return initialGrow * (1 - easeOutCubic(progress));
+};
+
 const sortPoint = new THREE.Vector3();
 const cameraRight = new THREE.Vector3();
 const cameraUp = new THREE.Vector3();
@@ -86,8 +96,19 @@ const updatePlantAtlases = (plantRoot, elapsed, camera) => {
     });
 };
 
-export const updatePlantGrow = (plantRoot, growingPlants, now = performance.now()) => {
-    if (!plantRoot || !growingPlants?.size) return;
+const completePlantShrink = (shrinkingPlants, plantId, shrinking) => {
+    shrinkingPlants.delete(plantId);
+    shrinking.onComplete?.();
+};
+
+export const updatePlantGrow = (
+    plantRoot,
+    growingPlants,
+    shrinkingPlants = null,
+    now = performance.now()
+) => {
+    if (!plantRoot) return;
+    if (!growingPlants?.size && !shrinkingPlants?.size) return;
 
     plantRoot.traverse((child) => {
         if (child.userData?.plantAtlas) {
@@ -98,7 +119,25 @@ export const updatePlantGrow = (plantRoot, growingPlants, now = performance.now(
             let changed = false;
 
             plantIds.forEach((plantId, index) => {
-                const startedAt = growingPlants.get(plantId);
+                const shrinking = shrinkingPlants?.get(plantId);
+                if (shrinking) {
+                    const progress = Math.min(
+                        1,
+                        (now - shrinking.startedAt) / PLANT_GROW_DURATION_MS
+                    );
+                    const grow = plantShrinkFactor(shrinking, now);
+                    if (growAttribute.getX(index) !== grow) {
+                        growAttribute.setX(index, grow);
+                        changed = true;
+                    }
+
+                    if (progress >= 1) {
+                        completePlantShrink(shrinkingPlants, plantId, shrinking);
+                    }
+                    return;
+                }
+
+                const startedAt = growingPlants?.get(plantId);
                 if (!startedAt) return;
 
                 const grow = plantGrowFactor(startedAt, now);
@@ -119,7 +158,33 @@ export const updatePlantGrow = (plantRoot, growingPlants, now = performance.now(
         }
 
         const plantId = child.userData?.plantId;
-        const startedAt = plantId ? growingPlants.get(plantId) : null;
+        if (!plantId) return;
+
+        const shrinking = shrinkingPlants?.get(plantId);
+        if (shrinking) {
+            const baseScale = child.userData.baseScale;
+            const sway = child.userData.sway;
+            if (!baseScale) return;
+
+            const progress = Math.min(
+                1,
+                (now - shrinking.startedAt) / PLANT_GROW_DURATION_MS
+            );
+            const grow = plantShrinkFactor(shrinking, now);
+            child.scale.set(baseScale.x * grow, baseScale.y * grow, 1);
+
+            if (sway) {
+                sway.baseScaleX = baseScale.x * grow;
+                sway.baseScaleY = baseScale.y * grow;
+            }
+
+            if (progress >= 1) {
+                completePlantShrink(shrinkingPlants, plantId, shrinking);
+            }
+            return;
+        }
+
+        const startedAt = growingPlants?.get(plantId);
         if (!startedAt) return;
 
         const baseScale = child.userData.baseScale;
@@ -163,10 +228,16 @@ const sortPlantBillboards = (plantRoot, camera) => {
     });
 };
 
-export const updatePlantSway = (plantRoot, elapsed, camera, growingPlants = null) => {
+export const updatePlantSway = (
+    plantRoot,
+    elapsed,
+    camera,
+    growingPlants = null,
+    shrinkingPlants = null
+) => {
     if (!plantRoot) return;
 
-    updatePlantGrow(plantRoot, growingPlants);
+    updatePlantGrow(plantRoot, growingPlants, shrinkingPlants);
     updatePlantAtlases(plantRoot, elapsed, camera);
 
     collectBillboards(plantRoot).forEach((sprite) => {
