@@ -65,6 +65,20 @@ export const loadUserLines = () => {
     return lines;
 };
 
+export const removeLastUserLine = () => {
+    try {
+        const currentLines = loadUserLines();
+        if (currentLines.length === 0) return currentLines;
+
+        const next = currentLines.slice(0, -1);
+        writeUserLines(next);
+        window.dispatchEvent(new Event(GARDEN_PLANTS_UPDATED));
+        return next;
+    } catch {
+        return loadUserLines();
+    }
+};
+
 export const saveUserLine = (text) => {
     const trimmed = text.trim();
     if (!trimmed) return loadUserLines();

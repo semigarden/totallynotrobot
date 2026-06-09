@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import {
     GARDEN_PLANTS_UPDATED,
     loadUserLines,
+    removeLastUserLine,
     saveUserLine,
 } from "@/api/manifestoGarden";
+import { randomPlantText } from "@/utils/randomPlantText";
 
 export const useGardenPlants = () => {
     const [plants, setPlants] = useState(loadUserLines);
@@ -28,5 +30,13 @@ export const useGardenPlants = () => {
         return next;
     };
 
-    return { plants, plantLine, refreshPlants };
+    const plantRandomLine = () => plantLine(randomPlantText());
+
+    const removeLastPlant = () => {
+        const next = removeLastUserLine();
+        setPlants(next);
+        return next;
+    };
+
+    return { plants, plantLine, plantRandomLine, removeLastPlant, refreshPlants };
 };

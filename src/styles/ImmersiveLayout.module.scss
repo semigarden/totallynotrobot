@@ -14,10 +14,8 @@
 
 .fullscreenDock {
     position: fixed;
-    // top: max(6px, env(safe-area-inset-top, 0px));
-    // right: max(12px, env(safe-area-inset-right, 0px));
-    top: 0;
-    right: 0;
+    bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    left: max(6px, env(safe-area-inset-left, 0px));
     z-index: 2;
     width: 44px;
     height: 44px;
@@ -30,6 +28,106 @@
     &:hover .fullscreenToggle,
     &:focus-within .fullscreenToggle {
         opacity: 1;
+    }
+}
+
+.mobileActionDock {
+    position: fixed;
+    top: max(6px, env(safe-area-inset-top, 0px));
+    left: max(6px, env(safe-area-inset-left, 0px));
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    opacity: 0;
+
+    &:hover .mobileActionButton,
+    &:focus-within .mobileActionButton {
+        opacity: 1;
+    }
+}
+
+.mobileActionDockCreate {
+    left: auto;
+    right: max(6px, env(safe-area-inset-right, 0px));
+}
+
+.mobileActionButton {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(0, 1, 0, 0.5);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+    touch-action: manipulation;
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.32);
+    }
+
+    &:focus-visible {
+        opacity: 1;
+        outline: 1px solid rgba(255, 255, 255, 0.4);
+        outline-offset: 2px;
+    }
+}
+
+.mobileActionIconDelete,
+.mobileActionIconCreate {
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin: 0 auto;
+}
+
+.mobileActionIconDelete {
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 10px;
+        height: 1.5px;
+        background: rgba(255, 255, 255, 0.72);
+        transform: translate(-50%, -50%);
+    }
+}
+
+.mobileActionIconCreate {
+    position: relative;
+
+    &::before,
+    &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        background: rgba(255, 255, 255, 0.72);
+        transform: translate(-50%, -50%);
+    }
+
+    &::before {
+        width: 10px;
+        height: 1.5px;
+    }
+
+    &::after {
+        width: 1.5px;
+        height: 10px;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .mobileActionDock {
+        display: flex;
     }
 }
 

@@ -4,6 +4,8 @@ import styles from "@/styles/Garden.module.scss";
 const GardenControls = ({
     plants = [],
     onPlant,
+    onRandomPlant = null,
+    onDeleteLastPlant = null,
     showHeader = true,
     showLabel = true,
     showActionButton = false,
@@ -31,10 +33,20 @@ const GardenControls = ({
     };
 
     const onInputKeyDown = (event) => {
-        if (event.key !== "Enter" && event.keyCode !== 13) return;
+        if (event.key === "Enter" || event.keyCode === 13) {
+            event.preventDefault();
+            if (draft.trim()) {
+                plantDraft();
+            } else {
+                onRandomPlant?.();
+            }
+            return;
+        }
 
-        event.preventDefault();
-        plantDraft();
+        if (event.key === "Backspace" && draft === "" && onDeleteLastPlant) {
+            event.preventDefault();
+            onDeleteLastPlant();
+        }
     };
 
     const onInputSearch = (event) => {
@@ -65,7 +77,7 @@ const GardenControls = ({
                         plant
                     </label>
                 )}
-                <input
+                {/* <input
                     ref={inputRef}
                     id={inputId}
                     className={`${styles.plantInput} ${inputClassName}`.trim()}
@@ -82,7 +94,7 @@ const GardenControls = ({
                     autoCapitalize="sentences"
                     enterKeyHint="go"
                     inputMode="text"
-                />
+                /> */}
                 {/* {showActionButton ? (
                     <button
                         type="submit"
