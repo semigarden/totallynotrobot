@@ -422,6 +422,7 @@ const GardenScene = ({
                 cameraY: cameraOffset.y,
                 initialOffset: cameraOffset,
                 lookTarget: freshSpawnLookTarget ?? cameraTarget,
+                groundLookTarget: cameraTarget,
                 savedState: savedPosition,
                 onPositionChange: handleWalkPositionChange,
                 constrainPosition,

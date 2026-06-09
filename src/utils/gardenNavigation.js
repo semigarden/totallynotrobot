@@ -99,6 +99,7 @@ export const attachGardenWalkControls = ({
     cameraY,
     initialOffset,
     lookTarget,
+    groundLookTarget = null,
     savedState = null,
     onPositionChange = null,
     constrainPosition = clampWalkPosition,
@@ -109,22 +110,35 @@ export const attachGardenWalkControls = ({
     pinchSpeed = 0.014,
     moveSpeed = DEFAULT_MOVE_SPEED,
 }) => {
-    const state =
+    const mobileLike = isMobileLikePointer();
+    const gardenLookTarget = groundLookTarget ?? lookTarget;
+    const hasSavedState =
         savedState &&
         Number.isFinite(savedState.x) &&
         Number.isFinite(savedState.z) &&
         Number.isFinite(savedState.yaw) &&
-        Number.isFinite(savedState.pitch)
-            ? {
-                  x: savedState.x,
-                  z: savedState.z,
-                  yaw: savedState.yaw,
-                  pitch: savedState.pitch,
-              }
-            : initWalkState(initialOffset, lookTarget, cameraY);
+        Number.isFinite(savedState.pitch);
 
-    if (isMobileLikePointer()) {
-        state.pitch = initWalkState(initialOffset, lookTarget, cameraY).pitch;
+    const state = hasSavedState
+        ? {
+              x: savedState.x,
+              z: savedState.z,
+              yaw: savedState.yaw,
+              pitch: savedState.pitch,
+          }
+        : initWalkState(
+              initialOffset,
+              mobileLike ? gardenLookTarget : lookTarget,
+              cameraY
+          );
+
+    if (mobileLike) {
+        // Moon-framed spawn pitch points at the sky; mobile needs a ground-level view.
+        state.pitch = initWalkState(
+            initialOffset,
+            gardenLookTarget,
+            cameraY
+        ).pitch;
     }
 
     constrainPosition?.(state);
@@ -253,6 +267,10 @@ export const attachGardenWalkControls = ({
     const onPointerDown = (event) => {
         if (!enabled) return;
 
+        if (event.pointerType === "touch" || event.button !== 0) {
+            lookAtAnimation = null;
+        }
+
         pointers.set(event.pointerId, event);
 
         if (pointers.size === 2) {
@@ -375,6 +393,7 @@ export const attachGardenWalkControls = ({
         }
 
         if (dragMode === "rotate") {
+            lookAtAnimation = null;
             state.yaw -= dx * rotateSpeed;
             state.pitch -= dy * rotateSpeed;
             updateCamera();
