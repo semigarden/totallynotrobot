@@ -23,7 +23,8 @@ export class ConstantGlitchPass extends Pass {
     advance(elapsed = 0) {
         this.uniforms.byp.value = 0;
         this.uniforms.amount.value = this.amount;
-        this.uniforms.seed.value = (Math.sin(elapsed * 7.3) + 1) * 0.5;
+        // Keep time in a modest range so mobile GPUs retain sin precision.
+        this.uniforms.uTime.value = elapsed % 157;
         this.uniforms.angle.value = Math.sin(elapsed * 0.9) * 0.35;
     }
 

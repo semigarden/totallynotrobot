@@ -1,9 +1,18 @@
 import * as THREE from "three";
 
 export const GARDEN_MAX_PIXEL_RATIO = 2;
+export const GARDEN_GRAIN_SCALE = 2;
 
 export const gardenPixelRatio = () =>
     Math.min(window.devicePixelRatio || 1, GARDEN_MAX_PIXEL_RATIO);
+
+export const gardenEffectivePixelRatio = (cssWidth, bufferWidth) => {
+    if (cssWidth > 0 && bufferWidth > 0) {
+        return bufferWidth / cssWidth;
+    }
+
+    return gardenPixelRatio();
+};
 
 export const createGardenRenderer = () => {
     const renderer = new THREE.WebGLRenderer({

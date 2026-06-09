@@ -5,7 +5,11 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { FilmPass } from "three/addons/postprocessing/FilmPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { gardenPixelRatio } from "@/utils/gardenRenderer";
+import {
+    GARDEN_GRAIN_SCALE,
+    gardenEffectivePixelRatio,
+    gardenPixelRatio,
+} from "@/utils/gardenRenderer";
 import { GardenExperimentShader } from "@/utils/gardenExperimentShader";
 import { ConstantGlitchPass } from "@/utils/gardenConstantGlitchPass";
 import { GardenAfterimagePass } from "@/utils/gardenAfterimagePass";
@@ -37,7 +41,7 @@ export const GARDEN_DEFAULT_EFFECTS = {
     [GARDEN_EFFECTS.bloom]: true,
     [GARDEN_EFFECTS.experiment]: false,
     [GARDEN_EFFECTS.warp]: false,
-    [GARDEN_EFFECTS.halftone]: true,
+    [GARDEN_EFFECTS.halftone]: false,
     [GARDEN_EFFECTS.film]: true,
     [GARDEN_EFFECTS.glitch]: true,
     [GARDEN_EFFECTS.tear]: false,
@@ -217,11 +221,22 @@ export const createGardenComposer = (
     };
 
     const resize = (width, height) => {
-        const nextPixelRatio = gardenPixelRatio();
-        renderer.setPixelRatio(nextPixelRatio);
+        const pixelRatio = gardenPixelRatio();
+
+        renderer.setPixelRatio(pixelRatio);
+        renderer.setSize(width, height);
+        composer.setPixelRatio(pixelRatio);
         composer.setSize(width, height);
-        const bufferWidth = width * nextPixelRatio;
-        const bufferHeight = height * nextPixelRatio;
+
+        const bufferWidth = renderer.domElement.width;
+        const bufferHeight = renderer.domElement.height;
+        const effectivePixelRatio = gardenEffectivePixelRatio(
+            width,
+            bufferWidth
+        );
+
+        glitchPass.uniforms.uPixelRatio.value = effectivePixelRatio;
+        glitchPass.uniforms.uGrainScale.value = GARDEN_GRAIN_SCALE;
 
         afterimagePass.setSize(bufferWidth, bufferHeight);
         feedbackPass.setSize(bufferWidth, bufferHeight);
