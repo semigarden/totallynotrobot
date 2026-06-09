@@ -35,10 +35,10 @@ export const buildPlantPhenotype = ({
     const archetypeBias = speciesHash % 5;
 
     return {
-        presetIndex: (plantHash + archetypeBias) % 14,
+        presetIndex: (plantHash + archetypeBias) % 12,
         iterations: 3 + ((plantHash >> 5) % 2),
-        angleJitter: ((plantHash >> 9) % 17) - 8,
-        segmentLength: hashRange(plantHash, 13, 4.2, 8.4),
+        angleJitter: ((plantHash >> 9) % 13) - 6,
+        segmentLength: hashRange(plantHash, 13, 5, 7.5),
         sizeScale: hashRange(plantHash, 17, 0.72, 1.62),
         strokeScale: hashRange(speciesHash, 7, 0.72, 1.35),
         opacityScale: hashRange(plantHash, 20, 0.72, 1),

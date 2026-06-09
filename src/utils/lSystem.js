@@ -68,6 +68,8 @@ const PRESETS = [
 
 const MAX_INSTRUCTIONS = 12000;
 const SAFE_FALLBACK_PRESET = 0;
+const FOREST_CANDIDATE_ATTEMPTS = 12;
+const FOREST_PRESET_BIAS = [0, 1, 4, 6, 7, 8, 9, 2, 3, 5, 10, 11];
 
 export const hashString = (text) => {
     let hash = 2166136261;
@@ -172,24 +174,110 @@ export const normalizeSegments = (segments, padding = 8) => {
     };
 };
 
-const hasRootedShape = (plant) => {
-    if (!plant.segments || plant.segments.length < 8) return false;
-    if (plant.height < 24) return false;
+const segmentBounds = (segments) => {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    segments.forEach((segment) => {
+        minX = Math.min(minX, segment.x1, segment.x2);
+        minY = Math.min(minY, segment.y1, segment.y2);
+        maxX = Math.max(maxX, segment.x1, segment.x2);
+        maxY = Math.max(maxY, segment.y1, segment.y2);
+    });
+
+    return {
+        minX,
+        minY,
+        maxX,
+        maxY,
+        width: maxX - minX,
+        height: maxY - minY,
+    };
+};
+
+const isQualityForestPlant = (plant) => {
+    const segments = plant.segments ?? [];
+    if (segments.length < 12) return false;
+    if (plant.height < 28) return false;
 
     const aspect = plant.width / Math.max(plant.height, 1);
-    if (aspect > 1.85) return false;
+    if (aspect > 1.45 || aspect < 0.22) return false;
 
     const rootDepth = plant.rootY / Math.max(plant.height, 1);
     if (rootDepth < 0.58) return false;
 
-    const trunkSegments = plant.segments.filter((segment) => segment.depth === 0);
+    const trunkSegments = segments.filter((segment) => segment.depth === 0);
+    if (trunkSegments.length < 2) return false;
+
     const highestTrunkY = trunkSegments.reduce(
         (top, segment) => Math.min(top, segment.y1, segment.y2),
         plant.rootY
     );
     const trunkReach = plant.rootY - highestTrunkY;
+    if (trunkReach < plant.height * 0.28) return false;
 
-    return trunkReach > plant.height * 0.24;
+    const branchSegments = segments.filter((segment) => segment.depth >= 1);
+    const forkSegments = segments.filter((segment) => segment.depth >= 2);
+    const maxDepth = segments.reduce(
+        (deepest, segment) => Math.max(deepest, segment.depth),
+        0
+    );
+
+    if (branchSegments.length < 8) return false;
+    if (forkSegments.length < 4) return false;
+    if (maxDepth < 3) return false;
+
+    const segmentDensity = segments.length / Math.max(plant.height, 1);
+    if (segmentDensity > 1.75) return false;
+
+    const lowerBandY = plant.rootY - plant.height * 0.38;
+    const lowerSegments = segments.filter(
+        (segment) => Math.max(segment.y1, segment.y2) >= lowerBandY
+    );
+    const lowerBounds = segmentBounds(lowerSegments);
+    const lowerSpreadRatio = lowerBounds.width / Math.max(plant.height, 1);
+    if (lowerSpreadRatio > 0.68) return false;
+
+    const crownSegments = segments.filter(
+        (segment) => Math.min(segment.y1, segment.y2) <= plant.rootY - plant.height * 0.42
+    );
+    const crownBounds = segmentBounds(crownSegments);
+    const crownSpreadRatio = crownBounds.width / Math.max(plant.height, 1);
+    if (crownSpreadRatio > 1.05) return false;
+
+    const trunkMass = trunkSegments.length / segments.length;
+    if (trunkMass > 0.42 && aspect > 0.95) return false;
+
+    return true;
+};
+
+const forestCandidateParams = (text, seed, phenotype, attempt) => {
+    const hash = hashString(`${text}:${seed}:forest:${attempt}`);
+    const presetIndex =
+        phenotype?.presetIndex != null && attempt === 0
+            ? phenotype.presetIndex % PRESETS.length
+            : FOREST_PRESET_BIAS[hash % FOREST_PRESET_BIAS.length];
+    const iterations =
+        phenotype?.iterations != null && attempt === 0
+            ? phenotype.iterations
+            : 3 + ((hash >> 3) % 2);
+    const angleJitter =
+        phenotype?.angleJitter != null && attempt === 0
+            ? phenotype.angleJitter
+            : ((hash >> 6) % 15) - 7;
+    const segmentLength =
+        phenotype?.segmentLength != null && attempt === 0
+            ? phenotype.segmentLength
+            : 5 + ((hash >> 10) % 4);
+
+    return {
+        presetIndex,
+        iterations,
+        angleJitter,
+        segmentLength: Math.min(8, Math.max(4.5, segmentLength)),
+    };
 };
 
 const buildPlantFromPreset = ({
@@ -221,29 +309,47 @@ const buildPlantFromPreset = ({
 
 export const textToPlant = (text, seed = "", phenotype = null) => {
     const hash = hashString(`${text}:${seed}`);
-    const candidate = buildPlantFromPreset({
-        text,
-        seed,
-        phenotype,
-        presetIndex: phenotype?.presetIndex ?? hash % PRESETS.length,
-        iterations: phenotype?.iterations ?? 3 + (hash % 2),
-        angleJitter: phenotype?.angleJitter,
-        segmentLength: phenotype?.segmentLength ?? 5 + (hash % 5),
-    });
 
-    if (hasRootedShape(candidate)) return candidate;
+    for (let attempt = 0; attempt < FOREST_CANDIDATE_ATTEMPTS; attempt++) {
+        const params = forestCandidateParams(text, seed, phenotype, attempt);
+        const candidate = buildPlantFromPreset({
+            text,
+            seed: `${seed}:${attempt}`,
+            phenotype,
+            ...params,
+        });
+
+        if (isQualityForestPlant(candidate)) {
+            return candidate;
+        }
+    }
+
+    const fallbackPresets = [0, 4, 6, 8, 1, 7];
+    for (const presetIndex of fallbackPresets) {
+        for (const iterations of [3, 4]) {
+            const candidate = buildPlantFromPreset({
+                text,
+                seed: `${seed}:fallback:${presetIndex}:${iterations}`,
+                phenotype,
+                presetIndex,
+                iterations,
+                angleJitter: ((hash >> 4) % 7) - 3,
+                segmentLength: 5.5 + (hash % 2),
+            });
+
+            if (isQualityForestPlant(candidate)) {
+                return candidate;
+            }
+        }
+    }
 
     return buildPlantFromPreset({
         text,
-        seed,
-        phenotype: {
-            ...phenotype,
-            presetIndex: SAFE_FALLBACK_PRESET,
-            iterations: 3,
-        },
+        seed: `${seed}:fallback`,
+        phenotype,
         presetIndex: SAFE_FALLBACK_PRESET,
-        iterations: 3,
+        iterations: 4,
         angleJitter: ((hash >> 4) % 7) - 3,
-        segmentLength: 6 + (hash % 3),
+        segmentLength: 6,
     });
 };
