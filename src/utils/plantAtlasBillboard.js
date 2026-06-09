@@ -129,12 +129,15 @@ export const createPlantAtlasBillboards = (plants = [], options = {}) => {
     const instanceUvRects = new Float32Array(plants.length * 4);
     const instanceSways = new Float32Array(plants.length * 4);
     const instanceGrows = new Float32Array(plants.length);
+    const plantRenderData = new Map();
 
     plants.forEach((plant, index) => {
+        const globalProgress = getInitialGrow(plant);
         const asset = createPlantRenderAsset(plant.text, plant.id, {
             gardenId: plant.gardenId,
             pubDate: plant.pubDate,
             at: plant.at,
+            renderOptions: { globalProgress },
         });
         const column = index % columns;
         const row = Math.floor(index / columns);
@@ -168,7 +171,19 @@ export const createPlantAtlasBillboards = (plants = [], options = {}) => {
             [sway.phase, sway.speed, sway.rollAmp, sway.offsetAmp],
             index * 4
         );
-        instanceGrows[index] = getInitialGrow(plant);
+        instanceGrows[index] = 1;
+
+        plantRenderData.set(plant.id, {
+            plant: asset.plant,
+            segmentSchedule: asset.segmentSchedule,
+            canvasScale: asset.canvasScale,
+            canvasWidth: asset.canvas.width,
+            canvasHeight: asset.canvas.height,
+            tileX: x,
+            tileY: y,
+            drawWidth,
+            drawHeight,
+        });
     });
 
     const texture = new THREE.CanvasTexture(atlas);
@@ -217,6 +232,10 @@ export const createPlantAtlasBillboards = (plants = [], options = {}) => {
     mesh.frustumCulled = false;
     mesh.userData.plantAtlas = true;
     mesh.userData.plantIds = plants.map((plant) => plant.id);
+    mesh.userData.plantRenderData = plantRenderData;
+    mesh.userData.atlasCanvas = atlas;
+    mesh.userData.atlasContext = context;
+    mesh.userData.atlasTexture = texture;
     group.add(mesh);
 
     return group;

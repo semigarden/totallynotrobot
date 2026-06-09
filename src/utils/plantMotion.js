@@ -1,7 +1,13 @@
 import * as THREE from "three";
 import { hashString } from "@/utils/lSystem";
+import { effectiveGrowProgressForShrink } from "@/utils/plantGrowth";
+import {
+    updateAtlasPlantTexture,
+    updateSpritePlantTexture,
+} from "@/utils/plantTextureAnimation";
 
-export const PLANT_GROW_DURATION_MS = 2600;
+export const PLANT_GROW_DURATION_MS = 6500;
+export const PLANT_SHRINK_DURATION_MS = 6500;
 
 const easeOutCubic = (t) => 1 - (1 - t) ** 3;
 
@@ -18,7 +24,7 @@ export const plantShrinkFactor = (
 ) => {
     if (!Number.isFinite(startedAt)) return 0;
 
-    const progress = Math.min(1, (now - startedAt) / PLANT_GROW_DURATION_MS);
+    const progress = Math.min(1, (now - startedAt) / PLANT_SHRINK_DURATION_MS);
     return initialGrow * (1 - easeOutCubic(progress));
 };
 
@@ -101,6 +107,18 @@ const completePlantShrink = (shrinkingPlants, plantId, shrinking) => {
     shrinking.onComplete?.();
 };
 
+const animatePlantTexture = (child, plantId, globalProgress) => {
+    if (child.userData?.plantAtlas) {
+        return updateAtlasPlantTexture(child, plantId, globalProgress);
+    }
+
+    if (child.userData?.plantId === plantId) {
+        return updateSpritePlantTexture(child, globalProgress);
+    }
+
+    return false;
+};
+
 export const updatePlantGrow = (
     plantRoot,
     growingPlants,
@@ -112,24 +130,21 @@ export const updatePlantGrow = (
 
     plantRoot.traverse((child) => {
         if (child.userData?.plantAtlas) {
-            const growAttribute = child.geometry?.getAttribute("instanceGrow");
             const plantIds = child.userData.plantIds;
-            if (!growAttribute || !Array.isArray(plantIds)) return;
+            if (!Array.isArray(plantIds)) return;
 
-            let changed = false;
-
-            plantIds.forEach((plantId, index) => {
+            plantIds.forEach((plantId) => {
                 const shrinking = shrinkingPlants?.get(plantId);
                 if (shrinking) {
                     const progress = Math.min(
                         1,
-                        (now - shrinking.startedAt) / PLANT_GROW_DURATION_MS
+                        (now - shrinking.startedAt) / PLANT_SHRINK_DURATION_MS
                     );
-                    const grow = plantShrinkFactor(shrinking, now);
-                    if (growAttribute.getX(index) !== grow) {
-                        growAttribute.setX(index, grow);
-                        changed = true;
-                    }
+                    const globalProgress = effectiveGrowProgressForShrink(
+                        plantShrinkFactor(shrinking, now),
+                        shrinking.initialGrow
+                    );
+                    animatePlantTexture(child, plantId, globalProgress);
 
                     if (progress >= 1) {
                         completePlantShrink(shrinkingPlants, plantId, shrinking);
@@ -140,20 +155,18 @@ export const updatePlantGrow = (
                 const startedAt = growingPlants?.get(plantId);
                 if (!startedAt) return;
 
-                const grow = plantGrowFactor(startedAt, now);
-                if (growAttribute.getX(index) === grow) return;
+                const globalProgress = plantGrowFactor(startedAt, now);
+                const isComplete = globalProgress >= 1;
+                animatePlantTexture(
+                    child,
+                    plantId,
+                    isComplete ? 1 : globalProgress
+                );
 
-                growAttribute.setX(index, grow);
-                changed = true;
-
-                if (grow >= 1) {
+                if (isComplete) {
                     growingPlants.delete(plantId);
                 }
             });
-
-            if (changed) {
-                growAttribute.needsUpdate = true;
-            }
             return;
         }
 
@@ -162,21 +175,15 @@ export const updatePlantGrow = (
 
         const shrinking = shrinkingPlants?.get(plantId);
         if (shrinking) {
-            const baseScale = child.userData.baseScale;
-            const sway = child.userData.sway;
-            if (!baseScale) return;
-
             const progress = Math.min(
                 1,
-                (now - shrinking.startedAt) / PLANT_GROW_DURATION_MS
+                (now - shrinking.startedAt) / PLANT_SHRINK_DURATION_MS
             );
-            const grow = plantShrinkFactor(shrinking, now);
-            child.scale.set(baseScale.x * grow, baseScale.y * grow, 1);
-
-            if (sway) {
-                sway.baseScaleX = baseScale.x * grow;
-                sway.baseScaleY = baseScale.y * grow;
-            }
+            const globalProgress = effectiveGrowProgressForShrink(
+                plantShrinkFactor(shrinking, now),
+                shrinking.initialGrow
+            );
+            animatePlantTexture(child, plantId, globalProgress);
 
             if (progress >= 1) {
                 completePlantShrink(shrinkingPlants, plantId, shrinking);
@@ -187,19 +194,11 @@ export const updatePlantGrow = (
         const startedAt = growingPlants?.get(plantId);
         if (!startedAt) return;
 
-        const baseScale = child.userData.baseScale;
-        const sway = child.userData.sway;
-        if (!baseScale) return;
+        const globalProgress = plantGrowFactor(startedAt, now);
+        const isComplete = globalProgress >= 1;
+        animatePlantTexture(child, plantId, isComplete ? 1 : globalProgress);
 
-        const grow = plantGrowFactor(startedAt, now);
-        child.scale.set(baseScale.x * grow, baseScale.y * grow, 1);
-
-        if (sway) {
-            sway.baseScaleX = baseScale.x * grow;
-            sway.baseScaleY = baseScale.y * grow;
-        }
-
-        if (grow >= 1) {
+        if (isComplete) {
             growingPlants.delete(plantId);
         }
     });

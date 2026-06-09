@@ -13,6 +13,7 @@ import {
     plantShrinkFactor,
     updatePlantSway,
 } from "@/utils/plantMotion";
+import { effectiveGrowProgressForShrink } from "@/utils/plantGrowth";
 import {
     buildFlowerPosition,
     createFlowerBillboard,
@@ -132,23 +133,17 @@ const createChunkContent = ({
         group.add(plantGroup);
     } else {
     gardenPlants.forEach((plant) => {
+        const globalProgress = getInitialGrow(plant);
         const billboard = createPlantBillboard(plant.text, plant.id, {
             gardenId: plant.gardenId,
             pubDate: plant.pubDate,
             at: plant.at,
+            renderOptions: { globalProgress },
         });
         const position = plantPosition(plant);
         billboard.position.set(position.x, 0, position.z);
         billboard.userData.plantId = plant.id;
         billboard.userData.baseScale = billboard.scale.clone();
-        const grow = getInitialGrow(plant);
-        if (grow < 1) {
-            billboard.scale.set(
-                billboard.userData.baseScale.x * grow,
-                billboard.userData.baseScale.y * grow,
-                1
-            );
-        }
         initPlantSway(billboard, plant.id ?? plant.text);
 
         if (showPlantTitles && !TEMPORARILY_HIDE_SCENE_METADATA) {
@@ -329,7 +324,10 @@ const GardenScene = ({
     const getPlantMotionFactor = (plant) => {
         const shrinking = shrinkingPlantsRef.current.get(plant.id);
         if (shrinking) {
-            return plantShrinkFactor(shrinking);
+            return effectiveGrowProgressForShrink(
+                plantShrinkFactor(shrinking),
+                shrinking.initialGrow
+            );
         }
 
         const startedAt = growingPlantsRef.current.get(plant.id);

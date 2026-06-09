@@ -8,6 +8,10 @@ import {
     segmentStrokeColor,
     segmentStrokeWidth,
 } from "@/utils/plantDraw";
+import {
+    buildSegmentSchedule,
+    segmentProgressFromSchedule,
+} from "@/utils/plantGrowth";
 import { buildPlantPhenotype } from "@/utils/plantPhenotype";
 
 const CANVAS_TARGET = 256;
@@ -37,7 +41,47 @@ const phenotypeStrokeColor = (segment, phenotype) => {
     return `rgba(${channel}, ${channel}, ${channel}, ${opacity})`;
 };
 
-export const renderPlantToCanvas = (plant, canvasTarget = CANVAS_TARGET) => {
+export const drawPlantSegments = (
+    context,
+    plant,
+    scale,
+    { globalProgress = 1, segmentSchedule = null } = {}
+) => {
+    const schedule =
+        segmentSchedule ?? buildSegmentSchedule(plant.segments ?? []);
+
+    plant.segments.forEach((segment, index) => {
+        const segmentProgress = segmentProgressFromSchedule(
+            schedule[index],
+            globalProgress
+        );
+        if (segmentProgress <= 0) return;
+
+        context.strokeStyle = phenotypeStrokeColor(segment, plant.phenotype);
+        context.lineWidth =
+            segmentStrokeWidth(segment.depth) *
+            (plant.phenotype?.strokeScale ?? 1) *
+            scale;
+
+        const x1 = segment.x1 * scale;
+        const y1 = segment.y1 * scale;
+        const x2 = segment.x2 * scale;
+        const y2 = segment.y2 * scale;
+        const drawX = x1 + (x2 - x1) * segmentProgress;
+        const drawY = y1 + (y2 - y1) * segmentProgress;
+
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(drawX, drawY);
+        context.stroke();
+    });
+};
+
+export const renderPlantToCanvas = (
+    plant,
+    canvasTarget = CANVAS_TARGET,
+    options = {}
+) => {
     const canvas = document.createElement("canvas");
     const scale = canvasTarget / Math.max(plant.width, plant.height, 1);
     canvas.width = Math.max(1, Math.ceil(plant.width * scale));
@@ -50,53 +94,9 @@ export const renderPlantToCanvas = (plant, canvasTarget = CANVAS_TARGET) => {
     context.lineCap = "round";
     context.lineJoin = "round";
 
-    plant.segments.forEach((segment) => {
-        context.strokeStyle = phenotypeStrokeColor(segment, plant.phenotype);
-        context.lineWidth =
-            segmentStrokeWidth(segment.depth) *
-            (plant.phenotype?.strokeScale ?? 1) *
-            scale;
-        context.beginPath();
-        context.moveTo(segment.x1 * scale, segment.y1 * scale);
-        context.lineTo(segment.x2 * scale, segment.y2 * scale);
-        context.stroke();
-    });
+    drawPlantSegments(context, plant, scale, options);
 
     return canvas;
-};
-
-export const createPlantBillboard = (text, seed = "", options = {}) => {
-    const phenotype = buildPlantPhenotype({
-        text,
-        id: seed,
-        gardenId: options.gardenId,
-        pubDate: options.pubDate,
-        at: options.at,
-    });
-    const plant = textToPlant(text, seed, phenotype);
-    const sizeScale = phenotype.sizeScale ?? plantWorldScale(text, seed);
-    const worldHeight = BASE_WORLD_HEIGHT * sizeScale;
-    const canvas = renderPlantToCanvas(plant);
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    applyPlantTextureQuality(texture);
-    texture.needsUpdate = true;
-
-    const material = new THREE.SpriteMaterial({
-        map: texture,
-        transparent: true,
-        alphaTest: 0.008,
-        depthWrite: false,
-        depthTest: true,
-    });
-
-    const sprite = new THREE.Sprite(material);
-    const aspect = plant.width / Math.max(plant.height, 1);
-    sprite.scale.set(worldHeight * aspect, worldHeight, 1);
-    sprite.center.set(0.5, 0);
-    sprite.userData.sizeScale = sizeScale;
-
-    return sprite;
 };
 
 export const createPlantRenderAsset = (text, seed = "", options = {}) => {
@@ -110,15 +110,51 @@ export const createPlantRenderAsset = (text, seed = "", options = {}) => {
     const plant = textToPlant(text, seed, phenotype);
     const sizeScale = phenotype.sizeScale ?? plantWorldScale(text, seed);
     const worldHeight = BASE_WORLD_HEIGHT * sizeScale;
-    const canvas = renderPlantToCanvas(plant);
+    const segmentSchedule = buildSegmentSchedule(plant.segments);
+    const renderOptions = options.renderOptions ?? {};
+    const canvas = renderPlantToCanvas(plant, CANVAS_TARGET, {
+        segmentSchedule,
+        ...renderOptions,
+    });
     const aspect = plant.width / Math.max(plant.height, 1);
 
     return {
         canvas,
+        plant,
+        segmentSchedule,
+        canvasScale: CANVAS_TARGET / Math.max(plant.width, plant.height, 1),
         sizeScale,
         worldWidth: worldHeight * aspect,
         worldHeight,
     };
+};
+
+export const createPlantBillboard = (text, seed = "", options = {}) => {
+    const asset = createPlantRenderAsset(text, seed, options);
+    const texture = new THREE.CanvasTexture(asset.canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    applyPlantTextureQuality(texture);
+    texture.needsUpdate = true;
+
+    const material = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        alphaTest: 0.008,
+        depthWrite: false,
+        depthTest: true,
+    });
+
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(asset.worldWidth, asset.worldHeight, 1);
+    sprite.center.set(0.5, 0);
+    sprite.userData.sizeScale = asset.sizeScale;
+    sprite.userData.plantRenderData = {
+        plant: asset.plant,
+        segmentSchedule: asset.segmentSchedule,
+        canvasScale: asset.canvasScale,
+    };
+
+    return sprite;
 };
 
 const wrapLabelLines = (context, text, maxWidth, maxLines = 3) => {
