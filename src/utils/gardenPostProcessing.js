@@ -22,7 +22,6 @@ import {
     applyGardenShiftColors,
 } from "@/utils/gardenShiftColors";
 
-/** Toggleable post-processing effect ids (render/output passes are always on). */
 export const GARDEN_EFFECTS = {
     afterimage: "afterimage",
     feedback: "feedback",
