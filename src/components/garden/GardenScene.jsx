@@ -32,6 +32,7 @@ import {
     groupPlantsByChunk,
     visibleChunkKeys,
 } from "@/utils/gardenChunks";
+import { createImmersionClouds } from "@/utils/immersionClouds";
 import { createMoon } from "@/utils/moonScene";
 import { createGardenComposer } from "@/utils/gardenPostProcessing";
 import {
@@ -297,6 +298,7 @@ const GardenScene = ({
     walkPositionKey = "immersive",
     showPlantTitles = true,
     showDateTerritories = false,
+    showClouds = false,
     onWalkStateChange = null,
     gardenActionsRef = null,
     postProcessingPreset = null,
@@ -500,6 +502,7 @@ const GardenScene = ({
 
         const groundRipples = createGroundRipples(scene);
         const moonRoot = createMoon(scene);
+        const clouds = showClouds ? createImmersionClouds(scene) : null;
 
         sceneRef.current = scene;
 
@@ -559,6 +562,7 @@ const GardenScene = ({
                 shrinkingPlantsRef.current
             );
             groundRipples.update(elapsed, camera);
+            clouds?.update(elapsed, delta, camera);
             postProcessing.update(elapsed);
             postProcessing.composer.render();
         };
@@ -625,6 +629,7 @@ const GardenScene = ({
                 territoryRef.current = null;
             }
             groundRipples.dispose();
+            clouds?.dispose();
             scene.remove(moonRoot);
             disposeObject(moonRoot);
             disposeObject(scene);
@@ -669,6 +674,7 @@ const GardenScene = ({
         walkPositionKey,
         showPlantTitles,
         showDateTerritories,
+        showClouds,
         onWalkStateChange,
         gardenActionsRef,
         postProcessingPreset,

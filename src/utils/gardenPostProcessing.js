@@ -35,14 +35,14 @@ export const GARDEN_EFFECTS = {
 };
 
 export const GARDEN_DEFAULT_EFFECTS = {
-    [GARDEN_EFFECTS.afterimage]: true,
-    [GARDEN_EFFECTS.feedback]: true,
-    [GARDEN_EFFECTS.bloom]: true,
+    [GARDEN_EFFECTS.afterimage]: true, // true
+    [GARDEN_EFFECTS.feedback]: true, // true
+    [GARDEN_EFFECTS.bloom]: true, // true
     [GARDEN_EFFECTS.experiment]: false,
     [GARDEN_EFFECTS.warp]: false,
     [GARDEN_EFFECTS.halftone]: false,
-    [GARDEN_EFFECTS.film]: true,
-    [GARDEN_EFFECTS.glitch]: true,
+    [GARDEN_EFFECTS.film]: true, // true
+    [GARDEN_EFFECTS.glitch]: false, // true
     [GARDEN_EFFECTS.tear]: false,
 };
 
