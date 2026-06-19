@@ -65,10 +65,14 @@ export const GARDEN_EXPERIMENTAL_PRESET = {
     afterimageDamp: 0.89,
     afterimageMoveTrail: 0.045,
     afterimageYawTrail: 0.022,
+    afterimagePlantTrail: 0.11,
+    afterimagePlantDampBoost: 0.07,
     feedbackDamp: 0.8,
     feedbackMix: 0.32,
     feedbackMoveSmear: 0.028,
     feedbackYawSmear: 0.014,
+    feedbackPlantSmear: 0.05,
+    feedbackPlantDampBoost: 0.08,
     feedbackZoom: 1.0014,
     bloomStrength: 0.52,
     bloomRadius: 0.38,
@@ -243,7 +247,10 @@ export const createGardenComposer = (
         halftonePass.uniforms.resolution.value.set(bufferWidth, bufferHeight);
     };
 
-    const update = (elapsed = 0) => {
+    const baseAfterimageDamp = preset.afterimageDamp;
+    const baseFeedbackDamp = preset.feedbackDamp;
+
+    const update = (elapsed = 0, motion = {}) => {
         worldDelta.subVectors(camera.position, prevPosition);
         prevPosition.copy(camera.position);
 
@@ -264,21 +271,43 @@ export const createGardenComposer = (
         const moveX = worldDelta.dot(right);
         const moveY = worldDelta.dot(forward);
 
+        const plantMotion = motion.plants ?? {};
+        const plantStrength = plantMotion.strength ?? 0;
+
         // Trail behind motion: offset old frame opposite to default leading-edge ghosts.
         const trailX =
             -moveX * preset.afterimageMoveTrail +
-            yawDelta * preset.afterimageYawTrail;
-        const trailY = -moveY * preset.afterimageMoveTrail;
+            yawDelta * preset.afterimageYawTrail +
+            (plantMotion.trailX ?? 0) * preset.afterimagePlantTrail * plantStrength;
+        const trailY =
+            -moveY * preset.afterimageMoveTrail +
+            (plantMotion.trailY ?? 0) * preset.afterimagePlantTrail * plantStrength;
 
         if (afterimagePass.enabled) {
+            afterimagePass.damp = Math.min(
+                0.98,
+                baseAfterimageDamp +
+                    preset.afterimagePlantDampBoost * plantStrength
+            );
             afterimagePass.setTrailOffset(trailX, trailY);
         }
 
         if (feedbackPass.enabled) {
+            feedbackPass.uniforms.damp.value = Math.min(
+                0.96,
+                baseFeedbackDamp + preset.feedbackPlantDampBoost * plantStrength
+            );
             const smearX =
                 -moveX * preset.feedbackMoveSmear +
-                yawDelta * preset.feedbackYawSmear;
-            const smearY = -moveY * preset.feedbackMoveSmear;
+                yawDelta * preset.feedbackYawSmear +
+                (plantMotion.trailX ?? 0) *
+                    preset.feedbackPlantSmear *
+                    plantStrength;
+            const smearY =
+                -moveY * preset.feedbackMoveSmear +
+                (plantMotion.trailY ?? 0) *
+                    preset.feedbackPlantSmear *
+                    plantStrength;
             feedbackPass.setSmearOffset(smearX, smearY);
         }
 

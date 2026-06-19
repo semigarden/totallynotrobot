@@ -154,8 +154,12 @@ export const createPlantAtlasBillboards = (plants = [], options = {}) => {
         context.drawImage(asset.canvas, x, y, drawWidth, drawHeight);
 
         const position = plantPosition(plant);
+        const scaleMultiplier = options.plantScaleMultiplier ?? 1;
         instancePositions.set([position.x, 0, position.z], index * 3);
-        instanceScales.set([asset.worldWidth, asset.worldHeight], index * 2);
+        instanceScales.set(
+            [asset.worldWidth * scaleMultiplier, asset.worldHeight * scaleMultiplier],
+            index * 2
+        );
         instanceUvRects.set(
             [
                 x / atlas.width,
@@ -239,4 +243,12 @@ export const createPlantAtlasBillboards = (plants = [], options = {}) => {
     group.add(mesh);
 
     return group;
+};
+
+export const setAtlasInstancePosition = (mesh, instanceIndex, x, z) => {
+    const attribute = mesh.geometry?.getAttribute("instancePosition");
+    if (!attribute || instanceIndex < 0) return;
+
+    attribute.setXYZ(instanceIndex, x, 0, z);
+    attribute.needsUpdate = true;
 };

@@ -5,6 +5,7 @@ import {
     updateAtlasPlantTexture,
     updateSpritePlantTexture,
 } from "@/utils/plantTextureAnimation";
+import { setAtlasInstancePosition } from "@/utils/plantAtlasBillboard";
 
 export const PLANT_GROW_DURATION_MS = 6500;
 export const PLANT_SHRINK_DURATION_MS = 6500;
@@ -75,6 +76,8 @@ const syncPlantLabels = (billboard) => {
 const collectBillboards = (plantRoot) => {
     const billboards = [];
 
+    if (!plantRoot) return billboards;
+
     plantRoot.traverse((child) => {
         if (child.userData?.sway) {
             billboards.push(child);
@@ -82,6 +85,55 @@ const collectBillboards = (plantRoot) => {
     });
 
     return billboards;
+};
+
+export const splitCameraFollowPlants = (plants = []) => {
+    const worldPlants = [];
+    const followPlants = [];
+
+    plants.forEach((plant) => {
+        if (!plant?.text) return;
+
+        if (plant.followsCamera) {
+            followPlants.push(plant);
+            return;
+        }
+
+        worldPlants.push(plant);
+    });
+
+    return { worldPlants, followPlants };
+};
+
+export const syncCameraFollowPlants = (plantRoot, camera, followPlants = []) => {
+    if (!plantRoot || !camera || followPlants.length === 0) return;
+
+    const followIds = new Set(followPlants.map((plant) => plant.id));
+    const x = camera.position.x;
+    const z = camera.position.z;
+
+    plantRoot.traverse((child) => {
+        if (child.userData?.plantAtlas) {
+            const plantIds = child.userData.plantIds;
+            if (!Array.isArray(plantIds)) return;
+
+            plantIds.forEach((plantId, index) => {
+                if (!followIds.has(plantId)) return;
+                setAtlasInstancePosition(child, index, x, z);
+            });
+            return;
+        }
+
+        const plantId = child.userData?.plantId;
+        if (!plantId || !followIds.has(plantId)) return;
+
+        child.position.set(x, 0, z);
+
+        if (child.userData.sway) {
+            child.userData.sway.baseX = x;
+            child.userData.sway.baseZ = z;
+        }
+    });
 };
 
 const updatePlantAtlases = (plantRoot, elapsed, camera) => {
@@ -225,6 +277,133 @@ const sortPlantBillboards = (plantRoot, camera) => {
             entry.sprite.userData.nameLabel.renderOrder = index;
         }
     });
+};
+
+const projectWorldToScreen = (worldPos, camera, target) => {
+    target.copy(worldPos).project(camera);
+    target.x = target.x * 0.5 + 0.5;
+    target.y = target.y * 0.5 + 0.5;
+    return target;
+};
+
+const plantSwayOffset = (plant, elapsed, sizeScale = 1) => {
+    const hash = hashString(plant.id ?? plant.text ?? "");
+    const phase = ((hash % 628) / 100) * Math.PI * 2;
+    const speed = 0.55 + ((hash >> 6) % 45) / 100;
+    const scale = Math.sqrt(sizeScale || 1);
+    const offsetAmp = (0.018 + ((hash >> 14) % 22) / 1000) / scale;
+    const t = elapsed * speed + phase;
+
+    return {
+        x: Math.sin(t * 0.85) * offsetAmp,
+        z: Math.cos(t * 1.05) * offsetAmp,
+    };
+};
+
+const plantMotionHeight = (plant, growingPlants, shrinkingPlants) => {
+    const plantId = plant.id;
+    const shrinking = shrinkingPlants?.get(plantId);
+
+    if (shrinking) {
+        return 0.25 + plantShrinkFactor(shrinking) * 0.75;
+    }
+
+    const growingStartedAt = growingPlants?.get(plantId);
+    if (growingStartedAt) {
+        return 0.25 + plantGrowFactor(growingStartedAt) * 0.75;
+    }
+
+    return 0.85;
+};
+
+export const createPlantScreenMotionTracker = () => {
+    const prevScreen = new Map();
+    const worldPos = new THREE.Vector3();
+    const screenPos = new THREE.Vector3();
+
+    const reset = () => {
+        prevScreen.clear();
+    };
+
+    const measure = (
+        plants = [],
+        camera,
+        elapsed,
+        { growingPlants = null, shrinkingPlants = null, plantScaleMultiplier = 1 } = {}
+    ) => {
+        if (!camera || plants.length === 0) {
+            return { strength: 0, trailX: 0, trailY: 0 };
+        }
+
+        const activeIds = new Set([
+            ...(growingPlants?.keys() ?? []),
+            ...(shrinkingPlants?.keys() ?? []),
+        ]);
+        const animatingCount = activeIds.size;
+
+        let weightedDx = 0;
+        let weightedDy = 0;
+        let weightSum = 0;
+        let peakMotion = 0;
+        const seenIds = new Set();
+
+        plants.forEach((plant) => {
+            const plantId = plant.id;
+            if (!plantId || seenIds.has(plantId)) return;
+            seenIds.add(plantId);
+
+            const sway = plantSwayOffset(plant, elapsed, plantScaleMultiplier);
+            worldPos.set(
+                plant.x + sway.x,
+                plantMotionHeight(plant, growingPlants, shrinkingPlants),
+                plant.z + sway.z
+            );
+            projectWorldToScreen(worldPos, camera, screenPos);
+
+            const prev = prevScreen.get(plantId);
+            const weight = activeIds.has(plantId) ? 2.4 : 1;
+
+            if (prev) {
+                const dx = screenPos.x - prev.x;
+                const dy = screenPos.y - prev.y;
+                const motion = Math.hypot(dx, dy);
+
+                weightedDx += dx * weight;
+                weightedDy += dy * weight;
+                weightSum += weight;
+                peakMotion = Math.max(peakMotion, motion * weight);
+            }
+
+            prevScreen.set(plantId, {
+                x: screenPos.x,
+                y: screenPos.y,
+            });
+        });
+
+        prevScreen.forEach((_, plantId) => {
+            if (!seenIds.has(plantId)) {
+                prevScreen.delete(plantId);
+            }
+        });
+
+        const motionStrength = Math.min(1, peakMotion * 18);
+        const animStrength = Math.min(1, animatingCount * 0.42);
+        const strength = Math.min(1, motionStrength + animStrength);
+
+        return {
+            strength,
+            trailX:
+                weightSum > 0
+                    ? THREE.MathUtils.clamp(weightedDx / weightSum, -0.05, 0.05)
+                    : 0,
+            trailY:
+                weightSum > 0
+                    ? THREE.MathUtils.clamp(weightedDy / weightSum, -0.05, 0.05)
+                    : 0,
+        };
+    };
+
+    return { measure, reset };
 };
 
 export const updatePlantSway = (

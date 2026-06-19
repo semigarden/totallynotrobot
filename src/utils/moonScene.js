@@ -78,7 +78,7 @@ const createGlowTexture = (stops) => {
     return texture;
 };
 
-const createGlowSprite = (texture, scale, opacity, blending, renderOrder = 1) => {
+const createGlowSprite = (texture, scale, opacity, blending, position, renderOrder = 1) => {
     const material = new THREE.SpriteMaterial({
         map: texture,
         transparent: true,
@@ -89,14 +89,24 @@ const createGlowSprite = (texture, scale, opacity, blending, renderOrder = 1) =>
     });
 
     const sprite = new THREE.Sprite(material);
-    sprite.position.copy(MOON_POSITION);
+    sprite.position.copy(position);
     sprite.scale.set(scale, scale, 1);
     sprite.renderOrder = renderOrder;
 
     return sprite;
 };
 
-export const createMoon = (scene) => {
+export const createMoon = (
+    scene,
+    {
+        position = MOON_POSITION,
+        lightTarget = { x: 0, y: 0, z: 0 },
+    } = {}
+) => {
+    const moonPosition =
+        position instanceof THREE.Vector3
+            ? position.clone()
+            : new THREE.Vector3(position.x, position.y, position.z);
     const moonRoot = new THREE.Group();
 
     const innerGlowTexture = createGlowTexture([
@@ -107,7 +117,14 @@ export const createMoon = (scene) => {
         [1, "rgba(120, 120, 120, 0)"],
     ]);
     moonRoot.add(
-        createGlowSprite(innerGlowTexture, 10, 0.85, THREE.AdditiveBlending, 1)
+        createGlowSprite(
+            innerGlowTexture,
+            10,
+            0.85,
+            THREE.AdditiveBlending,
+            moonPosition,
+            1
+        )
     );
 
     const outerGlowTexture = createGlowTexture([
@@ -118,7 +135,14 @@ export const createMoon = (scene) => {
         [1, "rgba(70, 70, 70, 0)"],
     ]);
     moonRoot.add(
-        createGlowSprite(outerGlowTexture, 34, 0.7, THREE.AdditiveBlending, 1)
+        createGlowSprite(
+            outerGlowTexture,
+            34,
+            0.7,
+            THREE.AdditiveBlending,
+            moonPosition,
+            1
+        )
     );
 
     const coronaTexture = createGlowTexture([
@@ -129,7 +153,14 @@ export const createMoon = (scene) => {
         [1, "rgba(70, 70, 70, 0)"],
     ]);
     moonRoot.add(
-        createGlowSprite(coronaTexture, 58, 0.55, THREE.AdditiveBlending, 1)
+        createGlowSprite(
+            coronaTexture,
+            58,
+            0.55,
+            THREE.AdditiveBlending,
+            moonPosition,
+            1
+        )
     );
 
     const surfaceTexture = createMoonSurfaceTexture();
@@ -142,14 +173,14 @@ export const createMoon = (scene) => {
             depthWrite: false,
         })
     );
-    moonDisk.position.copy(MOON_POSITION);
+    moonDisk.position.copy(moonPosition);
     moonDisk.scale.set(MOON_DISK_SIZE, MOON_DISK_SIZE, 1);
     moonDisk.renderOrder = 2;
     moonRoot.add(moonDisk);
 
     const moonLight = new THREE.DirectionalLight(0xc8c8c8, 0.62);
-    moonLight.position.copy(MOON_POSITION);
-    moonLight.target.position.set(0, 0, 0);
+    moonLight.position.copy(moonPosition);
+    moonLight.target.position.set(lightTarget.x, lightTarget.y, lightTarget.z);
     moonRoot.add(moonLight);
     moonRoot.add(moonLight.target);
 

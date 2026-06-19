@@ -8,9 +8,12 @@ import {
 } from "@/utils/plantBillboard";
 import { createPlantAtlasBillboards } from "@/utils/plantAtlasBillboard";
 import {
+    createPlantScreenMotionTracker,
     initPlantSway,
     plantGrowFactor,
     plantShrinkFactor,
+    splitCameraFollowPlants,
+    syncCameraFollowPlants,
     updatePlantSway,
 } from "@/utils/plantMotion";
 import { effectiveGrowProgressForShrink } from "@/utils/plantGrowth";
@@ -33,6 +36,7 @@ import {
     visibleChunkKeys,
 } from "@/utils/gardenChunks";
 import { createImmersionClouds } from "@/utils/immersionClouds";
+import { createImmersionEntrance } from "@/utils/immersionEntrance";
 import { createMoon } from "@/utils/moonScene";
 import { createGardenComposer } from "@/utils/gardenPostProcessing";
 import {
@@ -96,7 +100,15 @@ const mergeShrinkingPlants = (plants, shrinkingPlants) => {
     return [...base, ...ghosts].sort((a, b) => a.id.localeCompare(b.id));
 };
 
-const computeMovementTerritory = (plants, wrapMovement) => {
+const computeMovementTerritory = (
+    plants,
+    wrapMovement,
+    movementBounds = null
+) => {
+    if (movementBounds) {
+        return { bounds: movementBounds, boundary: null };
+    }
+
     const gardenPlants = normalizePlants(plants);
     if (wrapMovement) {
         return (
@@ -112,6 +124,14 @@ const computeMovementTerritory = (plants, wrapMovement) => {
     };
 };
 
+const isWalkPositionInBounds = (position, bounds) =>
+    position &&
+    bounds &&
+    position.x >= bounds.minX &&
+    position.x <= bounds.maxX &&
+    position.z >= bounds.minZ &&
+    position.z <= bounds.maxZ;
+
 const plantPosition = (plant) => ({
     x: Number.isFinite(plant?.x) ? plant.x : 0,
     z: Number.isFinite(plant?.z) ? plant.z : 0,
@@ -121,6 +141,7 @@ const createChunkContent = ({
     plants,
     showPlantTitles = true,
     getInitialGrow = () => 1,
+    plantScaleMultiplier = 1,
 }) => {
     const gardenPlants = normalizePlants(plants);
     const group = new THREE.Group();
@@ -129,7 +150,10 @@ const createChunkContent = ({
 
     if (!showPlantTitles) {
         plantGroup.add(
-            createPlantAtlasBillboards(gardenPlants, { getInitialGrow })
+            createPlantAtlasBillboards(gardenPlants, {
+                getInitialGrow,
+                plantScaleMultiplier,
+            })
         );
         group.add(plantGroup);
     } else {
@@ -219,6 +243,7 @@ const syncGardenChunks = ({
     chunkRadius = DEFAULT_VISIBLE_CHUNK_RADIUS,
     showPlantTitles = true,
     getInitialGrow = () => 1,
+    plantScaleMultiplier = 1,
 }) => {
     if (!plantRoot) return;
 
@@ -241,7 +266,7 @@ const syncGardenChunks = ({
         const existing = loadedChunks.get(key);
         const showLabels =
             showPlantTitles && !TEMPORARILY_HIDE_SCENE_METADATA;
-        const plantIds = `${showLabels ? "t" : "n"}:${chunkPlants
+        const plantIds = `${showLabels ? "t" : "n"}:${plantScaleMultiplier}:${chunkPlants
             .map((plant) => plant.id)
             .join("|")}`;
 
@@ -257,10 +282,54 @@ const syncGardenChunks = ({
             plants: chunkPlants,
             showPlantTitles: showLabels,
             getInitialGrow,
+            plantScaleMultiplier,
         });
         plantRoot.add(group);
         loadedChunks.set(key, { group, plantIds });
     });
+};
+
+const syncFollowPlants = ({
+    followRoot,
+    followState,
+    followPlants,
+    showPlantTitles = true,
+    getInitialGrow = () => 1,
+    plantScaleMultiplier = 1,
+}) => {
+    if (!followRoot || !followState) return;
+
+    const plantKey = `${plantScaleMultiplier}:${followPlants
+        .map((plant) => `${plant.id}:${plant.text}`)
+        .join("|")}`;
+
+    if (followState.plantKey === plantKey && followState.group) return;
+
+    if (followState.group) {
+        followRoot.remove(followState.group);
+        disposeObject(followState.group);
+        followState.group = null;
+    }
+
+    followState.plantKey = plantKey;
+
+    if (followPlants.length === 0) return;
+
+    const group = createChunkContent({
+        plants: followPlants,
+        showPlantTitles,
+        getInitialGrow,
+        plantScaleMultiplier,
+    });
+
+    group.traverse((child) => {
+        if (child.isMesh || child.isSprite) {
+            child.renderOrder = 10000;
+        }
+    });
+
+    followRoot.add(group);
+    followState.group = group;
 };
 
 const syncDateTerritories = ({ scene, territoryRef, plants, enabled }) => {
@@ -296,9 +365,17 @@ const GardenScene = ({
     walkNavigation = false,
     wrapMovement = false,
     walkPositionKey = "immersive",
+    movementBounds = null,
     showPlantTitles = true,
     showDateTerritories = false,
     showClouds = false,
+    showEntrance = false,
+    moonPosition = null,
+    moonLightTarget = null,
+    cloudAnchor = null,
+    cloudFollowCamera = true,
+    plantScaleMultiplier = 1,
+    visibleChunkRadius = DEFAULT_VISIBLE_CHUNK_RADIUS,
     onWalkStateChange = null,
     gardenActionsRef = null,
     postProcessingPreset = null,
@@ -308,19 +385,24 @@ const GardenScene = ({
     const sceneRef = useRef(null);
     const cameraRef = useRef(null);
     const plantRootRef = useRef(null);
+    const followPlantRootRef = useRef(null);
+    const followPlantStateRef = useRef({ plantKey: null, group: null });
     const territoryRef = useRef(null);
     const loadedChunksRef = useRef(new Map());
     const movementTerritoryRef = useRef(
-        computeMovementTerritory(plants, wrapMovement)
+        computeMovementTerritory(plants, wrapMovement, movementBounds)
     );
     const wasInsideTerritoryRef = useRef(null);
     const previousTerritoryPositionRef = useRef(null);
     const plantsRef = useRef(plants);
     const showPlantTitlesRef = useRef(showPlantTitles);
     const showDateTerritoriesRef = useRef(showDateTerritories);
+    const plantScaleMultiplierRef = useRef(plantScaleMultiplier);
+    const visibleChunkRadiusRef = useRef(visibleChunkRadius);
     const knownPlantIdsRef = useRef(new Set());
     const growingPlantsRef = useRef(new Map());
     const shrinkingPlantsRef = useRef(new Map());
+    const plantMotionTrackerRef = useRef(createPlantScreenMotionTracker());
     const hasInitializedPlantsRef = useRef(false);
 
     const getPlantMotionFactor = (plant) => {
@@ -344,12 +426,20 @@ const GardenScene = ({
             shrinkingPlantsRef.current
         );
 
+    const getScenePlantSets = () => {
+        const renderable = normalizePlants(getRenderablePlants());
+        return splitCameraFollowPlants(renderable);
+    };
+
     plantsRef.current = plants;
     showPlantTitlesRef.current = showPlantTitles;
     showDateTerritoriesRef.current = showDateTerritories;
+    plantScaleMultiplierRef.current = plantScaleMultiplier;
+    visibleChunkRadiusRef.current = visibleChunkRadius;
     movementTerritoryRef.current = computeMovementTerritory(
         plants,
-        wrapMovement
+        wrapMovement,
+        movementBounds
     );
 
     useEffect(() => {
@@ -363,9 +453,15 @@ const GardenScene = ({
         wasInsideTerritoryRef.current = null;
         previousTerritoryPositionRef.current = null;
 
-        const savedPosition = walkNavigation
+        const loadedPosition = walkNavigation
             ? await loadWalkPosition(walkPositionKey)
             : null;
+        const savedPosition =
+            movementBounds &&
+            loadedPosition &&
+            !isWalkPositionInBounds(loadedPosition, movementBounds)
+                ? null
+                : loadedPosition;
         if (cancelled) return;
 
         const positionSaver = walkNavigation
@@ -501,23 +597,53 @@ const GardenScene = ({
         scene.add(ground);
 
         const groundRipples = createGroundRipples(scene);
-        const moonRoot = createMoon(scene);
-        const clouds = showClouds ? createImmersionClouds(scene) : null;
+        const moonRoot = createMoon(scene, {
+            position: moonPosition ?? undefined,
+            lightTarget: moonLightTarget ?? undefined,
+        });
+        const clouds = showClouds
+            ? createImmersionClouds(scene, {
+                  anchor: cloudAnchor ?? undefined,
+                  followCamera: cloudFollowCamera,
+                  moonHeight: cloudAnchor?.y ?? moonPosition?.y ?? undefined,
+                  minHeight: cloudAnchor ? 24 : 16,
+                  maxHeight: cloudAnchor ? 46 : 34,
+                  spreadX: cloudAnchor ? 76 : 58,
+                  spreadZ: cloudAnchor ? 76 : 48,
+                  layerCount: cloudAnchor ? 13 : 11,
+              })
+            : null;
+        const entrance = showEntrance ? createImmersionEntrance(scene) : null;
 
         sceneRef.current = scene;
 
         const plantRoot = new THREE.Group();
+        const followPlantRoot = new THREE.Group();
         scene.add(plantRoot);
+        scene.add(followPlantRoot);
         plantRootRef.current = plantRoot;
+        followPlantRootRef.current = followPlantRoot;
 
+        const { worldPlants, followPlants } = getScenePlantSets();
         syncGardenChunks({
             plantRoot,
             loadedChunks: loadedChunksRef.current,
-            plants: getRenderablePlants(),
+            plants: worldPlants,
             cameraPosition: camera.position,
+            chunkRadius: visibleChunkRadiusRef.current,
             showPlantTitles: showPlantTitlesRef.current,
             getInitialGrow,
+            plantScaleMultiplier: plantScaleMultiplierRef.current,
         });
+        syncFollowPlants({
+            followRoot: followPlantRoot,
+            followState: followPlantStateRef.current,
+            followPlants,
+            showPlantTitles: showPlantTitlesRef.current,
+            getInitialGrow,
+            plantScaleMultiplier: plantScaleMultiplierRef.current,
+        });
+        syncCameraFollowPlants(followPlantRoot, camera, followPlants);
         syncDateTerritories({
             scene,
             territoryRef,
@@ -546,14 +672,30 @@ const GardenScene = ({
             walkControls?.update(delta);
             ground.position.x = camera.position.x;
             ground.position.z = camera.position.z;
+            const { worldPlants, followPlants } = getScenePlantSets();
             syncGardenChunks({
                 plantRoot,
                 loadedChunks: loadedChunksRef.current,
-                plants: getRenderablePlants(),
+                plants: worldPlants,
                 cameraPosition: camera.position,
+                chunkRadius: visibleChunkRadiusRef.current,
                 showPlantTitles: showPlantTitlesRef.current,
                 getInitialGrow,
+                plantScaleMultiplier: plantScaleMultiplierRef.current,
             });
+            syncFollowPlants({
+                followRoot: followPlantRootRef.current,
+                followState: followPlantStateRef.current,
+                followPlants,
+                showPlantTitles: showPlantTitlesRef.current,
+                getInitialGrow,
+                plantScaleMultiplier: plantScaleMultiplierRef.current,
+            });
+            syncCameraFollowPlants(
+                followPlantRootRef.current,
+                camera,
+                followPlants
+            );
             updatePlantSway(
                 plantRoot,
                 elapsed,
@@ -561,9 +703,26 @@ const GardenScene = ({
                 growingPlantsRef.current,
                 shrinkingPlantsRef.current
             );
+            updatePlantSway(
+                followPlantRootRef.current,
+                elapsed,
+                camera,
+                growingPlantsRef.current,
+                shrinkingPlantsRef.current
+            );
+            const plantMotion = plantMotionTrackerRef.current.measure(
+                worldPlants,
+                camera,
+                elapsed,
+                {
+                    growingPlants: growingPlantsRef.current,
+                    shrinkingPlants: shrinkingPlantsRef.current,
+                    plantScaleMultiplier: plantScaleMultiplierRef.current,
+                }
+            );
             groundRipples.update(elapsed, camera);
             clouds?.update(elapsed, delta, camera);
-            postProcessing.update(elapsed);
+            postProcessing.update(elapsed, { plants: plantMotion });
             postProcessing.composer.render();
         };
         animate();
@@ -623,6 +782,12 @@ const GardenScene = ({
                 disposeObject(chunk.group);
             });
             loadedChunksRef.current.clear();
+            if (followPlantStateRef.current.group) {
+                followPlantRoot?.remove(followPlantStateRef.current.group);
+                disposeObject(followPlantStateRef.current.group);
+                followPlantStateRef.current.group = null;
+                followPlantStateRef.current.plantKey = null;
+            }
             if (territoryRef.current) {
                 scene.remove(territoryRef.current);
                 disposeObject(territoryRef.current);
@@ -630,6 +795,7 @@ const GardenScene = ({
             }
             groundRipples.dispose();
             clouds?.dispose();
+            entrance?.dispose();
             scene.remove(moonRoot);
             disposeObject(moonRoot);
             disposeObject(scene);
@@ -641,6 +807,7 @@ const GardenScene = ({
             sceneRef.current = null;
             cameraRef.current = null;
             plantRootRef.current = null;
+            followPlantRootRef.current = null;
             setGardenTextureRenderer(null);
             if (mount.contains(renderer.domElement)) {
                 mount.removeChild(renderer.domElement);
@@ -672,9 +839,26 @@ const GardenScene = ({
         minDistance,
         maxDistance,
         walkPositionKey,
+        movementBounds?.minX,
+        movementBounds?.maxX,
+        movementBounds?.minZ,
+        movementBounds?.maxZ,
         showPlantTitles,
         showDateTerritories,
         showClouds,
+        showEntrance,
+        moonPosition?.x,
+        moonPosition?.y,
+        moonPosition?.z,
+        moonLightTarget?.x,
+        moonLightTarget?.y,
+        moonLightTarget?.z,
+        cloudAnchor?.x,
+        cloudAnchor?.y,
+        cloudAnchor?.z,
+        cloudFollowCamera,
+        plantScaleMultiplier,
+        visibleChunkRadius,
         onWalkStateChange,
         gardenActionsRef,
         postProcessingPreset,
@@ -684,7 +868,8 @@ const GardenScene = ({
     useEffect(() => {
         movementTerritoryRef.current = computeMovementTerritory(
             plants,
-            wrapMovement
+            wrapMovement,
+            movementBounds
         );
         wasInsideTerritoryRef.current = null;
         previousTerritoryPositionRef.current = null;
@@ -701,6 +886,7 @@ const GardenScene = ({
         });
 
         normalizePlants(plants).forEach((plant) => {
+            if (plant.followsCamera) return;
             if (knownPlantIdsRef.current.has(plant.id)) return;
 
             if (hasInitializedPlantsRef.current) {
@@ -710,15 +896,35 @@ const GardenScene = ({
             knownPlantIdsRef.current.add(plant.id);
         });
         hasInitializedPlantsRef.current = true;
+        plantMotionTrackerRef.current.reset();
+
+        const { worldPlants, followPlants } = splitCameraFollowPlants(
+            normalizePlants(getRenderablePlants())
+        );
 
         syncGardenChunks({
             plantRoot: plantRootRef.current,
             loadedChunks: loadedChunksRef.current,
-            plants: getRenderablePlants(),
+            plants: worldPlants,
             cameraPosition: cameraRef.current?.position ?? { x: 0, z: 0 },
+            chunkRadius: visibleChunkRadiusRef.current,
             showPlantTitles,
             getInitialGrow,
+            plantScaleMultiplier: plantScaleMultiplierRef.current,
         });
+        syncFollowPlants({
+            followRoot: followPlantRootRef.current,
+            followState: followPlantStateRef.current,
+            followPlants,
+            showPlantTitles,
+            getInitialGrow,
+            plantScaleMultiplier: plantScaleMultiplierRef.current,
+        });
+        syncCameraFollowPlants(
+            followPlantRootRef.current,
+            cameraRef.current,
+            followPlants
+        );
         syncDateTerritories({
             scene: sceneRef.current,
             territoryRef,
