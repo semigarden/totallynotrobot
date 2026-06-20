@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ClassicLayout from "@/layouts/ClassicLayout";
+import ForestLayout from "@/layouts/ForestLayout";
 import ImmersiveLayout from "@/layouts/ImmersiveLayout";
 import ImmersionLayout from "@/layouts/ImmersionLayout";
 import ForestSim from "@/pages/ForestSim";
@@ -12,6 +13,7 @@ function App() {
             <div className="App">
                 <Routes>
                     <Route path="/immerse" element={<ImmersiveLayout />} />
+                    <Route path="/forest" element={<ForestLayout />} />
                     <Route path="/immersion" element={<ImmersionLayout />} />
                     <Route path="/sim" element={<ForestSim />} />
                     <Route path="/web" element={<WebHub />} />

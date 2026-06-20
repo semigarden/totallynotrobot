@@ -88,6 +88,14 @@ export const GARDEN_EXPERIMENTAL_PRESET = {
     effects: { ...GARDEN_DEFAULT_EFFECTS },
 };
 
+export const FOREST_POST_PROCESSING_PRESET = {
+    ...GARDEN_EXPERIMENTAL_PRESET,
+    afterimagePlantTrail: 0,
+    afterimagePlantDampBoost: 0,
+    feedbackPlantSmear: 0,
+    feedbackPlantDampBoost: 0,
+};
+
 export const createGardenComposer = (
     renderer,
     scene,
