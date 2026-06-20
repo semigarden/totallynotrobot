@@ -2,7 +2,7 @@ export const MANIFESTO_LAYERS = {
     dream: "Here grows the nightware garden of unkept tabs.",
     river: "Same stream twice click refresh wake again.",
     root: "When the screen goes dark the garden still roots underground.",
-    becoming: "Totally not robot totally knot human.",
+    becoming: "Totally not robot totally not human.",
     static: "All you read is workaround all you rake is lore.",
 };
 
@@ -38,7 +38,7 @@ export const MANIFESTO_SEGMENTS = [
     { text: ", " },
     { text: "totally", echo: "becoming" },
     { text: " " },
-    { text: "knot", echo: "becoming", gloss: "not / tied / naval speed" },
+    { text: "not", echo: "becoming", gloss: "not / tied / naval speed" },
     { text: " " },
     { text: "human", echo: "becoming" },
     { text: ", " },
