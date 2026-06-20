@@ -36,7 +36,6 @@ import {
     visibleChunkKeys,
     chunkCoord,
 } from "@/utils/gardenChunks";
-import { createProceduralForestManager, DEFAULT_PROCEDURAL_FOREST_CONFIG, headingBucket } from "@/utils/proceduralForest";
 import { createImmersionClouds } from "@/utils/immersionClouds";
 import { createImmersionEntrance } from "@/utils/immersionEntrance";
 import { createMoon } from "@/utils/moonScene";
@@ -132,12 +131,6 @@ const isWalkPositionInBounds = (position, bounds) =>
     position.x <= bounds.maxX &&
     position.z >= bounds.minZ &&
     position.z <= bounds.maxZ;
-
-const resolveProceduralForestConfig = (value) => {
-    if (!value || value.enabled === false) return null;
-    if (value === true) return { ...DEFAULT_PROCEDURAL_FOREST_CONFIG };
-    return { ...DEFAULT_PROCEDURAL_FOREST_CONFIG, ...value };
-};
 
 const plantPosition = (plant) => ({
     x: Number.isFinite(plant?.x) ? plant.x : 0,
@@ -410,7 +403,6 @@ const GardenScene = ({
     gardenActionsRef = null,
     postProcessingPreset = null,
     postProcessingRef = null,
-    proceduralForest = null,
 }) => {
     const mountRef = useRef(null);
     const sceneRef = useRef(null);
@@ -421,11 +413,8 @@ const GardenScene = ({
     const territoryRef = useRef(null);
     const loadedChunksRef = useRef(new Map());
     const authoredChunksRef = useRef(new Map());
-    const proceduralForestRef = useRef(null);
-    const walkStateRef = useRef(null);
     const needsChunkSyncRef = useRef(true);
     const lastSyncChunkRef = useRef(null);
-    const lastSyncHeadingRef = useRef(null);
     const trackPlantMotionRef = useRef(true);
     const movementTerritoryRef = useRef(
         computeMovementTerritory(plants, wrapMovement, movementBounds)
@@ -486,33 +475,7 @@ const GardenScene = ({
         const camera = cameraRef.current;
         if (!plantRoot || !camera) return;
 
-        const manager = proceduralForestRef.current;
-        const authored = normalizePlants(plantsRef.current);
-        const walkState = walkStateRef.current;
-        let yaw = walkState?.yaw;
-
-        if (!Number.isFinite(yaw) && camera) {
-            const euler = new THREE.Euler().setFromQuaternion(
-                camera.quaternion,
-                "YXZ"
-            );
-            yaw = euler.y;
-        }
-
-        if (manager) {
-            manager.sync(
-                {
-                    x: camera.position.x,
-                    z: camera.position.z,
-                    yaw,
-                },
-                authored
-            );
-        }
-
         const { worldPlants, followPlants } = getScenePlantSets();
-        const renderChunkRadius =
-            manager?.settings?.visibleRadius ?? visibleChunkRadiusRef.current;
 
         syncGardenChunks({
             plantRoot,
@@ -520,11 +483,10 @@ const GardenScene = ({
             plants: worldPlants,
             authoredChunks: authoredChunksRef.current,
             cameraPosition: camera.position,
-            chunkRadius: renderChunkRadius,
+            chunkRadius: visibleChunkRadiusRef.current,
             showPlantTitles: showPlantTitlesRef.current,
             getInitialGrow,
             plantScaleMultiplier: plantScaleMultiplierRef.current,
-            proceduralForest: manager,
             onNewPlants: registerNewChunkPlants,
         });
         syncFollowPlants({
@@ -542,7 +504,6 @@ const GardenScene = ({
         );
 
         lastSyncChunkRef.current = `${chunkCoord(camera.position.x)}:${chunkCoord(camera.position.z)}`;
-        lastSyncHeadingRef.current = headingBucket(yaw ?? 0);
         needsChunkSyncRef.current = false;
     };
 
@@ -552,10 +513,7 @@ const GardenScene = ({
     plantScaleMultiplierRef.current = plantScaleMultiplier;
     visibleChunkRadiusRef.current = visibleChunkRadius;
     authoredChunksRef.current = groupPlantsByChunk(normalizePlants(plants));
-    const proceduralForestConfig = resolveProceduralForestConfig(proceduralForest);
-    trackPlantMotionRef.current = proceduralForestConfig
-        ? Boolean(proceduralForestConfig.trackPlantMotion)
-        : true;
+    trackPlantMotionRef.current = true;
     movementTerritoryRef.current = computeMovementTerritory(
         plants,
         wrapMovement,
@@ -631,7 +589,6 @@ const GardenScene = ({
             return false;
         };
         const handleWalkPositionChange = (state) => {
-            walkStateRef.current = state;
             positionSaver?.schedule(state);
             onWalkStateChange?.(state);
         };
@@ -751,16 +708,6 @@ const GardenScene = ({
         plantRootRef.current = plantRoot;
         followPlantRootRef.current = followPlantRoot;
 
-        if (proceduralForestConfig) {
-            const manager = createProceduralForestManager(proceduralForestConfig);
-            proceduralForestRef.current = manager;
-            manager.setOnChunksChanged(() => {
-                needsChunkSyncRef.current = true;
-            });
-        } else {
-            proceduralForestRef.current = null;
-        }
-
         runChunkSync();
         syncDateTerritories({
             scene,
@@ -792,14 +739,9 @@ const GardenScene = ({
             ground.position.z = camera.position.z;
 
             const chunkCenter = `${chunkCoord(camera.position.x)}:${chunkCoord(camera.position.z)}`;
-            const nextHeadingBucket = proceduralForestRef.current
-                ? headingBucket(walkStateRef.current?.yaw ?? 0)
-                : null;
             if (
                 needsChunkSyncRef.current ||
-                chunkCenter !== lastSyncChunkRef.current ||
-                (nextHeadingBucket !== null &&
-                    nextHeadingBucket !== lastSyncHeadingRef.current)
+                chunkCenter !== lastSyncChunkRef.current
             ) {
                 runChunkSync();
             }
@@ -892,8 +834,6 @@ const GardenScene = ({
                 disposeObject(chunk.group);
             });
             loadedChunksRef.current.clear();
-            proceduralForestRef.current?.dispose();
-            proceduralForestRef.current = null;
             if (followPlantStateRef.current.group) {
                 followPlantRoot?.remove(followPlantStateRef.current.group);
                 disposeObject(followPlantStateRef.current.group);
@@ -976,7 +916,6 @@ const GardenScene = ({
         gardenActionsRef,
         postProcessingPreset,
         postProcessingRef,
-        proceduralForest,
     ]);
 
     useEffect(() => {

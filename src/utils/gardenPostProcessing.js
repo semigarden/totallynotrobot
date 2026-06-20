@@ -42,7 +42,7 @@ export const GARDEN_DEFAULT_EFFECTS = {
     [GARDEN_EFFECTS.warp]: false,
     [GARDEN_EFFECTS.halftone]: false,
     [GARDEN_EFFECTS.film]: true, // true
-    [GARDEN_EFFECTS.glitch]: false, // true
+    [GARDEN_EFFECTS.glitch]: true,
     [GARDEN_EFFECTS.tear]: false,
 };
 
