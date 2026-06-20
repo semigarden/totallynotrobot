@@ -17,15 +17,6 @@ const getAnchorCoords = (rect, anchor) => {
   }
 };
 
-/**
- * containerRef: ref to the container element the SVG should overlay.
- * If not provided, defaults to viewport (left/top 0).
- * All coordinates are calculated relative to this container.
- *
- * breakpointCount: number of intermediate breakpoints for routing
- * If > 0, the line will be split into (breakpointCount + 1) segments
- * randomizeBreakpoints: if true, breakpoints will be offset randomly
- */
 const Line = ({
   startRef = null,
   endRef = null,
@@ -80,7 +71,6 @@ const Line = ({
     };
   }, [startRef, endRef, startAnchor, endAnchor, containerRef]);
 
-  // Helper to generate path data for different routing modes
   const getPathData = (x1, y1, x2, y2, routingMode, breakpointCount, randomizeBreakpoints) => {
     const rand = (range) => (Math.random() - 0.5) * range;
 
@@ -155,7 +145,6 @@ const Line = ({
   };
 
   if (startRef && endRef && coords) {
-    // Calculate SVG bounds
     const left = 0;
     const top = 0;
     const width = (containerRef?.current?.offsetWidth || window.innerWidth);
@@ -178,7 +167,6 @@ const Line = ({
           zIndex: 1000,
         }}
       >
-        {/* Draw the path */}
         <path
           d={pathData}
           stroke={color}
@@ -186,7 +174,6 @@ const Line = ({
           fill="none"
           className={animate ? "svg-line animated" : "svg-line"}
         />
-        {/* Draw connector holes (pads) on top */}
         <circle
           cx={x1}
           cy={y1}
@@ -209,7 +196,6 @@ const Line = ({
     );
   }
 
-  // Fallback: legacy start/end or div-based rendering
   const getLegacyPathData = (start, end, routingMode, breakpointCount, randomizeBreakpoints) => {
     const rand = (range) => (Math.random() - 0.5) * range;
     if (!start || !end) return null;
@@ -273,7 +259,6 @@ const Line = ({
     if (routingMode === "vh") {
       return `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`;
     }
-    // 'auto': choose the shorter total path
     const dx = Math.abs(end.x - start.x);
     const dy = Math.abs(end.y - start.y);
     if (dx < dy) {
@@ -292,7 +277,6 @@ const Line = ({
           className={animate ? 'svg-line animated' : 'svg-line'}
           style={{ stroke: color, fill: 'none' }}
         />
-        {/* Draw connector holes (pads) on top */}
         <circle
           cx={start.x}
           cy={start.y}
@@ -315,7 +299,6 @@ const Line = ({
     );
   }
 
-  // Fallback to div-based rendering
   return (
     <div className={`line ${className}`}>
       <div className="connector" style={{ borderColor: color }} />

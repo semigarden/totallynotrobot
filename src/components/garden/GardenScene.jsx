@@ -56,7 +56,6 @@ import {
 } from "@/api/gardenPosition";
 
 const FLOWERS_ENABLED = false;
-// Temporary: hide post titles, author names, and year labels in-scene.
 const TEMPORARILY_HIDE_SCENE_METADATA = true;
 
 const disposeObject = (object) => {
