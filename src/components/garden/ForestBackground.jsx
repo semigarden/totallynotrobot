@@ -1,6 +1,7 @@
 import GardenScene from "@/components/garden/GardenScene";
 import { computeMoonFramedLookTarget } from "@/utils/moonScene";
 import { FOREST_POST_PROCESSING_PRESET } from "@/utils/gardenPostProcessing";
+import { DEFAULT_PROCEDURAL_FOREST_CONFIG } from "@/utils/proceduralForest";
 import styles from "@/styles/GardenBackground.module.scss";
 
 const GROUND_CAMERA = {
@@ -12,7 +13,7 @@ const GROUND_CAMERA = {
 
 const FRESH_SPAWN_LOOK = computeMoonFramedLookTarget(GROUND_CAMERA.offset);
 
-const ForestBackground = ({ plants = [], onWalkStateChange, gardenActionsRef }) => (
+const ForestBackground = ({ plants = [], gardenActionsRef }) => (
     <GardenScene
         plants={plants}
         className={styles.background}
@@ -28,9 +29,9 @@ const ForestBackground = ({ plants = [], onWalkStateChange, gardenActionsRef }) 
         unboundedMovement
         walkPositionKey="forest"
         showPlantTitles={false}
-        onWalkStateChange={onWalkStateChange}
         gardenActionsRef={gardenActionsRef}
         postProcessingPreset={FOREST_POST_PROCESSING_PRESET}
+        proceduralForest={DEFAULT_PROCEDURAL_FOREST_CONFIG}
     />
 );
 

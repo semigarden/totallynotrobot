@@ -1,8 +1,9 @@
 import { hashString } from "@/utils/lSystem";
 import {
     CHUNK_SIZE,
+    chunkCoord,
+    chunkKey,
     parseChunkKey,
-    visibleChunkKeys,
     withChunkFields,
     DEFAULT_VISIBLE_CHUNK_RADIUS,
 } from "@/utils/gardenChunks";
@@ -14,6 +15,18 @@ import {
 export const PROCEDURAL_FOREST_SEED = "infinite-forest-v1";
 export const PROCEDURAL_DENSITY_THRESHOLD = 0.34;
 export const PROCEDURAL_CELLS_PER_SIDE = 6;
+export const PROCEDURAL_PREFETCH_RADIUS = 1;
+export const PROCEDURAL_CACHE_RADIUS = DEFAULT_VISIBLE_CHUNK_RADIUS + 2;
+
+export const DEFAULT_PROCEDURAL_FOREST_CONFIG = {
+    worldSeed: PROCEDURAL_FOREST_SEED,
+    visibleRadius: DEFAULT_VISIBLE_CHUNK_RADIUS,
+    prefetchRadius: PROCEDURAL_PREFETCH_RADIUS,
+    cacheRadius: PROCEDURAL_CACHE_RADIUS,
+    densityThreshold: PROCEDURAL_DENSITY_THRESHOLD,
+    cellsPerSide: PROCEDURAL_CELLS_PER_SIDE,
+    trackPlantMotion: false,
+};
 
 const FOREST_WORDS = [
     "forest",
@@ -44,10 +57,73 @@ const FOREST_WORDS = [
 
 const hashUnit = (key) => hashString(key) / 0xffffffff;
 
+const keysInRadius = (centerX, centerZ, radius) => {
+    const keys = [];
+
+    for (let z = centerZ - radius; z <= centerZ + radius; z++) {
+        for (let x = centerX - radius; x <= centerX + radius; x++) {
+            keys.push(chunkKey(x, z));
+        }
+    }
+
+    return keys;
+};
+
+const createPlantSpatialIndex = () => {
+    const byChunk = new Map();
+
+    const addPlants = (plants = []) => {
+        plants.forEach((plant) => {
+            if (!Number.isFinite(plant?.chunkX) || !Number.isFinite(plant?.chunkZ)) {
+                return;
+            }
+
+            const key = chunkKey(plant.chunkX, plant.chunkZ);
+            const group = byChunk.get(key) ?? [];
+            group.push(plant);
+            byChunk.set(key, group);
+        });
+    };
+
+    const setChunk = (key, plants = []) => {
+        if (plants.length === 0) {
+            byChunk.delete(key);
+            return;
+        }
+
+        byChunk.set(key, plants);
+    };
+
+    const removeChunk = (key) => {
+        byChunk.delete(key);
+    };
+
+    const queryNearby = (chunkX, chunkZ, marginChunks = 1) => {
+        const results = [];
+
+        for (let z = chunkZ - marginChunks; z <= chunkZ + marginChunks; z++) {
+            for (let x = chunkX - marginChunks; x <= chunkX + marginChunks; x++) {
+                results.push(...(byChunk.get(chunkKey(x, z)) ?? []));
+            }
+        }
+
+        return results;
+    };
+
+    const clear = () => {
+        byChunk.clear();
+    };
+
+    return { addPlants, setChunk, removeChunk, queryNearby, clear };
+};
+
 export const proceduralPlantId = (chunkX, chunkZ, cellX, cellZ) =>
     `proc:${chunkX}:${chunkZ}:${cellX}:${cellZ}`;
 
-export const proceduralPlantText = (plantId, worldSeed = PROCEDURAL_FOREST_SEED) => {
+export const proceduralPlantText = (
+    plantId,
+    worldSeed = PROCEDURAL_FOREST_SEED
+) => {
     const hash = hashString(`${worldSeed}:text:${plantId}`);
     const wordA = FOREST_WORDS[hash % FOREST_WORDS.length];
     const wordB = FOREST_WORDS[(hash >> 8) % FOREST_WORDS.length];
@@ -162,53 +238,145 @@ export const generateChunkPlants = (
     return generated;
 };
 
-export const mergeProceduralPlants = (authoredPlants = [], proceduralPlants = []) => {
-    const authored = authoredPlants.filter((plant) => plant?.text);
-    const procedural = proceduralPlants.filter(
-        (plant) => plant?.text && plant?.procedural
-    );
-    return [...authored, ...procedural];
-};
+export const createProceduralForestManager = (config = {}) => {
+    const settings = { ...DEFAULT_PROCEDURAL_FOREST_CONFIG, ...config };
+    const chunkCache = new Map();
+    const spatialIndex = createPlantSpatialIndex();
+    let prefetchHandle = null;
+    let lastCenterKey = null;
+    let onChunksChanged = null;
 
-export const ensureVisibleProceduralChunks = (
-    position = { x: 0, z: 0 },
-    {
-        authoredPlants = [],
-        chunkCache = new Map(),
-        loadedKeys = new Set(),
-        chunkRadius = DEFAULT_VISIBLE_CHUNK_RADIUS,
-        worldSeed = PROCEDURAL_FOREST_SEED,
-    } = {}
-) => {
-    const visible = visibleChunkKeys(position, chunkRadius);
-    let changed = false;
+    const loadChunk = (chunkX, chunkZ, authoredPlants = []) => {
+        const key = chunkKey(chunkX, chunkZ);
+        if (chunkCache.has(key)) {
+            return chunkCache.get(key);
+        }
 
-    const getCachedPlants = () => {
-        const cached = [];
-        chunkCache.forEach((plants) => cached.push(...plants));
-        return cached;
+        const nearby = [
+            ...collectNearbyPlants(authoredPlants, chunkX, chunkZ, 1),
+            ...spatialIndex.queryNearby(chunkX, chunkZ, 1),
+        ];
+        const generated = generateChunkPlants(chunkX, chunkZ, nearby, {
+            worldSeed: settings.worldSeed,
+            densityThreshold: settings.densityThreshold,
+            cellsPerSide: settings.cellsPerSide,
+        });
+
+        chunkCache.set(key, generated);
+        spatialIndex.setChunk(key, generated);
+        return generated;
     };
 
-    visible.forEach((key) => {
-        if (loadedKeys.has(key)) return;
+    const prune = (centerX, centerZ) => {
+        chunkCache.forEach((_, key) => {
+            const { chunkX, chunkZ } = parseChunkKey(key);
+            if (
+                Math.abs(chunkX - centerX) <= settings.cacheRadius &&
+                Math.abs(chunkZ - centerZ) <= settings.cacheRadius
+            ) {
+                return;
+            }
 
-        loadedKeys.add(key);
-        changed = true;
-
-        const { chunkX, chunkZ } = parseChunkKey(key);
-        const nearby = collectNearbyPlants(
-            [...authoredPlants, ...getCachedPlants()],
-            chunkX,
-            chunkZ
-        );
-        const generated = generateChunkPlants(chunkX, chunkZ, nearby, {
-            worldSeed,
+            chunkCache.delete(key);
+            spatialIndex.removeChunk(key);
         });
-        chunkCache.set(key, generated);
-    });
+    };
 
-    const proceduralPlants = [];
-    chunkCache.forEach((plants) => proceduralPlants.push(...plants));
+    const schedulePrefetch = (centerX, centerZ, authoredPlants = []) => {
+        const outerRadius = settings.visibleRadius + settings.prefetchRadius;
+        const keysToPrefetch = keysInRadius(centerX, centerZ, outerRadius).filter(
+            (key) => {
+                if (chunkCache.has(key)) return false;
 
-    return { changed, proceduralPlants };
+                const { chunkX, chunkZ } = parseChunkKey(key);
+                return (
+                    Math.abs(chunkX - centerX) > settings.visibleRadius ||
+                    Math.abs(chunkZ - centerZ) > settings.visibleRadius
+                );
+            }
+        );
+
+        if (prefetchHandle !== null) {
+            cancelIdleCallback(prefetchHandle);
+            prefetchHandle = null;
+        }
+
+        if (keysToPrefetch.length === 0) return;
+
+        let index = 0;
+
+        const processNext = (deadline) => {
+            while (
+                index < keysToPrefetch.length &&
+                (deadline?.timeRemaining?.() ?? 8) > 1
+            ) {
+                const { chunkX, chunkZ } = parseChunkKey(keysToPrefetch[index]);
+                index += 1;
+                loadChunk(chunkX, chunkZ, authoredPlants);
+            }
+
+            if (index < keysToPrefetch.length) {
+                prefetchHandle = requestIdleCallback(processNext, { timeout: 120 });
+                return;
+            }
+
+            prefetchHandle = null;
+            onChunksChanged?.();
+        };
+
+        prefetchHandle = requestIdleCallback(processNext, { timeout: 120 });
+    };
+
+    const sync = (position = { x: 0, z: 0 }, authoredPlants = []) => {
+        const centerX = chunkCoord(position.x ?? 0);
+        const centerZ = chunkCoord(position.z ?? 0);
+        const centerKey = chunkKey(centerX, centerZ);
+        const centerChanged = centerKey !== lastCenterKey;
+        lastCenterKey = centerKey;
+
+        let loadedNew = false;
+
+        keysInRadius(centerX, centerZ, settings.visibleRadius).forEach((key) => {
+            if (chunkCache.has(key)) return;
+
+            const { chunkX, chunkZ } = parseChunkKey(key);
+            loadChunk(chunkX, chunkZ, authoredPlants);
+            loadedNew = true;
+        });
+
+        prune(centerX, centerZ);
+
+        if (centerChanged || loadedNew) {
+            schedulePrefetch(centerX, centerZ, authoredPlants);
+        }
+
+        return centerChanged || loadedNew;
+    };
+
+    const getChunkPlants = (key) => chunkCache.get(key) ?? [];
+
+    const setOnChunksChanged = (callback) => {
+        onChunksChanged = callback;
+    };
+
+    const dispose = () => {
+        if (prefetchHandle !== null) {
+            cancelIdleCallback(prefetchHandle);
+            prefetchHandle = null;
+        }
+
+        chunkCache.clear();
+        spatialIndex.clear();
+        lastCenterKey = null;
+        onChunksChanged = null;
+    };
+
+    return {
+        sync,
+        getChunkPlants,
+        loadChunk,
+        setOnChunksChanged,
+        dispose,
+        settings,
+    };
 };

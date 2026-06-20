@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { hashString } from "@/utils/lSystem";
 import { applyPlantTextureQuality } from "@/utils/gardenRenderer";
-import { createPlantRenderAsset } from "@/utils/plantBillboard";
+import { getCachedPlantRenderAsset } from "@/utils/plantRenderCache";
 
 const MAX_ATLAS_SIZE = 4096;
 const MAX_TILE_SIZE = 512;
@@ -133,7 +133,7 @@ export const createPlantAtlasBillboards = (plants = [], options = {}) => {
 
     plants.forEach((plant, index) => {
         const globalProgress = getInitialGrow(plant);
-        const asset = createPlantRenderAsset(plant.text, plant.id, {
+        const asset = getCachedPlantRenderAsset(plant.text, plant.id, {
             gardenId: plant.gardenId,
             pubDate: plant.pubDate,
             at: plant.at,

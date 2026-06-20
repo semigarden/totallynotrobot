@@ -2,16 +2,14 @@ import { useCallback, useRef } from "react";
 import ForestBackground from "@/components/garden/ForestBackground";
 import ForestChrome from "@/components/portal/ForestChrome";
 import { useGardenPlants } from "@/hooks/useGardenPlants";
-import { useProceduralForest } from "@/hooks/useProceduralForest";
 import styles from "@/styles/ImmersiveLayout.module.scss";
 
 const ForestLayout = () => {
     const { plants: authoredPlants, plantLine, plantRandomLine, removeLastPlant } =
         useGardenPlants();
-    const { plants, onWalkStateChange } = useProceduralForest(authoredPlants);
     const gardenActionsRef = useRef(null);
-    const plantsRef = useRef(plants);
-    plantsRef.current = plants;
+    const plantsRef = useRef(authoredPlants);
+    plantsRef.current = authoredPlants;
 
     const lookAtPlant = useCallback((plant) => {
         if (!plant) return;
@@ -60,14 +58,13 @@ const ForestLayout = () => {
     return (
         <div className={styles.root}>
             <ForestBackground
-                plants={plants}
+                plants={authoredPlants}
                 gardenActionsRef={gardenActionsRef}
-                onWalkStateChange={onWalkStateChange}
             />
 
             <div className={styles.uiLayer}>
                 <ForestChrome
-                    plants={plants}
+                    plants={authoredPlants}
                     onPlant={handlePlant}
                     onRandomPlant={handleRandomPlant}
                     onDeleteLastPlant={handleDeleteLastPlant}
