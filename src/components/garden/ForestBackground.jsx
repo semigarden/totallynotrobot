@@ -25,7 +25,8 @@ const ForestBackground = ({ plants = [], onWalkStateChange, gardenActionsRef }) 
         scrollWalk
         walkSpeed={0.005}
         walkNavigation
-        wrapMovement
+        unboundedMovement
+        walkPositionKey="forest"
         showPlantTitles={false}
         onWalkStateChange={onWalkStateChange}
         gardenActionsRef={gardenActionsRef}

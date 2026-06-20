@@ -357,6 +357,14 @@ const forestDensity = (x, z, seed) => {
     return clamp01(mixed * 0.85 + edgeFalloff * 0.15);
 };
 
+const unboundedForestDensity = (x, z, seed) => {
+    const large = valueNoise2D(x * 0.045, z * 0.045, `${seed}:large`);
+    const medium = valueNoise2D(x * 0.09, z * 0.09, `${seed}:medium`);
+    const detail = valueNoise2D(x * 0.18, z * 0.18, `${seed}:detail`);
+
+    return clamp01(large * 0.62 + medium * 0.28 + detail * 0.1);
+};
+
 export const minSpacingForPlant = (plant) =>
     BASE_TREE_SPACING +
     plantWorldScale(plant.text, plant.id ?? plant.text) * 0.58;
@@ -625,3 +633,6 @@ export const FOREST_FIELD_RADIUS = FOREST_RADIUS;
 
 export const sampleForestDensity = (x, z) =>
     forestDensity(x, z, FOREST_DENSITY_SEED);
+
+export const sampleUnboundedForestDensity = (x, z, seed = FOREST_DENSITY_SEED) =>
+    unboundedForestDensity(x, z, seed);

@@ -363,6 +363,7 @@ const GardenScene = ({
     walkSpeed = 0.004,
     walkNavigation = false,
     wrapMovement = false,
+    unboundedMovement = false,
     walkPositionKey = "immersive",
     movementBounds = null,
     showPlantTitles = true,
@@ -494,6 +495,8 @@ const GardenScene = ({
         let walkControls = null;
         let detachScrollWalk = null;
         const constrainPosition = (state, motion = null) => {
+            if (unboundedMovement) return false;
+
             const territory = movementTerritoryRef.current;
             if (wrapMovement) {
                 return constrainTerritoryMovement(
@@ -574,14 +577,16 @@ const GardenScene = ({
                         camera.position.add(move);
                         target.add(move);
 
-                        clampPointToBounds(
-                            camera.position,
-                            movementTerritoryRef.current.bounds
-                        );
-                        clampPointToBounds(
-                            target,
-                            movementTerritoryRef.current.bounds
-                        );
+                        if (!unboundedMovement) {
+                            clampPointToBounds(
+                                camera.position,
+                                movementTerritoryRef.current.bounds
+                            );
+                            clampPointToBounds(
+                                target,
+                                movementTerritoryRef.current.bounds
+                            );
+                        }
                     },
                 });
             }
@@ -595,7 +600,9 @@ const GardenScene = ({
         ground.position.y = -0.01;
         scene.add(ground);
 
-        const groundRipples = createGroundRipples(scene);
+        const groundRipples = createGroundRipples(scene, {
+            unbounded: unboundedMovement,
+        });
         const moonRoot = createMoon(scene, {
             position: moonPosition ?? undefined,
             lightTarget: moonLightTarget ?? undefined,
@@ -826,6 +833,7 @@ const GardenScene = ({
         walkSpeed,
         walkNavigation,
         wrapMovement,
+        unboundedMovement,
         cameraOffset.x,
         cameraOffset.y,
         cameraOffset.z,

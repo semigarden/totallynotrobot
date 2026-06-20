@@ -38,95 +38,111 @@ const createRingMesh = () => {
     return mesh;
 };
 
-const clampToField = (x, z) => {
+const clampToField = (x, z, fieldRadius = FIELD_RADIUS) => {
     const dist = Math.hypot(x, z);
-    if (dist <= FIELD_RADIUS) {
+    if (dist <= fieldRadius) {
         return { x, z };
     }
 
-    const scale = FIELD_RADIUS / dist;
+    const scale = fieldRadius / dist;
     return { x: x * scale, z: z * scale };
 };
 
-const intersectGround = (camera, x, y) => {
-    ndc.set(x, y);
-    raycaster.setFromCamera(ndc, camera);
+const createGroundSampling = ({ unbounded = false } = {}) => {
+    const constrainPoint = (x, z) =>
+        unbounded ? { x, z } : clampToField(x, z);
 
-    const { origin, direction } = raycaster.ray;
-    if (direction.y >= -0.008) return null;
+    const intersectGround = (camera, x, y) => {
+        ndc.set(x, y);
+        raycaster.setFromCamera(ndc, camera);
 
-    const t = -origin.y / direction.y;
-    if (t < MIN_GROUND_DISTANCE) return null;
+        const { origin, direction } = raycaster.ray;
+        if (direction.y >= -0.008) return null;
 
-    const hitX = origin.x + direction.x * t;
-    const hitZ = origin.z + direction.z * t;
-    const dist = Math.hypot(hitX - origin.x, hitZ - origin.z);
-    if (dist > MAX_GROUND_DISTANCE) return null;
+        const t = -origin.y / direction.y;
+        if (t < MIN_GROUND_DISTANCE) return null;
 
-    return clampToField(hitX, hitZ);
+        const hitX = origin.x + direction.x * t;
+        const hitZ = origin.z + direction.z * t;
+        const dist = Math.hypot(hitX - origin.x, hitZ - origin.z);
+        if (dist > MAX_GROUND_DISTANCE) return null;
+
+        return constrainPoint(hitX, hitZ);
+    };
+
+    const buildVisibleGround = (camera) => {
+        const hits = GROUND_NDC.map(([x, y]) =>
+            intersectGround(camera, x, y)
+        ).filter(Boolean);
+
+        if (hits.length === 0) {
+            return null;
+        }
+
+        const bl = intersectGround(camera, -1, -1);
+        const br = intersectGround(camera, 1, -1);
+        const tr = intersectGround(camera, 1, 1);
+        const tl = intersectGround(camera, -1, 1);
+
+        return { hits, bl, br, tr, tl };
+    };
+
+    const randomVisibleGroundPoint = (camera, visibleGround) => {
+        const { hits, bl, br, tr, tl } = visibleGround;
+
+        if (bl && br && tr && tl) {
+            const u = Math.random();
+            const v = Math.random();
+            const bottom = {
+                x: bl.x + (br.x - bl.x) * u,
+                z: bl.z + (br.z - bl.z) * u,
+            };
+            const top = {
+                x: tl.x + (tr.x - tl.x) * u,
+                z: tl.z + (tr.z - tl.z) * u,
+            };
+            return {
+                x: bottom.x + (top.x - bottom.x) * v,
+                z: bottom.z + (top.z - bottom.z) * v,
+            };
+        }
+
+        if (hits.length >= 3) {
+            const anchor = hits[Math.floor(Math.random() * hits.length)];
+            const partner = hits[Math.floor(Math.random() * hits.length)];
+            const blend = Math.random();
+            const point = {
+                x: anchor.x + (partner.x - anchor.x) * blend,
+                z: anchor.z + (partner.z - anchor.z) * blend,
+            };
+            const jitter = Math.random() * 1.4;
+            const angle = Math.random() * Math.PI * 2;
+
+            return {
+                x: point.x + Math.cos(angle) * jitter,
+                z: point.z + Math.sin(angle) * jitter,
+            };
+        }
+
+        for (let attempt = 0; attempt < 10; attempt += 1) {
+            const point = intersectGround(
+                camera,
+                Math.random() * 2 - 1,
+                Math.random() * 1.4 - 1
+            );
+            if (point) return point;
+        }
+
+        camera.getWorldPosition(cameraOrigin);
+        return constrainPoint(cameraOrigin.x, cameraOrigin.z + 2);
+    };
+
+    return { buildVisibleGround, randomVisibleGroundPoint };
 };
 
-const lerpGround = (a, b, t) => ({
-    x: a.x + (b.x - a.x) * t,
-    z: a.z + (b.z - a.z) * t,
-});
-
-const buildVisibleGround = (camera) => {
-    const hits = GROUND_NDC.map(([x, y]) => intersectGround(camera, x, y)).filter(
-        Boolean
-    );
-
-    if (hits.length === 0) {
-        return null;
-    }
-
-    const bl = intersectGround(camera, -1, -1);
-    const br = intersectGround(camera, 1, -1);
-    const tr = intersectGround(camera, 1, 1);
-    const tl = intersectGround(camera, -1, 1);
-
-    return { hits, bl, br, tr, tl };
-};
-
-const randomVisibleGroundPoint = (camera, visibleGround) => {
-    const { hits, bl, br, tr, tl } = visibleGround;
-
-    if (bl && br && tr && tl) {
-        const u = Math.random();
-        const v = Math.random();
-        const bottom = lerpGround(bl, br, u);
-        const top = lerpGround(tl, tr, u);
-        return lerpGround(bottom, top, v);
-    }
-
-    if (hits.length >= 3) {
-        const anchor = hits[Math.floor(Math.random() * hits.length)];
-        const partner = hits[Math.floor(Math.random() * hits.length)];
-        const blend = Math.random();
-        const point = lerpGround(anchor, partner, blend);
-        const jitter = Math.random() * 1.4;
-        const angle = Math.random() * Math.PI * 2;
-
-        return {
-            x: point.x + Math.cos(angle) * jitter,
-            z: point.z + Math.sin(angle) * jitter,
-        };
-    }
-
-    for (let attempt = 0; attempt < 10; attempt += 1) {
-        const point = intersectGround(
-            camera,
-            Math.random() * 2 - 1,
-            Math.random() * 1.4 - 1
-        );
-        if (point) return point;
-    }
-
-    camera.getWorldPosition(cameraOrigin);
-    return clampToField(cameraOrigin.x, cameraOrigin.z + 2);
-};
-
-export const createGroundRipples = (scene) => {
+export const createGroundRipples = (scene, { unbounded = false } = {}) => {
+    const { buildVisibleGround, randomVisibleGroundPoint } =
+        createGroundSampling({ unbounded });
     const root = new THREE.Group();
     const ripples = [];
 
