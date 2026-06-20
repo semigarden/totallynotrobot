@@ -36,7 +36,7 @@ import {
     visibleChunkKeys,
     chunkCoord,
 } from "@/utils/gardenChunks";
-import { createProceduralForestManager, DEFAULT_PROCEDURAL_FOREST_CONFIG } from "@/utils/proceduralForest";
+import { createProceduralForestManager, DEFAULT_PROCEDURAL_FOREST_CONFIG, headingBucket } from "@/utils/proceduralForest";
 import { createImmersionClouds } from "@/utils/immersionClouds";
 import { createImmersionEntrance } from "@/utils/immersionEntrance";
 import { createMoon } from "@/utils/moonScene";
@@ -422,8 +422,10 @@ const GardenScene = ({
     const loadedChunksRef = useRef(new Map());
     const authoredChunksRef = useRef(new Map());
     const proceduralForestRef = useRef(null);
+    const walkStateRef = useRef(null);
     const needsChunkSyncRef = useRef(true);
     const lastSyncChunkRef = useRef(null);
+    const lastSyncHeadingRef = useRef(null);
     const trackPlantMotionRef = useRef(true);
     const movementTerritoryRef = useRef(
         computeMovementTerritory(plants, wrapMovement, movementBounds)
@@ -486,15 +488,31 @@ const GardenScene = ({
 
         const manager = proceduralForestRef.current;
         const authored = normalizePlants(plantsRef.current);
+        const walkState = walkStateRef.current;
+        let yaw = walkState?.yaw;
+
+        if (!Number.isFinite(yaw) && camera) {
+            const euler = new THREE.Euler().setFromQuaternion(
+                camera.quaternion,
+                "YXZ"
+            );
+            yaw = euler.y;
+        }
 
         if (manager) {
             manager.sync(
-                { x: camera.position.x, z: camera.position.z },
+                {
+                    x: camera.position.x,
+                    z: camera.position.z,
+                    yaw,
+                },
                 authored
             );
         }
 
         const { worldPlants, followPlants } = getScenePlantSets();
+        const renderChunkRadius =
+            manager?.settings?.visibleRadius ?? visibleChunkRadiusRef.current;
 
         syncGardenChunks({
             plantRoot,
@@ -502,7 +520,7 @@ const GardenScene = ({
             plants: worldPlants,
             authoredChunks: authoredChunksRef.current,
             cameraPosition: camera.position,
-            chunkRadius: visibleChunkRadiusRef.current,
+            chunkRadius: renderChunkRadius,
             showPlantTitles: showPlantTitlesRef.current,
             getInitialGrow,
             plantScaleMultiplier: plantScaleMultiplierRef.current,
@@ -524,6 +542,7 @@ const GardenScene = ({
         );
 
         lastSyncChunkRef.current = `${chunkCoord(camera.position.x)}:${chunkCoord(camera.position.z)}`;
+        lastSyncHeadingRef.current = headingBucket(yaw ?? 0);
         needsChunkSyncRef.current = false;
     };
 
@@ -612,6 +631,7 @@ const GardenScene = ({
             return false;
         };
         const handleWalkPositionChange = (state) => {
+            walkStateRef.current = state;
             positionSaver?.schedule(state);
             onWalkStateChange?.(state);
         };
@@ -772,9 +792,14 @@ const GardenScene = ({
             ground.position.z = camera.position.z;
 
             const chunkCenter = `${chunkCoord(camera.position.x)}:${chunkCoord(camera.position.z)}`;
+            const nextHeadingBucket = proceduralForestRef.current
+                ? headingBucket(walkStateRef.current?.yaw ?? 0)
+                : null;
             if (
                 needsChunkSyncRef.current ||
-                chunkCenter !== lastSyncChunkRef.current
+                chunkCenter !== lastSyncChunkRef.current ||
+                (nextHeadingBucket !== null &&
+                    nextHeadingBucket !== lastSyncHeadingRef.current)
             ) {
                 runChunkSync();
             }

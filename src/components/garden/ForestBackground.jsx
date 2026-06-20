@@ -1,7 +1,7 @@
 import GardenScene from "@/components/garden/GardenScene";
 import { computeMoonFramedLookTarget } from "@/utils/moonScene";
 import { FOREST_POST_PROCESSING_PRESET } from "@/utils/gardenPostProcessing";
-import { DEFAULT_PROCEDURAL_FOREST_CONFIG } from "@/utils/proceduralForest";
+import { DEFAULT_PROCEDURAL_FOREST_CONFIG, PROCEDURAL_RENDER_RADIUS } from "@/utils/proceduralForest";
 import styles from "@/styles/GardenBackground.module.scss";
 
 const GROUND_CAMERA = {
@@ -28,6 +28,7 @@ const ForestBackground = ({ plants = [], gardenActionsRef }) => (
         walkNavigation
         unboundedMovement
         walkPositionKey="forest"
+        visibleChunkRadius={PROCEDURAL_RENDER_RADIUS}
         showPlantTitles={false}
         gardenActionsRef={gardenActionsRef}
         postProcessingPreset={FOREST_POST_PROCESSING_PRESET}
