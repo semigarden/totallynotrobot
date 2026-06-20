@@ -60,8 +60,8 @@ const Gallery = () => {
                         type="button"
                         className={styles.item}
                         disabled={Boolean(openingLabel)}
-                        onClick={() => handleOpen(item)}
-                        title={`Open ${item.label}`}
+                        onDoubleClick={() => handleOpen(item)}
+                        title={`Double-click to open ${item.label}`}
                     >
                         <img
                             className={styles.galleryCover}
