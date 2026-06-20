@@ -4,8 +4,9 @@ import AnimateText from "@/components/effect/AnimateText";
 import LevelBar from "@/components/hud/LevelBar";
 import Name from "@/components/hud/Name";
 import Manifesto from "@/components/portal/Manifesto";
+import Gallery from "@/components/portal/Gallery";
 import Garden from "@/components/portal/Garden";
-import { tabFromParam } from "@/utils/tabRoute";
+import { TABS, tabFromParam } from "@/utils/tabRoute";
 import styles from "@/styles/Panel.module.scss";
 import memory, { level, exp } from "@/api/memory";
 
@@ -58,8 +59,7 @@ const Panel = () => {
                     </div>
 
                     <div className={styles.tabs}>
-                        {["Manifesto", "Garden", "Toolkit", "Projects", "Connection", "Experience", "Interests"].map(
-                            (nodeName) => (
+                        {TABS.map((nodeName) => (
                                 <div
                                     key={nodeName}
                                     className={`${styles.tab} ${tab === nodeName && styles.active}`}
@@ -68,8 +68,7 @@ const Panel = () => {
                                 >
                                     <div className={styles.name}>{nodeName}</div>
                                 </div>
-                            )
-                        )}
+                        ))}
                     </div>
                 </div>
 
@@ -78,6 +77,7 @@ const Panel = () => {
                         tab === "Garden" ? styles.tabPaneFill : ""
                     }`}
                 >
+                    {tab === "Gallery" && <Gallery />}
                     {tab === "Manifesto" && <Manifesto />}
                     {tab === "Garden" && <Garden />}
                     {tab === "Toolkit" && (

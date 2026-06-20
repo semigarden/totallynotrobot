@@ -47,7 +47,7 @@ const Extract = () => {
                     <p className={styles.eyebrow}>Memory vessel</p>
                     <h1 className={styles.title}>/extract</h1>
                 </div>
-                <Link className={styles.backLink} to="/">
+                <Link className={styles.backLink} to="/gallery">
                     Home
                 </Link>
             </header>

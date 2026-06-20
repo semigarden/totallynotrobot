@@ -4,6 +4,7 @@ import {
 } from "@/cartridge/cartridgeFormat";
 
 const textDecoder = new TextDecoder();
+const retainedRuntimes = new Set();
 
 const normalizeAssetPath = (value) => value.replace(/^\.\//, "");
 
@@ -80,12 +81,35 @@ export const createCartridgeFromFile = async (file) => {
     const launchUrl = URL.createObjectURL(launchBlob);
     blobUrls.push(launchUrl);
 
-    return {
+    const runtime = {
         manifest,
         coverUrl,
         launchUrl,
         dispose: () => {
             blobUrls.forEach((url) => URL.revokeObjectURL(url));
+            retainedRuntimes.delete(runtime);
         },
     };
+
+    return runtime;
+};
+
+export const openCartridgeInNewTab = async (source, fileName = "cartridge.png") => {
+    const response = await fetch(source);
+    if (!response.ok) {
+        throw new Error("Failed to load cartridge image.");
+    }
+
+    const buffer = await response.arrayBuffer();
+    const file = new File([buffer], fileName, { type: "image/png" });
+    const runtime = await createCartridgeFromFile(file);
+    const tab = window.open(runtime.launchUrl, "_blank", "noopener,noreferrer");
+
+    if (!tab) {
+        runtime.dispose();
+        throw new Error("Popup blocked. Allow popups to launch cartridges.");
+    }
+
+    retainedRuntimes.add(runtime);
+    return runtime;
 };

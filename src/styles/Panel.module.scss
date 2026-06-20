@@ -311,16 +311,45 @@
                 height: max-content;
                 transition: opacity 0.5s ease-in-out;
                 cursor: pointer;
+                border: 0;
+                padding: 0;
+                background: transparent;
 
                 .icon {
                     width: 32px;
                     height: 32px;
                 }
 
+                .galleryCover {
+                    width: 32px;
+                    height: 32px;
+                    object-fit: cover;
+                    display: block;
+                }
+
                 .name {
                     color: white;
                     font-size: 12px;
                 }
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: wait;
+                }
+            }
+
+            .galleryEmpty,
+            .galleryError {
+                width: 100%;
+                margin: 2vh 0;
+                padding: 0 1rem;
+                color: rgba(255, 255, 255, 0.78);
+                font-size: 12px;
+                text-align: center;
+            }
+
+            .galleryError {
+                color: #ff8d8d;
             }
         }
     }

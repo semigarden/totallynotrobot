@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ClassicLayout from "@/layouts/ClassicLayout";
 import ImmersiveLayout from "@/layouts/ImmersiveLayout";
 import ImmersionLayout from "@/layouts/ImmersionLayout";
@@ -18,7 +18,7 @@ function App() {
                     <Route path="/web" element={<WebHub />} />
                     <Route path="/extract" element={<Extract />} />
                     <Route path="/:tab" element={<ClassicLayout />} />
-                    <Route path="/" element={<ImmersiveLayout />} />
+                    <Route path="/" element={<Navigate to="/gallery" replace />} />
                 </Routes>
             </div>
         </BrowserRouter>

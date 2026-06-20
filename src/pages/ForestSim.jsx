@@ -80,7 +80,7 @@ const ForestSim = () => {
                     <p className={styles.eyebrow}>Forest placement simulation</p>
                     <h1 className={styles.title}>/sim</h1>
                 </div>
-                <Link className={styles.backLink} to="/">
+                <Link className={styles.backLink} to="/gallery">
                     Back to garden
                 </Link>
             </header>

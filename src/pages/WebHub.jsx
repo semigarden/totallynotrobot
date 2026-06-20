@@ -36,7 +36,7 @@ const WebHub = () => {
                         <p className={styles.eyebrow}>Digital gardeners</p>
                         <h1 className={styles.title}>/web</h1>
                     </div>
-                    <Link className={styles.backLink} to="/">
+                    <Link className={styles.backLink} to="/gallery">
                         Home
                     </Link>
                 </header>
