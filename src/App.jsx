@@ -4,6 +4,7 @@ import ImmersiveLayout from "@/layouts/ImmersiveLayout";
 import ImmersionLayout from "@/layouts/ImmersionLayout";
 import ForestSim from "@/pages/ForestSim";
 import WebHub from "@/pages/WebHub";
+import Extract from "@/pages/Extract";
 import "@/styles/App.scss";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
                     <Route path="/immersion" element={<ImmersionLayout />} />
                     <Route path="/sim" element={<ForestSim />} />
                     <Route path="/web" element={<WebHub />} />
+                    <Route path="/extract" element={<Extract />} />
                     <Route path="/:tab" element={<ClassicLayout />} />
                     <Route path="/" element={<ImmersiveLayout />} />
                 </Routes>
