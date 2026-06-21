@@ -1,28 +1,32 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { createCartridgeFromFile } from "@/cartridge/loadCartridge";
+import { createMemoryBlob } from "memory-extract";
 import styles from "@/styles/Play.module.scss";
 
 const Play = () => {
     const [searchParams] = useSearchParams();
     const [error, setError] = useState("");
     const [launchUrl, setLaunchUrl] = useState("");
-    const [title, setTitle] = useState("cartridge");
-    const runtimeRef = useRef(null);
+    const [title, setTitle] = useState("memory");
+    const launchUrlRef = useRef("");
+    const memoryBlobRef = useRef(null);
 
     useEffect(
         () => () => {
-            runtimeRef.current?.dispose?.();
+            memoryBlobRef.current?.dispose?.();
+            if (launchUrlRef.current) {
+                URL.revokeObjectURL(launchUrlRef.current);
+            }
         },
         []
     );
 
     useEffect(() => {
         const source = searchParams.get("src");
-        const fileName = searchParams.get("name") ?? "cartridge.png";
+        const fileName = searchParams.get("name") ?? "memory.png";
 
         if (!source) {
-            setError("No cartridge source provided.");
+            setError("No memory source provided.");
             return;
         }
 
@@ -31,30 +35,36 @@ const Play = () => {
         const load = async () => {
             setError("");
             setLaunchUrl("");
-            runtimeRef.current?.dispose?.();
-            runtimeRef.current = null;
+
+            memoryBlobRef.current?.dispose?.();
+            memoryBlobRef.current = null;
+
+            if (launchUrlRef.current) {
+                URL.revokeObjectURL(launchUrlRef.current);
+                launchUrlRef.current = "";
+            }
 
             try {
                 const response = await fetch(source);
                 if (!response.ok) {
-                    throw new Error("Failed to load cartridge image.");
+                    throw new Error("Failed to load memory image.");
                 }
 
-                const buffer = await response.arrayBuffer();
-                const file = new File([buffer], fileName, { type: "image/png" });
-                const runtime = await createCartridgeFromFile(file);
+                const blob = await createMemoryBlob(await response.blob());
 
                 if (cancelled) {
-                    runtime.dispose();
+                    blob.dispose?.();
                     return;
                 }
 
-                runtimeRef.current = runtime;
-                setTitle(runtime.manifest.name ?? "cartridge");
-                setLaunchUrl(runtime.launchUrl);
+                memoryBlobRef.current = blob;
+                const url = URL.createObjectURL(blob);
+                launchUrlRef.current = url;
+                setTitle(fileName.replace(/\.png$/i, "") || "memory");
+                setLaunchUrl(url);
             } catch (loadError) {
                 if (!cancelled) {
-                    setError(loadError.message ?? "Failed to launch cartridge.");
+                    setError(loadError.message ?? "Failed to launch memory.");
                 }
             }
         };
@@ -77,7 +87,7 @@ const Play = () => {
     if (!launchUrl) {
         return (
             <div className={styles.root}>
-                <p className={styles.loading}>Loading cartridge...</p>
+                <p className={styles.loading}>Loading memory...</p>
             </div>
         );
     }

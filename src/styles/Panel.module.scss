@@ -86,7 +86,8 @@
                 height: max-content;
                 display: flex;
                 flex-direction: column;
-                align-items: center;
+                // align-items: center;
+                align-items: flex-start;
                 justify-content: space-around;
                 flex-grow: 1;
                 margin: 0;
@@ -362,7 +363,8 @@
             .info {
                 .details {
                     flex-direction: row;
-                    justify-content: center;
+                    // justify-content: center;
+                    justify-content: flex-start;
 
                     .divider {
                         width: 4%;
@@ -389,7 +391,8 @@
             }
     
             .info .details {
-                justify-content: space-around;
+                // justify-content: space-around;
+                justify-content: flex-start;
 
                 .divider {
                     display: none;

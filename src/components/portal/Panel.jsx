@@ -40,7 +40,7 @@ const Panel = () => {
 
                         <div className={styles.divider} />
 
-                        <div className={styles.tags}>
+                        {/* <div className={styles.tags}>
                             <div className={styles.group}>
                                 <div className={styles.name} augmented-ui="exe">Web Dev</div>
                                 <div className={styles.name} augmented-ui="exe">Art</div>
@@ -55,7 +55,7 @@ const Panel = () => {
                                 <div className={styles.name} augmented-ui="exe">Long Walks</div>
                                 <div className={styles.name} augmented-ui="exe">Writing</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className={styles.tabs}>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { openCartridgeInNewTab } from "@/cartridge/loadCartridge";
+import { openMemoryInNewTab } from "@/lib/openMemoryInNewTab";
 import styles from "@/styles/Panel.module.scss";
 
 const galleryImages = import.meta.glob("@/gallery/*.png", {
@@ -33,9 +33,9 @@ const Gallery = () => {
         setOpeningLabel(item.label);
 
         try {
-            await openCartridgeInNewTab(item.url, `${item.label}.png`);
+            await openMemoryInNewTab(item.url, `${item.label}.png`);
         } catch (openError) {
-            setError(openError.message ?? "Failed to open cartridge.");
+            setError(openError.message ?? "Failed to open memory.");
         } finally {
             setOpeningLabel("");
         }
@@ -44,7 +44,7 @@ const Gallery = () => {
     if (items.length === 0) {
         return (
             <p className={styles.galleryEmpty}>
-                Drop PNG cartridges into <code>src/gallery</code>.
+                Drop PNG memories into <code>src/gallery</code>.
             </p>
         );
     }
