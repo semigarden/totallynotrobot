@@ -22,7 +22,7 @@ const Panel = () => {
     return (
         <div className={styles.panel}>
             <div className={styles.content}>
-                <div className={styles.preface} augmented-ui="exe">
+                <div className={styles.preface}>
                     <AnimateText text={memory.preface} className={styles.text} />
                 </div>
 
@@ -49,7 +49,6 @@ const Panel = () => {
                                     key={nodeName}
                                     className={`${styles.tab} ${tab === nodeName && styles.active}`}
                                     onClick={() => openTab(nodeName)}
-                                    augmented-ui="exe"
                                 >
                                     <div className={styles.name}>{nodeName}</div>
                                 </div>

@@ -1,3 +1,5 @@
+@use "../utils/cyber" as cyber;
+
 .levelBar {
     position: relative;
     width: max-content;
@@ -11,22 +13,15 @@
     font-style: italic;
     display: flex;
     justify-content: space-between;
-    --aug-border: 1px;
-    --aug-inset: 1px;
-    --aug-border-bg: #40F99B;
-    --aug-inset-bg: #40F99B;
-    --aug-border-opacity: 0.8;
-    --aug-inset-opacity: 0.8;
+    gap: 2px;
 
     .exp {
         width: 15px;
         height: 5px;
-
         background-color: #fff;
         box-shadow: 0 0 20px 0 rgba(249, 64, 240);
         animation: levelBarPulse 4s ease-in-out forwards;
-        --aug-border: 5px;
-        --aug-inset: 5px;
+        @include cyber.cyber-segment(2px);
     }
 }
 

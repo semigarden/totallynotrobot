@@ -26,7 +26,6 @@ const LevelBar = ({ className, exp = 0 }) => {
                     <div
                         className={`${styles.exp} ${isLit ? styles.lit : ''}`}
                         key={index}
-                        augmented-ui="tl-clip br-clip exe"
                         style={{ animationDelay: `${index * 0.1}s` }}
                     />
                 );

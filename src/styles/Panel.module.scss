@@ -1,3 +1,5 @@
+@use "./utils/cyber" as cyber;
+
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
 
@@ -92,14 +94,14 @@
                 flex-grow: 1;
                 margin: 0;
                 padding: 0;
-                padding-top: 10px;
                 gap: 10px;
                 z-index: 1;
+                padding-left: 16px;
             
                 .hud {
                     position: relative;
                     width: 100%;
-                    height: 120px;
+                    height: 92px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -108,14 +110,14 @@
 
                     .levelHud {
                         position: absolute;
-                        bottom: 7px;
-                        left: 0px;
+                        bottom: 0;
+                        left: 0;
                         width: 100%;
-                        height: 38px;
+                        height: 33px;
 
                         .bar {
                             position: absolute;
-                            bottom: 8px;
+                            bottom: 0;
                             left: 36px;
                             width: calc(100% - 60px);
     
@@ -128,7 +130,7 @@
                         .status {
                             position: absolute;
                             width: 95px;
-                            top: 6px;
+                            top: 13px;
                             left: 133px;
                             color: #fff;
                             font-family: "Orbitron", sans-serif;
@@ -138,19 +140,21 @@
                             text-align: center;
                             letter-spacing: 6px;
                             font-style: italic;
+                            line-height: 1;
                         }
 
                         .level {
                             position: absolute;
                             width: 40px;
-                            top: -10px;
-                            left: 248px;
+                            top: 2px;
+                            left: 250px;
                             color: #fff;
                             font-family: "Orbitron", sans-serif;
                             font-size: 24px;
                             text-transform: uppercase;
                             font-weight: 500;
                             text-align: center;
+                            line-height: 1;
                         }
                     }
                 }
@@ -182,14 +186,15 @@
                         text-align: justify;
                         padding: 2px 6px;
                         transition: all 0.3s ease;
-                        --aug-border: 1px;
-                        --aug-inset: 1px;
 
                         &:hover {
                             cursor: pointer;
-                            --aug-border-bg: linear-gradient(90deg, #fff, #000, #fff);
-                            --aug-border-opacity: 1;
-                            --aug-border-radius: 10px;
+                            @include cyber.cyber-frame(1px, transparent, 1px, 10px);
+
+                            &::after {
+                                border: 1px solid transparent;
+                                border-image: linear-gradient(90deg, #fff, #000, #fff) 1;
+                            }
                         }
                     }
                 }
@@ -221,12 +226,8 @@
                     justify-content: center;
 
                     &.active {
-                        --aug-border-opacity: 1;
-                        --aug-border: 1px;
-                        --aug-inset: 1px;
-                        --aug-border-radius: 10px;
-
                         display: inline-block;
+                        padding: 2px 8px;
 
                         text-align: center;
                         filter: drop-shadow(0 0 2px #fff);

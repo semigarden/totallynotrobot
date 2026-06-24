@@ -32,29 +32,29 @@ const Name = ({ className, name = "", animate = true }) => {
             </div>
             <div className={styles.frame}>
                 <div className={styles.frameTop}>
-                    <div className={styles.frame1} augmented-ui="tl-clip br-clip exe"/>
-                    <div className={styles.line1} augmented-ui="tl-clip exe"/>
+                    <div className={styles.frame1}/>
+                    <div className={styles.line1}/>
                     <div className={styles.line2}/>
-                    <div className={styles.frame2} augmented-ui="br-clip exe"/>
-                    <div className={styles.frame3} augmented-ui="tl-clip tr-clip exe"/>
+                    <div className={styles.frame2}/>
+                    <div className={styles.frame3}/>
                 </div>
                 <div className={styles.frameMain}>
                     <div className={styles.text}>{name}</div>
                     <div className={styles.animation} ref={animationRef}>
                         {Array.from({length: 16}).map((_, index) => (
                             <div className={styles.arrow} key={index}>
-                                <div className={styles.line1} augmented-ui="tr-clip bl-clip exe"/>
-                                <div className={styles.line2} augmented-ui="br-clip tl-clip exe"/>
+                                <div className={styles.line1}/>
+                                <div className={styles.line2}/>
                             </div>
                         ))}
                     </div>
                 </div>
                 <div className={styles.frameBottom}>
-                    <div className={styles.frame1} augmented-ui="tl-clip br-clip exe"/>
-                    <div className={styles.frame2} augmented-ui="br-clip exe"/>
-                    <div className={styles.frame3} augmented-ui="tl-clip br-clip exe"/>
-                    <div className={styles.frame4} augmented-ui="br-clip tl-clip exe"/>
-                    <div className={styles.frame5} augmented-ui="br-clip exe"/>
+                    <div className={styles.frame1}/>
+                    <div className={styles.frame2}/>
+                    <div className={styles.frame3}/>
+                    <div className={styles.frame4}/>
+                    <div className={styles.frame5}/>
                 </div>
             </div>
         </div>
