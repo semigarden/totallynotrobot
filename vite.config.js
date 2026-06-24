@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { memoryPlayPlugin } from './vite-plugins/memoryPlay.js';
 
 const rssProxyPlugin = () => ({
   name: 'rss-proxy',
@@ -31,7 +32,7 @@ const rssProxyPlugin = () => ({
 });
 
 export default defineConfig({
-  plugins: [react(), rssProxyPlugin()],
+  plugins: [react(), rssProxyPlugin(), memoryPlayPlugin()],
   base: '/',
   resolve: {
     alias: {

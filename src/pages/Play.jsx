@@ -3,27 +3,56 @@ import { useSearchParams } from "react-router-dom";
 import { createMemoryBlob } from "memory-extract";
 import styles from "@/styles/Play.module.scss";
 
+const registerMemoryPlaySession = async (pngBlob) => {
+    const response = await fetch("/api/memory-play/register", {
+        method: "POST",
+        body: pngBlob,
+        headers: {
+            "Content-Type": "image/png",
+        },
+    });
+
+    if (response.status === 404) {
+        return null;
+    }
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "Failed to register memory session.");
+    }
+
+    const payload = await response.json();
+    return payload.playUrl ?? null;
+};
+
 const Play = () => {
     const [searchParams] = useSearchParams();
     const [error, setError] = useState("");
     const [launchUrl, setLaunchUrl] = useState("");
-    const [title, setTitle] = useState("memory");
     const launchUrlRef = useRef("");
     const memoryBlobRef = useRef(null);
 
+    const revokeLaunchResources = () => {
+        memoryBlobRef.current?.dispose?.();
+        memoryBlobRef.current = null;
+
+        if (launchUrlRef.current) {
+            URL.revokeObjectURL(launchUrlRef.current);
+            launchUrlRef.current = "";
+        }
+
+        setLaunchUrl("");
+    };
+
     useEffect(
         () => () => {
-            memoryBlobRef.current?.dispose?.();
-            if (launchUrlRef.current) {
-                URL.revokeObjectURL(launchUrlRef.current);
-            }
+            revokeLaunchResources();
         },
         []
     );
 
     useEffect(() => {
         const source = searchParams.get("src");
-        const fileName = searchParams.get("name") ?? "memory.png";
 
         if (!source) {
             setError("No memory source provided.");
@@ -34,15 +63,7 @@ const Play = () => {
 
         const load = async () => {
             setError("");
-            setLaunchUrl("");
-
-            memoryBlobRef.current?.dispose?.();
-            memoryBlobRef.current = null;
-
-            if (launchUrlRef.current) {
-                URL.revokeObjectURL(launchUrlRef.current);
-                launchUrlRef.current = "";
-            }
+            revokeLaunchResources();
 
             try {
                 const response = await fetch(source);
@@ -50,7 +71,21 @@ const Play = () => {
                     throw new Error("Failed to load memory image.");
                 }
 
-                const blob = await createMemoryBlob(await response.blob());
+                const pngBlob = await response.blob();
+                const playUrl = await registerMemoryPlaySession(pngBlob);
+
+                if (cancelled) {
+                    return;
+                }
+
+                if (playUrl) {
+                    window.location.replace(
+                        new URL(playUrl, window.location.origin).href
+                    );
+                    return;
+                }
+
+                const blob = await createMemoryBlob(pngBlob);
 
                 if (cancelled) {
                     blob.dispose?.();
@@ -60,7 +95,6 @@ const Play = () => {
                 memoryBlobRef.current = blob;
                 const url = URL.createObjectURL(blob);
                 launchUrlRef.current = url;
-                setTitle(fileName.replace(/\.png$/i, "") || "memory");
                 setLaunchUrl(url);
             } catch (loadError) {
                 if (!cancelled) {
@@ -84,21 +118,21 @@ const Play = () => {
         );
     }
 
-    if (!launchUrl) {
+    if (launchUrl) {
         return (
-            <div className={styles.root}>
-                <p className={styles.loading}>Loading memory...</p>
-            </div>
+            <iframe
+                className={styles.frame}
+                src={launchUrl}
+                title={searchParams.get("name") || "memory"}
+                sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+            />
         );
     }
 
     return (
-        <iframe
-            className={styles.frame}
-            src={launchUrl}
-            title={title}
-            sandbox="allow-scripts allow-same-origin allow-pointer-lock"
-        />
+        <div className={styles.root}>
+            <p className={styles.loading}>Loading memory...</p>
+        </div>
     );
 };
 

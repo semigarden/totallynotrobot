@@ -1,6 +1,6 @@
 export const TABS = [
-    "Gallery",
     "Manifesto",
+    "Gallery",
     "Garden",
     "Toolkit",
     "Projects",
@@ -9,7 +9,7 @@ export const TABS = [
     "Interests",
 ];
 
-export const DEFAULT_TAB = "Gallery";
+export const DEFAULT_TAB = "Manifesto";
 
 export const tabFromParam = (param) => {
     if (!param) return DEFAULT_TAB;
