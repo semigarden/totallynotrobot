@@ -20,7 +20,7 @@ function App() {
                     <Route path="/extract" element={<Extract />} />
                     <Route path="/play" element={<Play />} />
                     <Route path="/:tab" element={<ClassicLayout />} />
-                    <Route path="/" element={<Navigate to="/gallery" replace />} />
+                    <Route path="/" element={<Navigate to="/manifesto" replace />} />
                 </Routes>
             </div>
         </BrowserRouter>
