@@ -8,12 +8,11 @@
     color: white;
     font-family: "Sulphur Point", sans-serif;
     font-size: 16px;
-    padding: 20px;
+
 }
 
 .manifestoContent {
     width: 100%;
-    max-width: 680px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -52,10 +51,8 @@
 
 .manifestoText {
     width: 100%;
-    text-align: justify;
     line-height: 1.65;
     font-size: 14px;
-    hyphens: auto;
     color: rgba(255, 255, 255, 0.9);
 }
 

@@ -4,6 +4,7 @@ import {
     MANIFESTO_SEGMENTS,
     buildWakeModel,
 } from "@/data/manifestoWake";
+import { WATERFALL_SPEED } from "@/utils/waterfallEdges";
 import manifestoStyles from "@/styles/Manifesto.module.scss";
 
 const manifesto = buildWakeModel(MANIFESTO_SEGMENTS, MANIFESTO_LAYERS);
@@ -14,6 +15,9 @@ const ManifestoWake = () => (
         wordMeta={manifesto.wordMeta}
         echoLayers={manifesto.echoLayers}
         className={manifestoStyles.manifestoText}
+        justifyLines
+        waveEdges
+        waveSpeed={WATERFALL_SPEED}
     />
 );
 

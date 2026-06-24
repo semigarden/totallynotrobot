@@ -1,9 +1,6 @@
 import { Vector2, Vector3 } from "three";
 import { GARDEN_SHADE_SHIFT_GLSL } from "@/utils/gardenShiftColors";
 
-/**
- * Rotating dot halftone with shade-shift color layers.
- */
 export const GardenHalftoneShader = {
     name: "GardenHalftoneShader",
 

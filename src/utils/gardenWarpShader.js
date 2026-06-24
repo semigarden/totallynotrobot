@@ -1,9 +1,6 @@
 import { Vector3 } from "three";
 import { GARDEN_SHADE_SHIFT_GLSL } from "@/utils/gardenShiftColors";
 
-/**
- * Rippling sine warp + mild center swirl, with shade-shift sampling.
- */
 export const GardenWarpShader = {
     name: "GardenWarpShader",
 

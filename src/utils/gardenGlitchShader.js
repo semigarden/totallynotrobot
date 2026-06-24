@@ -1,10 +1,6 @@
 import { Vector2, Vector3 } from "three";
 import { GARDEN_SHADE_SHIFT_GLSL } from "@/utils/gardenShiftColors";
 
-/**
- * Glitch without tear bands or displacement jitter.
- * Directional shift via luminance shade layers.
- */
 export const GardenGlitchShader = {
     name: "GardenGlitchShader",
 

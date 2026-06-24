@@ -1,15 +1,11 @@
 import * as THREE from "three";
 
-/**
- * Shade inks for luminance-layered shift — not RGB channel splits or complements.
- * Each shade tints the light extracted from an offset sample, like stacked ink washes.
- */
 export const GARDEN_SHIFT_SHADES = {
-    /** Leading fringe — deep pond shadow */
+    
     plus: new THREE.Vector3(0.07, 0.13, 0.16),
-    /** Center — dusty mushroom neutral */
+    
     center: new THREE.Vector3(0.76, 0.71, 0.79),
-    /** Trailing fringe — washed apricot haze */
+    
     minus: new THREE.Vector3(0.93, 0.68, 0.52),
 };
 

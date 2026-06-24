@@ -21,7 +21,7 @@ const FullscreenToggle = () => {
                 await document.documentElement.requestFullscreen();
             }
         } catch {
-            // Fullscreen may be blocked by the browser or user settings.
+
         }
     }, []);
 

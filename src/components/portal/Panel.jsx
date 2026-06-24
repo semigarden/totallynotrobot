@@ -40,22 +40,7 @@ const Panel = () => {
 
                         <div className={styles.divider} />
 
-                        {/* <div className={styles.tags}>
-                            <div className={styles.group}>
-                                <div className={styles.name} augmented-ui="exe">Web Dev</div>
-                                <div className={styles.name} augmented-ui="exe">Art</div>
-                                <div className={styles.name} augmented-ui="exe">DIY</div>
-                            </div>
-                            <div className={styles.group}>
-                                <div className={styles.name} augmented-ui="exe">Music</div>
-                                <div className={styles.name} augmented-ui="exe">Plants</div>
-                                <div className={styles.name} augmented-ui="exe">Reading</div>
-                            </div>
-                            <div className={styles.group}>
-                                <div className={styles.name} augmented-ui="exe">Long Walks</div>
-                                <div className={styles.name} augmented-ui="exe">Writing</div>
-                            </div>
-                        </div> */}
+                        
                     </div>
 
                     <div className={styles.tabs}>

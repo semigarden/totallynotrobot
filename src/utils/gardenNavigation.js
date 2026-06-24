@@ -133,7 +133,7 @@ export const attachGardenWalkControls = ({
           );
 
     if (mobileLike) {
-        // Moon-framed spawn pitch points at the sky; mobile needs a ground-level view.
+
         state.pitch = initWalkState(
             initialOffset,
             gardenLookTarget,

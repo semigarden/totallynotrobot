@@ -23,20 +23,20 @@ const Line = ({
   color = "#fff",
   animate = false,
   className = "",
-  orientation = "angled", // fallback
+  orientation = "angled",
   length = 100,
-  start = null, // legacy
-  end = null,   // legacy
+  start = null,
+  end = null,
   holeRadius = 3,
   holeColor = "#fff",
   holeStroke = "#fff",
   holeStrokeWidth = 1,
-  routing = "auto", // 'auto', 'hv', 'vh', 'diagonal'
-  startAnchor = "center", // 'center', 'top', 'bottom', 'left', 'right'
-  endAnchor = "center",   // 'center', 'top', 'bottom', 'left', 'right'
-  breakpointCount = 0,    // number of breakpoints for routing
-  randomizeBreakpoints = false, // if true, breakpoints are offset randomly
-  containerRef = null,    // ref to container element
+  routing = "auto",
+  startAnchor = "center",
+  endAnchor = "center",
+  breakpointCount = 0,
+  randomizeBreakpoints = false,
+  containerRef = null,
 }) => {
   const [coords, setCoords] = useState(null);
   const [containerRect, setContainerRect] = useState({ left: 0, top: 0 });
@@ -134,13 +134,13 @@ const Line = ({
     if (routingMode === "vh") {
       return `M ${x1} ${y1} L ${x1} ${y2} L ${x2} ${y2}`;
     }
-    // 'auto': choose the shorter total path
+
     const dx = Math.abs(x2 - x1);
     const dy = Math.abs(y2 - y1);
     if (dx < dy) {
-      return `M ${x1} ${y1} L ${x2} ${y1} L ${x2} ${y2}`; // hv
+      return `M ${x1} ${y1} L ${x2} ${y1} L ${x2} ${y2}`;
     } else {
-      return `M ${x1} ${y1} L ${x1} ${y2} L ${x2} ${y2}`; // vh
+      return `M ${x1} ${y1} L ${x1} ${y2} L ${x2} ${y2}`;
     }
   };
 
@@ -262,9 +262,9 @@ const Line = ({
     const dx = Math.abs(end.x - start.x);
     const dy = Math.abs(end.y - start.y);
     if (dx < dy) {
-      return `M ${start.x} ${start.y} L ${end.x} ${start.y} L ${end.x} ${end.y}`; // hv
+      return `M ${start.x} ${start.y} L ${end.x} ${start.y} L ${end.x} ${end.y}`;
     } else {
-      return `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`; // vh
+      return `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`;
     }
   };
 

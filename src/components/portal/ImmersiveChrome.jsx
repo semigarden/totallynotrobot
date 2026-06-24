@@ -38,19 +38,7 @@ const ImmersiveChrome = ({
 
         <FullscreenToggle />
 
-        {/* <div className={styles.hudDock}>
-            <div className={styles.hudImmersive}>
-                <div className={styles.hudStage}>
-                    <Name name={memory.name} />
-
-                    <div className={styles.levelHud}>
-                        <LevelBar className={styles.bar} exp={exp} />
-                        <div className={styles.status}>Online</div>
-                        <div className={styles.level}>{level}</div>
-                    </div>
-                </div>
-            </div>
-        </div> */}
+        
 
         <div className={styles.inputDock}>
             <GardenControls

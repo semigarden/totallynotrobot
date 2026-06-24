@@ -2,9 +2,6 @@ import { ShaderMaterial, UniformsUtils } from "three";
 import { Pass, FullScreenQuad } from "three/addons/postprocessing/Pass.js";
 import { GardenGlitchShader } from "@/utils/gardenGlitchShader";
 
-/**
- * Always-on glitch: tinted shift + noise only (no tear bands or displacement).
- */
 export class ConstantGlitchPass extends Pass {
     constructor(amount = 0.035) {
         super();
@@ -23,7 +20,7 @@ export class ConstantGlitchPass extends Pass {
     advance(elapsed = 0) {
         this.uniforms.byp.value = 0;
         this.uniforms.amount.value = this.amount;
-        // Keep time in a modest range so mobile GPUs retain sin precision.
+
         this.uniforms.uTime.value = elapsed % 157;
         this.uniforms.angle.value = Math.sin(elapsed * 0.9) * 0.35;
     }

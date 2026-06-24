@@ -71,7 +71,7 @@ export const saveWalkPosition = async (
             transaction.onerror = () => resolve();
         });
     } catch {
-        // Ignore write failures from private mode or blocked storage.
+
     }
 };
 

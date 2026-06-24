@@ -1,8 +1,5 @@
 import { Vector2 } from "three";
 
-/**
- * Mixes decaying previous frame with current for creeping smear trails.
- */
 export const GardenFeedbackShader = {
     name: "GardenFeedbackShader",
 

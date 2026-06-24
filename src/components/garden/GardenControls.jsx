@@ -77,36 +77,8 @@ const GardenControls = ({
                         plant
                     </label>
                 )}
-                {/* <input
-                    ref={inputRef}
-                    id={inputId}
-                    className={`${styles.plantInput} ${inputClassName}`.trim()}
-                    type={showActionButton ? "search" : "text"}
-                    name="plant"
-                    value={draft}
-                    onChange={(event) => setDraft(event.target.value)}
-                    onKeyDown={onInputKeyDown}
-                    onSearch={onInputSearch}
-                    placeholder="type a line"
-                    maxLength={160}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="sentences"
-                    enterKeyHint="go"
-                    inputMode="text"
-                /> */}
-                {/* {showActionButton ? (
-                    <button
-                        type="submit"
-                        className={`${styles.plantAction} ${actionClassName}`.trim()}
-                    >
-                        Grow
-                    </button>
-                ) : (
-                    <button type="submit" className={styles.plantSubmit}>
-                        Plant
-                    </button>
-                )} */}
+                
+                
             </form>
         </>
     );

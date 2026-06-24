@@ -1,10 +1,6 @@
 import { Vector3 } from "three";
 import { GARDEN_SHADE_SHIFT_GLSL } from "@/utils/gardenShiftColors";
 
-/**
- * Composite experimental grade: radial chromatic split, barrel warp,
- * drifting scanlines, and a cool green vignette for the night garden.
- */
 export const GardenExperimentShader = {
     name: "GardenExperimentShader",
 

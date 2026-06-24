@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import "styles/CircuitBoard.scss";
 
-// Debounce utility
 function useDebouncedCallback(callback, delay) {
     const timeoutRef = useRef();
     return (...args) => {
@@ -14,7 +13,6 @@ const CircuitBoard = ({ className = '', source = null, children = null }) => {
     const boardRef = useRef(null);
     const [outlines, setOutlines] = useState([]);
 
-    // Helper to get positions relative to the board
     const getRelativeRect = (childRect, boardRect) => ({
         top: childRect.top - boardRect.top,
         left: childRect.left - boardRect.left,
@@ -22,7 +20,6 @@ const CircuitBoard = ({ className = '', source = null, children = null }) => {
         height: childRect.height,
     });
 
-    // Helper to generate a unique selector path for each element
     const getElementPath = (el) => {
         if (!el) return '';
         let path = '';
@@ -43,7 +40,7 @@ const CircuitBoard = ({ className = '', source = null, children = null }) => {
 
     const calculateOutlines = () => {
         if (!source?.current || !boardRef.current) {
-            setOutlines([]); // Clear outlines if source or board is missing
+            setOutlines([]);
             return;
         }
         const boardRect = boardRef.current.getBoundingClientRect();
@@ -65,19 +62,16 @@ const CircuitBoard = ({ className = '', source = null, children = null }) => {
         calculateOutlines();
     }, [source]);
 
-    // Debounced resize handler
     const debouncedCalculateOutlines = useDebouncedCallback(calculateOutlines, 100);
 
     useEffect(() => {
         const handleResize = () => {
-            setOutlines([]); // Immediately clear outlines on resize
-            debouncedCalculateOutlines(); // Redraw after debounce
+            setOutlines([]);
+            debouncedCalculateOutlines();
         };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [source, debouncedCalculateOutlines]);
-
-    // console.log(outlines);
 
     return (
         <div ref={boardRef} className={`circuit-board ${className}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -95,7 +89,7 @@ const CircuitBoard = ({ className = '', source = null, children = null }) => {
                         borderRadius: 4,
                         boxSizing: 'border-box',
                         pointerEvents: 'none',
-                        // filter: 'blur(4px)',
+
                     }}
                 />
             ))}

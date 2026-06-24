@@ -59,7 +59,6 @@ const Item = ({ item, moveRow, index, itemRefs }) => {
 
   drag(drop(ref));
 
-  // Store ref for position tracking
   if (itemRefs && ref.current) {
     itemRefs.current[item.label] = ref.current;
   }

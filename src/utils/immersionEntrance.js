@@ -7,7 +7,7 @@ import {
 
 const DEFAULT_OPTIONS = {
     width: 6.2,
-    depth: 8, // 4.8`
+    depth: 8,
     height: 14,
     tileSize: 2.2,
     color: 0x8a8a86,
@@ -78,7 +78,6 @@ export const createImmersionWitnessPlant = (plants = []) => {
     };
 };
 
-// Offsets from the entrance: x from center, z from the front edge.
 const IMMERSION_TREE_SLOTS = [
     { x: 70, z: 40 },
     { x: 70, z: 50 },

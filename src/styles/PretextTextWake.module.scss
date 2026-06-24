@@ -60,14 +60,43 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+    width: 100%;
 }
 
 .root {
     cursor: text;
+    width: 100%;
+}
+
+.rootWave {
+    overflow: visible;
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 1) 72%,
+        rgba(0, 0, 0, 0.55) 100%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 1) 72%,
+        rgba(0, 0, 0, 0.55) 100%
+    );
 }
 
 .line {
     white-space: pre-wrap;
+    width: 100%;
+}
+
+.lineWave {
+    width: auto;
+    text-align: center;
+    will-change: margin;
+}
+
+.lineJustify {
+    white-space: nowrap;
 }
 
 .word {

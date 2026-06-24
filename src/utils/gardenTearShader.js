@@ -1,9 +1,6 @@
 import { Vector3 } from "three";
 import { GARDEN_SHADE_SHIFT_GLSL } from "@/utils/gardenShiftColors";
 
-/**
- * Horizontal tear bands + jittered UV blocks, garden shade-shift instead of raw RGB.
- */
 export const GardenTearShader = {
     name: "GardenTearShader",
 

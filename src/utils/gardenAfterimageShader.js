@@ -1,8 +1,5 @@
 import { Vector2 } from "three";
 
-/**
- * Afterimage with directional trail offset for motion-aligned ghosts.
- */
 export const GardenAfterimageShader = {
     name: "GardenAfterimageShader",
 

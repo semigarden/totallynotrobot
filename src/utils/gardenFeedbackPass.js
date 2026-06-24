@@ -11,9 +11,6 @@ import { Pass, FullScreenQuad } from "three/addons/postprocessing/Pass.js";
 import { CopyShader } from "three/addons/shaders/CopyShader.js";
 import { GardenFeedbackShader } from "@/utils/gardenFeedbackShader";
 
-/**
- * Decaying feedback smear — softer ghosting than the max-blend afterimage pass.
- */
 export class GardenFeedbackPass extends Pass {
     constructor(damp = 0.82, mixAmount = 0.28) {
         super();
