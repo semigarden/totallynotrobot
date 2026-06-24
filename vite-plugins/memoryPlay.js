@@ -1,8 +1,44 @@
 import { randomUUID } from "node:crypto";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { extractMemory, listManifestFiles } from "memory-extract/node";
-import { resolveMemoryPlayMode } from "memory-extract/play";
-import { createMemoryPlayIdleWatcher } from "memory-extract/play/lifecycle";
-import { createMemoryPlayHandler } from "memory-extract/play/server";
+
+const require = createRequire(import.meta.url);
+const memoryExtractDir = path.resolve(
+    path.dirname(require.resolve("memory-extract/node")),
+    ".."
+);
+
+let playDeps;
+const loadPlayDeps = () => {
+    if (!playDeps) {
+        playDeps = Promise.all([
+            import(
+                pathToFileURL(
+                    path.join(memoryExtractDir, "src/memoryPlay.js")
+                ).href
+            ),
+            import(
+                pathToFileURL(
+                    path.join(memoryExtractDir, "src/memoryPlayLifecycle.js")
+                ).href
+            ),
+            import(
+                pathToFileURL(
+                    path.join(memoryExtractDir, "tools/playMemoryServer.mjs")
+                ).href
+            ),
+        ]).then(([memoryPlay, lifecycle, server]) => ({
+            resolveMemoryPlayMode: memoryPlay.resolveMemoryPlayMode,
+            createMemoryPlayIdleWatcher:
+                lifecycle.createMemoryPlayIdleWatcher,
+            createMemoryPlayHandler: server.createMemoryPlayHandler,
+        }));
+    }
+
+    return playDeps;
+};
 
 const SESSION_TTL_MS = 60 * 60 * 1000;
 const REGISTER_PATH = "/api/memory-play/register";
@@ -57,6 +93,11 @@ export const memoryPlayPlugin = () => {
 
                 if (pathname === REGISTER_PATH && request.method === "POST") {
                     try {
+                        const {
+                            resolveMemoryPlayMode,
+                            createMemoryPlayIdleWatcher,
+                            createMemoryPlayHandler,
+                        } = await loadPlayDeps();
                         pruneSessions(sessions);
                         const body = await readRequestBody(request);
                         const { manifest, fileBytes } = extractMemory(body);
