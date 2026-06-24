@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { extractMemory, listManifestFiles } from "../../memory-extract/tools/memoryFormat.mjs";
-import { resolveMemoryPlayMode } from "../../memory-extract/src/memoryPlay.js";
-import { createMemoryPlayIdleWatcher } from "../../memory-extract/src/memoryPlayLifecycle.js";
-import { createMemoryPlayHandler } from "../../memory-extract/tools/playMemoryServer.mjs";
+import { extractMemory, listManifestFiles } from "memory-extract/tools/memoryFormat.mjs";
+import { resolveMemoryPlayMode } from "memory-extract/src/memoryPlay.js";
+import { createMemoryPlayIdleWatcher } from "memory-extract/src/memoryPlayLifecycle.js";
+import { createMemoryPlayHandler } from "memory-extract/tools/playMemoryServer.mjs";
 
 const SESSION_TTL_MS = 60 * 60 * 1000;
 const REGISTER_PATH = "/api/memory-play/register";
