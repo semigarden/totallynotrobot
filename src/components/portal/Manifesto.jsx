@@ -4,12 +4,12 @@ import ManifestoWake from "@/components/portal/ManifestoWake";
 import manifestoStyles from "@/styles/Manifesto.module.scss";
 
 const Manifesto = () => {
-    const [mode, setMode] = useState("garden");
+    const [mode, setMode] = useState("wake");
 
     return (
         <div className={manifestoStyles.manifesto}>
             <div className={manifestoStyles.manifestoContent}>
-                <div className={manifestoStyles.modeSwitch}>
+                {/* <div className={manifestoStyles.modeSwitch}>
                     <button
                         type="button"
                         className={`${manifestoStyles.modeButton} ${
@@ -28,7 +28,7 @@ const Manifesto = () => {
                     >
                         wake
                     </button>
-                </div>
+                </div> */}
 
                 {mode === "garden" ? <ManifestoGarden /> : <ManifestoWake />}
             </div>
