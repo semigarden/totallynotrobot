@@ -100,13 +100,11 @@
             
                 .hud {
                     position: relative;
-                    width: 100%;
+                    width: 300px;
                     height: 92px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-
-                    width: 320px;
 
                     .levelHud {
                         position: absolute;
@@ -119,7 +117,7 @@
                             position: absolute;
                             bottom: 0;
                             left: 36px;
-                            width: calc(100% - 60px);
+                            width: calc(100% - 48px);
     
                             path {
                                 stroke: #f2f2f2;
