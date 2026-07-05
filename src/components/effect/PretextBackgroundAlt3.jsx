@@ -9,6 +9,11 @@ import {
 import { SCIFAIKU, scifaikuPlainText } from "@/data/scifaikuTom";
 import styles from "@/styles/PretextBackground.module.scss";
 import {
+    endsWithPunctuation,
+    fillerLineGap,
+    pretextContentWidth,
+} from "@/utils/pretextFiller";
+import {
     blockersToLocalSpace,
     buildGapPlacements,
     collectLayoutBlockers,
@@ -65,8 +70,6 @@ const buildFillText = (viewportHeight, lineWidth) => {
 };
 
 const splitLineWords = (line) => line.match(/\S+\s*/g) ?? [];
-
-const endsWithPunctuation = (word) => /[,.;:!?)\]·/&](?=\s*$)/.test(word);
 
 const PretextBackgroundAlt3 = () => {
     const location = useLocation();
@@ -317,7 +320,12 @@ const PretextBackgroundAlt3 = () => {
         if (!el) return;
 
         const updateSize = () => {
-            setWidth(el.getBoundingClientRect().width);
+            setWidth(
+                pretextContentWidth(
+                    el.getBoundingClientRect().width,
+                    HORIZONTAL_PADDING
+                )
+            );
             setViewportHeight(window.innerHeight);
         };
 
@@ -439,11 +447,12 @@ const PretextBackgroundAlt3 = () => {
                 <div className={styles.fillerLayer}>
                     {fillerLayout?.lines.map((line, lineIndex) => {
                         const words = splitLineWords(line.text || "\u00A0");
-                        const gapCount = Math.max(0, words.length - 1);
-                        const lineGap =
-                            innerWidth > 0 && gapCount > 0
-                                ? Math.max(0, innerWidth - line.width) / gapCount
-                                : 0;
+                        const lineGap = fillerLineGap(
+                            words,
+                            innerWidth,
+                            line.width,
+                            PUNCTUATION_GAP
+                        );
 
                         return (
                             <div

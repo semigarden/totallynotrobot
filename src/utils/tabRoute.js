@@ -1,9 +1,8 @@
 export const TABS = [
-    "Manifesto",
+    // "Manifesto",
     "Gallery",
     "Projects",
     "Connection",
-    "Experience",
 ];
 
 export const DEFAULT_TAB = "Manifesto";

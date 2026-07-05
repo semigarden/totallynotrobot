@@ -13,13 +13,15 @@
     position: absolute;
     inset: 0;
     box-sizing: border-box;
-    padding: 14px 18px;
     overflow: hidden;
 }
 
 .fillerLayer {
     position: absolute;
     inset: 0;
+    box-sizing: border-box;
+    padding: 14px 18px;
+    overflow: hidden;
 }
 
 .fillerLine {
@@ -45,6 +47,8 @@
 .haikuLayer {
     position: absolute;
     inset: 0;
+    box-sizing: border-box;
+    padding: 14px 18px;
     pointer-events: none;
 }
 

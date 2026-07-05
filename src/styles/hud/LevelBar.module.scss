@@ -3,7 +3,10 @@
 
 .levelBar {
     position: relative;
-    width: max-content;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     color: var(--color-fg);
     font-family: "Orbitron", sans-serif;
     font-size: 11px;
@@ -18,7 +21,9 @@
     @include theme-transition;
 
     .exp {
-        width: 15px;
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 15px;
         height: 5px;
         background-color: var(--color-fg);
         box-shadow: 0 0 20px 0 var(--color-glow-soft);
