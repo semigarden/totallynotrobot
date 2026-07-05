@@ -11,7 +11,7 @@ $diag-ray-max: $ray-length;
 $diag-ray-shrink: 0.55;
 $ray-breathe: 3.5s;
 $ray-gap: 8px * $light-scale;
-$ray-thick: 2px * $light-scale;
+$ray-thick: 1px;
 $ring-size: 48px * $light-scale;
 $glow-size: 10px * $light-scale;
 $half-core: $core-size * 0.5;
@@ -400,5 +400,35 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     100% {
         opacity: 1;
         transform: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .lightHud {
+        --light-hud-scale: 0.88;
+
+        right: 10px;
+        transform: scale(var(--light-hud-scale));
+        transform-origin: top right;
+
+        .themeLabel {
+            transform: translateX(-50%) scale(calc(1 / var(--light-hud-scale)));
+            transform-origin: center top;
+        }
+    }
+}
+
+@media (max-width: 380px) {
+    .lightHud {
+        --light-hud-scale: 0.8;
+
+        right: 8px;
+        transform: scale(var(--light-hud-scale));
+        transform-origin: top right;
+
+        .themeLabel {
+            transform: translateX(-50%) scale(calc(1 / var(--light-hud-scale)));
+            transform-origin: center top;
+        }
     }
 }
