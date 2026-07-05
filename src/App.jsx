@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import PretextBackgroundAlt3 from "@/components/effect/PretextBackgroundAlt3";
+import PretextBackgroundAlt from "@/components/effect/PretextBackgroundAlt";
 import ClassicLayout from "@/layouts/ClassicLayout";
 import ImmersiveLayout from "@/layouts/ImmersiveLayout";
 import ImmersionLayout from "@/layouts/ImmersionLayout";
@@ -12,7 +12,7 @@ import "@/styles/App.scss";
 function App() {
     return (
         <BrowserRouter>
-            <PretextBackgroundAlt2 />
+            <PretextBackgroundAlt />
             <div className="App">
                 <Routes>
                     <Route path="/immerse" element={<ImmersiveLayout />} />
