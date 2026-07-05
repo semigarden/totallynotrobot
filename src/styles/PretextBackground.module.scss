@@ -1,0 +1,43 @@
+@import "./theme";
+
+.root {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.inner {
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    padding: 14px 18px;
+    overflow: hidden;
+}
+
+.line {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+}
+
+.word {
+    display: inline-block;
+    color: var(--color-fg);
+    opacity: 0;
+    font-family: "Sulphur Point", sans-serif;
+    letter-spacing: 0.03em;
+    will-change: opacity, letter-spacing;
+    transition: letter-spacing 0.35s ease;
+}
+
+.wordAfterPunct {
+    letter-spacing: 0.04em;
+}
+
+.wordFocused {
+    letter-spacing: 0.05em;
+}

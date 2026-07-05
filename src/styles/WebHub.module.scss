@@ -4,7 +4,7 @@
     position: relative;
     min-height: 100dvh;
     overflow: hidden;
-    background: var(--color-bg);
+    background: transparent;
     color: var(--color-fg);
     @include theme-transition;
 }

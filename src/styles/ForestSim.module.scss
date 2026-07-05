@@ -5,7 +5,7 @@
     padding: 24px;
     background:
         radial-gradient(circle at top, color-mix(in srgb, var(--color-fg) 30%, transparent), transparent 42%),
-        var(--color-bg);
+        transparent;
     color: var(--color-fg);
     @include theme-transition;
 }
