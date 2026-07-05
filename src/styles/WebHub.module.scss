@@ -1,9 +1,12 @@
+@import "./theme";
+
 .root {
     position: relative;
     min-height: 100dvh;
     overflow: hidden;
-    background: #000100;
-    color: #f1f1f1;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    @include theme-transition;
 }
 
 .scene {

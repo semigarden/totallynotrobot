@@ -1,8 +1,11 @@
+@import "./theme";
+
 .root {
     position: relative;
     min-height: 100dvh;
     overflow: hidden;
-    background: #000100;
+    background: var(--color-bg);
+    @include theme-transition;
 }
 
 .uiLayer {
@@ -218,7 +221,7 @@
     width: 84px;
     top: 6px;
     left: 144px;
-    color: #fff;
+    color: var(--color-fg);
     font-family: "Orbitron", sans-serif;
     font-size: 10px;
     text-transform: uppercase;
@@ -233,7 +236,7 @@
     width: 40px;
     top: -10px;
     left: 248px;
-    color: #fff;
+    color: var(--color-fg);
     font-family: "Orbitron", sans-serif;
     font-size: 24px;
     text-transform: uppercase;

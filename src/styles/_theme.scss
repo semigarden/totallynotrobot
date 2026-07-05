@@ -1,0 +1,42 @@
+html {
+    --theme-transition: 900ms;
+    --color-bg: #000000;
+    --color-fg: #ffffff;
+    --color-fg-muted: rgba(255, 255, 255, 0.78);
+    --color-fg-soft: #b3b3b3;
+    --color-fg-dim: #737373;
+    --color-inverse-bg: #ffffff;
+    --color-inverse-fg: #000000;
+    --color-glow: #ffffff;
+    --color-glow-soft: rgba(255, 255, 255, 0.5);
+    --color-glow-strong: rgba(255, 255, 255, 1);
+    color-scheme: dark;
+}
+
+html[data-theme="light"] {
+    --color-bg: #ffffff;
+    --color-fg: #000000;
+    --color-fg-muted: rgba(0, 0, 0, 0.78);
+    --color-fg-soft: #4d4d4d;
+    --color-fg-dim: #8c8c8c;
+    --color-inverse-bg: #000000;
+    --color-inverse-fg: #ffffff;
+    --color-glow: #000000;
+    --color-glow-soft: rgba(0, 0, 0, 0.5);
+    --color-glow-strong: rgba(0, 0, 0, 1);
+    color-scheme: light;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+@mixin theme-transition {
+    transition:
+        background-color var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
+        color var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
+        border-color var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
+        fill var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
+        stroke var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1);
+}

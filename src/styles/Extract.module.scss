@@ -1,3 +1,5 @@
+@import "./theme";
+
 .root {
     min-height: 100dvh;
     display: grid;
@@ -6,9 +8,10 @@
     padding: 24px;
     box-sizing: border-box;
     background:
-        radial-gradient(circle at top, rgba(88, 88, 88, 0.3), transparent 42%),
-        #000100;
-    color: #f1f1f1;
+        radial-gradient(circle at top, color-mix(in srgb, var(--color-fg) 30%, transparent), transparent 42%),
+        var(--color-bg);
+    color: var(--color-fg);
+    @include theme-transition;
 }
 
 .header {
@@ -98,5 +101,5 @@
     width: 100%;
     min-height: 480px;
     border: 1px solid rgba(216, 216, 216, 0.2);
-    background: #000;
+    background: var(--color-bg);
 }

@@ -1,3 +1,5 @@
+@import "../theme";
+
 $light-scale: 0.72;
 $core-size: 24px * $light-scale;
 $ray-length: 18px * $light-scale;
@@ -49,9 +51,9 @@ $light-ease: cubic-bezier(0.4, 0, 0.2, 1);
     left: calc(50% - #{$half-core});
     width: $core-size;
     height: $core-size;
-    background-color: white;
+    background-color: var(--color-fg);
     border-radius: 50%;
-    box-shadow: 0 0 $glow-size 0 #fff;
+    box-shadow: 0 0 $glow-size 0 var(--color-glow);
 
     &::after {
         content: "";
@@ -62,8 +64,8 @@ $light-ease: cubic-bezier(0.4, 0, 0.2, 1);
         height: $core-size * 0.35;
         transform: translate(-50%, -50%);
         border-radius: 50%;
-        background-color: #fff;
-        box-shadow: 0 0 $glow-size 0 #fff;
+        background-color: var(--color-fg);
+        box-shadow: 0 0 $glow-size 0 var(--color-glow);
         animation: sunPulse 3s ease-in-out infinite;
     }
 }
@@ -75,9 +77,9 @@ $light-ease: cubic-bezier(0.4, 0, 0.2, 1);
     width: $ring-size;
     height: $ring-size;
     background-color: transparent;
-    border: $ray-thick solid white;
+    border: $ray-thick solid var(--color-fg);
     border-radius: 50%;
-    box-shadow: 0 0 $glow-size 0 #fff;
+    box-shadow: 0 0 $glow-size 0 var(--color-glow);
 }
 
 .sun,
@@ -97,9 +99,9 @@ $light-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
     %sunRay {
         position: absolute;
-        background-color: white;
+        background-color: var(--color-fg);
         border-radius: 1px;
-        box-shadow: 0 0 $glow-size 0 #fff;
+        box-shadow: 0 0 $glow-size 0 var(--color-glow);
         animation-duration: $ray-breathe;
         animation-timing-function: ease-in-out;
         animation-iteration-count: infinite;

@@ -125,7 +125,7 @@
 }
 
 .wordFocused {
-    color: #fff !important;
+    color: var(--color-fg) !important;
     transform: none !important;
 }
 
@@ -171,7 +171,7 @@
 
 .wordEchoLit {
     animation: none !important;
-    color: #fff !important;
+    color: var(--color-fg) !important;
     opacity: 1 !important;
     transform: none !important;
     letter-spacing: 0.05em !important;

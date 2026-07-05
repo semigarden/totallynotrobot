@@ -1,4 +1,5 @@
 @use "./utils/cyber" as cyber;
+@import "./theme";
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
@@ -10,8 +11,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #000100;
+    background-color: var(--color-bg);
     position: relative;
+    @include theme-transition;
 
     .content {
         grid-column: 2;
@@ -34,8 +36,8 @@
             justify-content: center;
             flex-direction: column;
             gap: 10px;
-            color: white;
-            text-shadow: rebeccapurple 0 0 10px;
+            color: var(--color-fg);
+            text-shadow: 0 0 10px var(--color-glow-soft);
             z-index: 1;
             padding: 10px 20px;
 
@@ -63,7 +65,7 @@
                     --tw-bg-opacity: 1;
                     --tw-translate-y: 0.1rem;
                     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-                    background-color: rgb(255 255 255/var(--tw-bg-opacity));
+                    background-color: var(--color-fg);
                 }
             }
         }
@@ -123,8 +125,8 @@
                             width: calc(100% - 48px);
     
                             path {
-                                stroke: #f2f2f2;
-                                fill: #8f8f8f;
+                                stroke: var(--color-fg-soft);
+                                fill: var(--color-fg-dim);
                             }
                         }
 
@@ -133,7 +135,7 @@
                             width: 95px;
                             top: 13px;
                             left: 133px;
-                            color: #fff;
+                            color: var(--color-fg);
                             font-family: "Orbitron", sans-serif;
                             font-size: 10px;
                             text-transform: uppercase;
@@ -149,7 +151,7 @@
                             width: 40px;
                             top: 2px;
                             left: 250px;
-                            color: #fff;
+                            color: var(--color-fg);
                             font-family: "Orbitron", sans-serif;
                             font-size: 24px;
                             text-transform: uppercase;
@@ -179,7 +181,7 @@
                     .name {
                         position: relative;
                         border-radius: 4px;
-                        color: #fff;
+                        color: var(--color-fg);
                         font-size: 10px;
                         font-family: "Orbitron", sans-serif;
                         text-transform: uppercase;
@@ -194,7 +196,7 @@
 
                             &::after {
                                 border: 1px solid transparent;
-                                border-image: linear-gradient(90deg, #fff, #000, #fff) 1;
+                                border-image: linear-gradient(90deg, var(--color-fg), var(--color-bg), var(--color-fg)) 1;
                             }
                         }
                     }
@@ -208,7 +210,7 @@
                 justify-content: flex-start;
                 align-items: flex-start;
                 gap: 10px;
-                color: black;
+                color: var(--color-inverse-fg);
 
                 .lines {
                     position: relative;
@@ -224,7 +226,7 @@
                         right: 0;
                         width: 16px;
                         height: 22px;
-                        background-color: white;
+                        background-color: var(--color-fg);
                         border-radius: 1px;
                     }
 
@@ -234,7 +236,7 @@
                         top: 22px;
                         width: 16px;
                         height: 20px;
-                        background-color: white;
+                        background-color: var(--color-fg);
                         clip-path: polygon(100% 0, 100% 100%, 0 0);
                     }
 
@@ -244,7 +246,7 @@
                         right: 0;
                         width: 2px;
                         height: 180px;
-                        background-color: white;
+                        background-color: var(--color-fg);
                     }
 
                     .line3 {
@@ -252,7 +254,7 @@
                         bottom: -181px;
                         right: 1px;
                         width: 50px;
-                        border-top: 2px solid white;
+                        border-top: 2px solid var(--color-fg);
                         transform: rotate(-60deg);
                         transform-origin: right center;
                     }
@@ -272,26 +274,26 @@
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
-                        background-color: white;
+                        background-color: var(--color-fg);
                         padding: 2px 12px;
                         gap: 4px;
                         border-radius: 2px;
 
                         &.active {
-                            background-color: #000;
-                            color: white;
+                            background-color: var(--color-inverse-bg);
+                            color: var(--color-inverse-fg);
                             font-weight: bolder;
                             margin-left: 10px;
 
                             svg {
-                                color: white;
+                                color: var(--color-inverse-fg);
                             }
                         }
 
                         svg {
                             width: 14px;
                             height: 14px;
-                            color: black;
+                            color: var(--color-inverse-fg);
                         }
                     }
                 }
@@ -305,7 +307,7 @@
                 justify-content: flex-start;
                 align-items: flex-start;
                 gap: 10px;
-                color: black;
+                color: var(--color-inverse-fg);
 
                 .lines {
                     position: relative;
@@ -321,7 +323,7 @@
                         left: 0;
                         width: 120px;
                         height: 12px;
-                        background-color: white;
+                        background-color: var(--color-fg);
                         border-radius: 1px;
                     }
 
@@ -331,7 +333,7 @@
                         top: 0;
                         width: 20px;
                         height: 12px;
-                        background-color: white;
+                        background-color: var(--color-fg);
                         clip-path: polygon( 0 0, 0 100%, 100% 0);
                     }
 
@@ -341,7 +343,7 @@
                         left: 0;
                         width: 100%;
                         height: 2px;
-                        background-color: white;
+                        background-color: var(--color-fg);
                     }
 
                     .line3 {
@@ -349,7 +351,7 @@
                         right: 0;
                         top: 0;
                         width: 50px;
-                        border-top: 2px solid white;
+                        border-top: 2px solid var(--color-fg);
                         transform: rotate(-160deg);
                         transform-origin: right center;
                     }
@@ -368,26 +370,26 @@
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
-                        background-color: white;
+                        background-color: var(--color-fg);
                         padding: 2px 12px;
                         gap: 8px;
                         border-radius: 2px;
 
                         &.active {
-                            background-color: #000;
-                            color: white;
+                            background-color: var(--color-inverse-bg);
+                            color: var(--color-inverse-fg);
                             font-weight: bolder;
                             margin-left: 10px;
 
                             svg {
-                                color: white;
+                                color: var(--color-inverse-fg);
                             }
                         }
 
                         svg {
                             width: 14px;
                             height: 14px;
-                            color: black;
+                            color: var(--color-inverse-fg);
                         }
                     }
                 }
@@ -398,7 +400,7 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 4px;
-                color: #fff;
+                color: var(--color-fg);
                 width: 100%;
                 height: 22px;
 
@@ -423,33 +425,33 @@
                         padding: 2px 8px;
 
                         text-align: center;
-                        filter: drop-shadow(0 0 2px #fff);
+                        filter: drop-shadow(0 0 2px var(--color-glow));
                         font-weight: bolder;
                         animation: tabShadow 3s ease-in-out 0.4s infinite alternate;
                         
 
                         @keyframes tabShadow {
                             0% {
-                                filter: drop-shadow(0 0 1px #fff);
+                                filter: drop-shadow(0 0 1px var(--color-glow));
                             }
                             25% {
-                                filter: drop-shadow(0 0 5px #fff);
+                                filter: drop-shadow(0 0 5px var(--color-glow));
                             }
                             50% {
-                                filter: drop-shadow(0 0 1px #fff);
+                                filter: drop-shadow(0 0 1px var(--color-glow));
                             }
                             75% {
-                                filter: drop-shadow(0 0 5px #fff);
+                                filter: drop-shadow(0 0 5px var(--color-glow));
                             }
                             100% {
-                                filter: drop-shadow(0 0 1px #fff);
+                                filter: drop-shadow(0 0 1px var(--color-glow));
                             }
                         }
                     }
 
                     .name {
                         z-index: 2;
-                        color: white;
+                        color: var(--color-fg);
                         font-family: "Orbitron", sans-serif;
                         font-size: 10px;
                         text-transform: uppercase;
@@ -494,7 +496,7 @@
             gap: 20px;
             width: 100%;
             margin: 2vh 0;
-            color: white;
+            color: var(--color-fg);
             z-index: 1;
             
             .item {
@@ -524,7 +526,7 @@
                 }
 
                 .name {
-                    color: white;
+                    color: var(--color-fg);
                     font-size: 12px;
                 }
 
@@ -539,13 +541,13 @@
                 width: 100%;
                 margin: 2vh 0;
                 padding: 0 1rem;
-                color: rgba(255, 255, 255, 0.78);
+                color: var(--color-fg-muted);
                 font-size: 12px;
                 text-align: center;
             }
 
             .galleryError {
-                color: #ff8d8d;
+                color: var(--color-fg-dim);
             }
         }
     }

@@ -1,10 +1,13 @@
+@import "./theme";
+
 .root {
     min-height: 100dvh;
     padding: 24px;
     background:
-        radial-gradient(circle at top, rgba(88, 88, 88, 0.3), transparent 42%),
-        #000100;
-    color: #f1f1f1;
+        radial-gradient(circle at top, color-mix(in srgb, var(--color-fg) 30%, transparent), transparent 42%),
+        var(--color-bg);
+    color: var(--color-fg);
+    @include theme-transition;
 }
 
 .header {

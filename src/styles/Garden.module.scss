@@ -1,3 +1,5 @@
+@import "./theme";
+
 .garden {
     display: flex;
     flex-direction: column;
@@ -5,7 +7,7 @@
     flex: 1;
     min-height: 0;
     padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid color-mix(in srgb, var(--color-fg) 10%, transparent);
 }
 
 .gardenHeader {
@@ -20,14 +22,14 @@
     font-size: 9px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.35);
+    color: color-mix(in srgb, var(--color-fg) 35%, transparent);
 }
 
 .gardenCount {
     font-size: 9px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.22);
+    color: color-mix(in srgb, var(--color-fg) 22%, transparent);
 }
 
 .space {
@@ -35,8 +37,8 @@
     flex: 1;
     min-height: 240px;
     width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: #000100;
+    border: 1px solid color-mix(in srgb, var(--color-fg) 8%, transparent);
+    background: var(--color-bg);
     overflow: hidden;
 }
 
@@ -57,7 +59,7 @@
     font-size: 8px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.22);
+    color: color-mix(in srgb, var(--color-fg) 22%, transparent);
     pointer-events: none;
 }
 
@@ -74,7 +76,7 @@
     font-size: 9px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.35);
+    color: color-mix(in srgb, var(--color-fg) 35%, transparent);
 }
 
 .plantSubmit {
@@ -101,7 +103,7 @@
     outline: none;
 
     &::placeholder {
-        color: rgba(255, 255, 255, 0.22);
+        color: color-mix(in srgb, var(--color-fg) 22%, transparent);
     }
 
     &:focus {

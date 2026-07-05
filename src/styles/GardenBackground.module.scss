@@ -1,9 +1,12 @@
+@import "./theme";
+
 .background {
     position: fixed;
     inset: 0;
     z-index: 0;
-    background: #000100;
+    background: var(--color-bg);
     overflow: hidden;
+    @include theme-transition;
 }
 
 .canvas {

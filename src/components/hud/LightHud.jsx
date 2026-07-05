@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
 import Moon from "@/components/hud/Moon";
 import Sun from "@/components/hud/Sun";
 import styles from "@/styles/hud/LightHud.module.scss";
@@ -6,11 +6,7 @@ import styles from "@/styles/hud/LightHud.module.scss";
 const TRANSITION_MS = 900;
 
 const LightHud = ({ className = "" }) => {
-    const [isSun, setIsSun] = useState(true);
-
-    const togglePhase = () => {
-        setIsSun((current) => !current);
-    };
+    const { isSun, toggleTheme } = useTheme();
 
     return (
         <div
@@ -21,8 +17,8 @@ const LightHud = ({ className = "" }) => {
             <button
                 type="button"
                 className={styles.stage}
-                onClick={togglePhase}
-                aria-label={isSun ? "Switch to moon" : "Switch to sun"}
+                onClick={toggleTheme}
+                aria-label={isSun ? "Switch to light theme" : "Switch to dark theme"}
             >
                 <Sun active={isSun} />
                 <Moon active={!isSun} />
