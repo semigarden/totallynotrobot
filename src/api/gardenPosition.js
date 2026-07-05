@@ -1,29 +1,6 @@
-const DB_NAME = "digital-garden";
-const DB_VERSION = 1;
-const STORE_NAME = "walk-position";
+import { openAppDb, WALK_STORE } from "@/api/appDb";
+
 const DEFAULT_POSITION_KEY = "immersive";
-
-let dbPromise = null;
-
-const openDb = () => {
-    if (dbPromise) return dbPromise;
-
-    dbPromise = new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-        request.onupgradeneeded = () => {
-            const db = request.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME);
-            }
-        };
-
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-
-    return dbPromise;
-};
 
 export const isWalkPosition = (value) =>
     value &&
@@ -36,11 +13,11 @@ export const loadWalkPosition = async (
     positionKey = DEFAULT_POSITION_KEY
 ) => {
     try {
-        const db = await openDb();
+        const db = await openAppDb();
 
         return new Promise((resolve) => {
-            const transaction = db.transaction(STORE_NAME, "readonly");
-            const store = transaction.objectStore(STORE_NAME);
+            const transaction = db.transaction(WALK_STORE, "readonly");
+            const store = transaction.objectStore(WALK_STORE);
             const request = store.get(positionKey);
 
             request.onsuccess = () => {
@@ -61,11 +38,11 @@ export const saveWalkPosition = async (
     if (!isWalkPosition(position)) return;
 
     try {
-        const db = await openDb();
+        const db = await openAppDb();
 
         await new Promise((resolve) => {
-            const transaction = db.transaction(STORE_NAME, "readwrite");
-            const store = transaction.objectStore(STORE_NAME);
+            const transaction = db.transaction(WALK_STORE, "readwrite");
+            const store = transaction.objectStore(WALK_STORE);
             store.put(position, positionKey);
             transaction.oncomplete = () => resolve();
             transaction.onerror = () => resolve();

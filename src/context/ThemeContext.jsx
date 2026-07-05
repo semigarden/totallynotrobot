@@ -1,8 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import {
+    loadThemePreference,
+    migrateLegacyThemePreference,
+    saveThemePreference,
+} from "@/api/themePreference";
 
 const ThemeContext = createContext(null);
 
-const STORAGE_KEY = "totallynotrobot-theme";
+const applyTheme = (isSun) => {
+    document.documentElement.dataset.theme = isSun ? "dark" : "light";
+};
 
 export const ThemeProvider = ({ children }) => {
     const [isSun, setIsSun] = useState(() => {
@@ -10,16 +17,41 @@ export const ThemeProvider = ({ children }) => {
             return true;
         }
 
-        const sun = window.localStorage.getItem(STORAGE_KEY) !== "light";
-        document.documentElement.dataset.theme = sun ? "dark" : "light";
-        return sun;
+        applyTheme(true);
+        return true;
     });
+    const [ready, setReady] = useState(false);
 
     useEffect(() => {
-        const theme = isSun ? "dark" : "light";
-        document.documentElement.dataset.theme = theme;
-        window.localStorage.setItem(STORAGE_KEY, theme);
-    }, [isSun]);
+        let cancelled = false;
+
+        const hydrateTheme = async () => {
+            const legacy = await migrateLegacyThemePreference();
+            const saved = legacy ?? (await loadThemePreference());
+            if (cancelled || saved === null) {
+                if (!cancelled) setReady(true);
+                return;
+            }
+
+            const nextIsSun = saved === "dark";
+            setIsSun(nextIsSun);
+            applyTheme(nextIsSun);
+            setReady(true);
+        };
+
+        hydrateTheme();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!ready) return;
+
+        applyTheme(isSun);
+        saveThemePreference(isSun);
+    }, [isSun, ready]);
 
     const toggleTheme = () => {
         setIsSun((current) => !current);
