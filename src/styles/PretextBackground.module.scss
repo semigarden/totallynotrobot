@@ -17,27 +17,55 @@
     overflow: hidden;
 }
 
-.line {
+.fillerLayer {
+    position: absolute;
+    inset: 0;
+}
+
+.fillerLine {
     display: block;
     white-space: nowrap;
     overflow: hidden;
     width: 100%;
 }
 
-.word {
+.fillerWord {
     display: inline-block;
-    color: var(--color-fg);
     opacity: 0;
+    color: var(--color-fg);
     font-family: "Sulphur Point", sans-serif;
+    font-size: 11px;
     letter-spacing: 0.03em;
-    will-change: opacity, letter-spacing;
-    transition: letter-spacing 0.35s ease;
 }
 
-.wordAfterPunct {
+.fillerWordAfterPunct {
     letter-spacing: 0.04em;
 }
 
-.wordFocused {
-    letter-spacing: 0.05em;
+.haikuLayer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.haikuBlock {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 268px;
+    text-align: center;
+    font-family: "Sulphur Point", sans-serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--color-fg);
+    letter-spacing: 0.04em;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+}
+
+.haikuLine {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

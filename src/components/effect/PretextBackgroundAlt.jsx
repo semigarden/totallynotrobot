@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { prepareWithSegments, layoutWithLines } from "@chenglou/pretext";
 import {
     loadReadHaikuIndices,
@@ -7,17 +8,19 @@ import {
 } from "@/api/scifaikuRead";
 import { SCIFAIKU, scifaikuPlainText } from "@/data/scifaikuTom";
 import styles from "@/styles/PretextBackground.module.scss";
+import {
+    blockersToLocalSpace,
+    buildGapPlacements,
+    collectLayoutBlockers,
+} from "@/utils/viewportEmptySlots";
 
 const FILLER_FONT = '11px "Sulphur Point", sans-serif';
 const FILLER_LINE_HEIGHT = 19;
 const HAIKU_LINE_HEIGHT = 22;
 const HORIZONTAL_PADDING = 36;
-const INNER_PADDING_X = 18;
 const INNER_PADDING_Y = 14;
 const SLOT_WIDTH = 268;
-const SLOT_MIN_GAP = 36;
-const SLOT_EDGE_MARGIN = 24;
-const SLOT_PLACE_ATTEMPTS = 96;
+const SLOT_HEIGHT = 92;
 const PUNCTUATION_GAP = 5;
 const HAIKU_HOVER_RADIUS = 88;
 const SLOT_RECENT_MEMORY = 6;
@@ -35,103 +38,6 @@ const pulseOpacity = (ageMs) => {
     }
     const t = (ageMs - FADE_IN_MS) / FADE_OUT_MS;
     return easeOutQuad(1 - t);
-};
-
-const createSeededRandom = (seed) => {
-    let state = seed >>> 0;
-    return () => {
-        state = (state * 1664525 + 1013904223) >>> 0;
-        return state / 0x100000000;
-    };
-};
-
-const estimateSlotHeight = (lineCount) =>
-    Math.max(HAIKU_LINE_HEIGHT * 2, lineCount * HAIKU_LINE_HEIGHT);
-
-const rectsOverlap = (a, b, gap) =>
-    !(
-        a.right + gap < b.left ||
-        b.right + gap < a.left ||
-        a.bottom + gap < b.top ||
-        b.bottom + gap < a.top
-    );
-
-const slotRect = (left, top, lineCount = 3) => {
-    const height = estimateSlotHeight(lineCount);
-    return {
-        left: left - SLOT_WIDTH / 2,
-        top: top - height / 2,
-        right: left + SLOT_WIDTH / 2,
-        bottom: top + height / 2,
-    };
-};
-
-const buildRandomPlacements = (innerWidth, innerHeight) => {
-    if (!innerWidth || !innerHeight) return [];
-
-    const seed =
-        Math.floor(innerWidth) * 73856093 ^
-        Math.floor(innerHeight) * 19349663;
-    const random = createSeededRandom(seed);
-
-    const targetCount = Math.min(
-        SCIFAIKU.length,
-        Math.max(
-            10,
-            Math.floor((innerWidth * innerHeight) / 52000)
-        )
-    );
-
-    const placed = [];
-
-    for (let slotIndex = 0; slotIndex < targetCount; slotIndex += 1) {
-        const lineCount = SCIFAIKU[slotIndex % SCIFAIKU.length].lines.length;
-        const height = estimateSlotHeight(lineCount);
-        let placedSlot = null;
-
-        for (let attempt = 0; attempt < SLOT_PLACE_ATTEMPTS; attempt += 1) {
-            const left =
-                SLOT_EDGE_MARGIN +
-                random() * (innerWidth - SLOT_EDGE_MARGIN * 2);
-            const top =
-                SLOT_EDGE_MARGIN +
-                random() * (innerHeight - SLOT_EDGE_MARGIN * 2);
-            const candidate = slotRect(left, top, lineCount);
-
-            if (
-                candidate.left < SLOT_EDGE_MARGIN ||
-                candidate.top < SLOT_EDGE_MARGIN ||
-                candidate.right > innerWidth - SLOT_EDGE_MARGIN ||
-                candidate.bottom > innerHeight - SLOT_EDGE_MARGIN
-            ) {
-                continue;
-            }
-
-            const overlaps = placed.some((existing) =>
-                rectsOverlap(
-                    candidate,
-                    slotRect(existing.left, existing.top, existing.lineCount),
-                    SLOT_MIN_GAP
-                )
-            );
-
-            if (overlaps) continue;
-
-            placedSlot = {
-                key: `slot-${slotIndex}`,
-                left,
-                top,
-                lineCount,
-            };
-            break;
-        }
-
-        if (placedSlot) {
-            placed.push(placedSlot);
-        }
-    }
-
-    return placed;
 };
 
 const buildFillText = (viewportHeight, lineWidth) => {
@@ -154,7 +60,8 @@ const splitLineWords = (line) => line.match(/\S+\s*/g) ?? [];
 
 const endsWithPunctuation = (word) => /[,.;:!?)\]·/&](?=\s*$)/.test(word);
 
-const PretextBackground = () => {
+const PretextBackgroundAlt = () => {
+    const location = useLocation();
     const containerRef = useRef(null);
     const haikuRefs = useRef(new Map());
     const pulseRef = useRef(new Map());
@@ -172,17 +79,35 @@ const PretextBackground = () => {
     const [viewportHeight, setViewportHeight] = useState(
         typeof window !== "undefined" ? window.innerHeight : 0
     );
+    const [blockerRects, setBlockerRects] = useState([]);
     const [slotHaikus, setSlotHaikus] = useState({});
 
     const innerWidth = Math.max(0, width);
-    const innerHeight = Math.max(
-        0,
-        viewportHeight - INNER_PADDING_Y * 2
-    );
+    const innerHeight = Math.max(0, viewportHeight - INNER_PADDING_Y * 2);
+
+    const measureBlockers = useCallback(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const containerRect = container.getBoundingClientRect();
+        const blockers = collectLayoutBlockers();
+        setBlockerRects(blockersToLocalSpace(blockers, containerRect));
+    }, []);
 
     const placements = useMemo(
-        () => buildRandomPlacements(innerWidth, innerHeight),
-        [innerWidth, innerHeight]
+        () =>
+            buildGapPlacements({
+                innerWidth,
+                innerHeight,
+                blockerRects,
+                slotWidth: SLOT_WIDTH,
+                slotHeight: SLOT_HEIGHT,
+                maxSlots: Math.min(
+                    SCIFAIKU.length,
+                    Math.max(6, Math.floor(blockerRects.length * 1.4) + 4)
+                ),
+            }),
+        [innerWidth, innerHeight, blockerRects]
     );
 
     const fillText = useMemo(
@@ -351,6 +276,37 @@ const PretextBackground = () => {
     }, []);
 
     useEffect(() => {
+        let innerId = null;
+        const outerId = requestAnimationFrame(() => {
+            innerId = requestAnimationFrame(measureBlockers);
+        });
+
+        const app = document.querySelector(".App");
+        const mutationObserver =
+            app &&
+            new MutationObserver(() => {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(measureBlockers);
+                });
+            });
+
+        mutationObserver?.observe(app, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+        });
+
+        window.addEventListener("resize", measureBlockers);
+
+        return () => {
+            cancelAnimationFrame(outerId);
+            if (innerId !== null) cancelAnimationFrame(innerId);
+            mutationObserver?.disconnect();
+            window.removeEventListener("resize", measureBlockers);
+        };
+    }, [location.pathname, measureBlockers, width, viewportHeight]);
+
+    useEffect(() => {
         const handleMouseMove = (event) => {
             mouseRef.current = {
                 x: event.clientX,
@@ -500,4 +456,4 @@ const PretextBackground = () => {
     );
 };
 
-export default PretextBackground;
+export default PretextBackgroundAlt;
