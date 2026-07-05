@@ -17,6 +17,7 @@ const Sun = ({ className = "", active = true }) => (
             <div className={styles.line9} />
         </div>
         <div className={styles.line5} />
+        <span className={styles.themeLabel}>Light</span>
     </div>
 );
 
