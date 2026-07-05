@@ -80,6 +80,9 @@
             overflow: visible;
             flex-shrink: 0;
 
+
+            gap: 100px;
+
             height: max-content;
 
             .details {
@@ -193,6 +196,198 @@
                                 border: 1px solid transparent;
                                 border-image: linear-gradient(90deg, #fff, #000, #fff) 1;
                             }
+                        }
+                    }
+                }
+            }
+
+            .sectionsHud {
+                position: relative;
+                width: 100%;
+                display: flex;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 10px;
+                color: black;
+
+                .lines {
+                    position: relative;
+                    width: 40px;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .line0 {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        width: 16px;
+                        height: 22px;
+                        background-color: white;
+                        border-radius: 1px;
+                    }
+
+                    .line1 {
+                        position: absolute;
+                        right: 0;
+                        top: 22px;
+                        width: 16px;
+                        height: 20px;
+                        background-color: white;
+                        clip-path: polygon(100% 0, 100% 100%, 0 0);
+                    }
+
+                    .line2 {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        width: 2px;
+                        height: 180px;
+                        background-color: white;
+                    }
+
+                    .line3 {
+                        position: absolute;
+                        bottom: -181px;
+                        right: 1px;
+                        width: 50px;
+                        border-top: 2px solid white;
+                        transform: rotate(-60deg);
+                        transform-origin: right center;
+                    }
+                }
+
+                .listSections {
+                    position: relative;
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: flex-start;
+                    gap: 10px;
+
+                    .itemSection {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        background-color: white;
+                        padding: 2px 12px;
+                        gap: 4px;
+                        border-radius: 2px;
+
+                        &.active {
+                            background-color: #000;
+                            color: white;
+                            font-weight: bolder;
+                            margin-left: 10px;
+
+                            svg {
+                                color: white;
+                            }
+                        }
+
+                        svg {
+                            width: 14px;
+                            height: 14px;
+                            color: black;
+                        }
+                    }
+                }
+            }
+
+            .sectionsHud2 {
+                position: relative;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 10px;
+                color: black;
+
+                .lines {
+                    position: relative;
+                    width: calc(100% - 50px);
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .line0 {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 120px;
+                        height: 12px;
+                        background-color: white;
+                        border-radius: 1px;
+                    }
+
+                    .line1 {
+                        position: absolute;
+                        left: 120px;
+                        top: 0;
+                        width: 20px;
+                        height: 12px;
+                        background-color: white;
+                        clip-path: polygon( 0 0, 0 100%, 100% 0);
+                    }
+
+                    .line2 {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 2px;
+                        background-color: white;
+                    }
+
+                    .line3 {
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                        width: 50px;
+                        border-top: 2px solid white;
+                        transform: rotate(-160deg);
+                        transform-origin: right center;
+                    }
+                }
+
+                .listSections {
+                    position: relative;
+                    // width: 100%;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: flex-start;
+                    gap: 10px;
+
+                    .itemSection {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        background-color: white;
+                        padding: 2px 12px;
+                        gap: 8px;
+                        border-radius: 2px;
+
+                        &.active {
+                            background-color: #000;
+                            color: white;
+                            font-weight: bolder;
+                            margin-left: 10px;
+
+                            svg {
+                                color: white;
+                            }
+                        }
+
+                        svg {
+                            width: 14px;
+                            height: 14px;
+                            color: black;
                         }
                     }
                 }

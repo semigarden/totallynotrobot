@@ -1,0 +1,288 @@
+$light-scale: 0.72;
+$core-size: 24px * $light-scale;
+$ray-length: 18px * $light-scale;
+$cardinal-ray-min: 18px * $light-scale;
+$cardinal-ray-max: 30px * $light-scale;
+$cardinal-ray-shrink: 0.6;
+$diag-ray-min: 10px * $light-scale;
+$diag-ray-max: $ray-length;
+$diag-ray-shrink: 0.55;
+$ray-breathe: 3.5s;
+$ray-gap: 8px * $light-scale;
+$ray-thick: 2px * $light-scale;
+$ring-size: 48px * $light-scale;
+$glow-size: 10px * $light-scale;
+$half-core: $core-size * 0.5;
+$ray-offset: $half-core + $ray-gap;
+$sun-size: ($ray-offset + $cardinal-ray-max) * 2;
+$light-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+.lightHud {
+    --light-transition: 900ms;
+
+    position: absolute;
+    top: 0;
+    right: 16px;
+
+    .stage {
+        position: relative;
+        width: $sun-size;
+        height: $sun-size;
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        transition:
+            width var(--light-transition) $light-ease,
+            height var(--light-transition) $light-ease;
+    }
+
+    &[data-phase="moon"] .stage {
+        width: $ring-size;
+        height: $ring-size;
+    }
+}
+
+%lightCore {
+    position: absolute;
+    top: calc(50% - #{$half-core});
+    left: calc(50% - #{$half-core});
+    width: $core-size;
+    height: $core-size;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 0 $glow-size 0 #fff;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: $core-size * 0.35;
+        height: $core-size * 0.35;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background-color: #fff;
+        box-shadow: 0 0 $glow-size 0 #fff;
+        animation: sunPulse 3s ease-in-out infinite;
+    }
+}
+
+%lightRing {
+    position: absolute;
+    top: calc(50% - #{$ring-size * 0.5});
+    left: calc(50% - #{$ring-size * 0.5});
+    width: $ring-size;
+    height: $ring-size;
+    background-color: transparent;
+    border: $ray-thick solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 $glow-size 0 #fff;
+}
+
+.sun,
+.moon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateZ(0);
+    transition:
+        opacity var(--light-transition) $light-ease,
+        transform var(--light-transition) $light-ease;
+}
+
+.sun {
+    width: $sun-size;
+    height: $sun-size;
+
+    %sunRay {
+        position: absolute;
+        background-color: white;
+        border-radius: 1px;
+        box-shadow: 0 0 $glow-size 0 #fff;
+        animation-duration: $ray-breathe;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+    }
+
+    .line0 {
+        @extend %lightCore;
+    }
+
+    .rays {
+        position: absolute;
+        inset: 0;
+        transition:
+            transform var(--light-transition) $light-ease,
+            opacity var(--light-transition) $light-ease;
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    .line1 {
+        @extend %sunRay;
+        top: calc(50% - #{$ray-offset + $cardinal-ray-max});
+        left: calc(50% - #{$ray-thick * 0.5});
+        width: $ray-thick;
+        height: $cardinal-ray-max;
+        transform-origin: center bottom;
+        animation-name: sunRayCardinalY;
+        animation-delay: 0s;
+    }
+
+    .line2 {
+        @extend %sunRay;
+        top: calc(50% + #{$ray-offset});
+        left: calc(50% - #{$ray-thick * 0.5});
+        width: $ray-thick;
+        height: $cardinal-ray-max;
+        transform-origin: center top;
+        animation-name: sunRayCardinalY;
+        animation-delay: 0.15s;
+    }
+
+    .line3 {
+        @extend %sunRay;
+        top: calc(50% - #{$ray-thick * 0.5});
+        left: calc(50% + #{$ray-offset});
+        width: $cardinal-ray-max;
+        height: $ray-thick;
+        transform-origin: left center;
+        animation-name: sunRayCardinalX;
+        animation-delay: 0.3s;
+    }
+
+    .line4 {
+        @extend %sunRay;
+        top: calc(50% - #{$ray-thick * 0.5});
+        right: calc(50% + #{$ray-offset});
+        width: $cardinal-ray-max;
+        height: $ray-thick;
+        transform-origin: right center;
+        animation-name: sunRayCardinalX;
+        animation-delay: 0.45s;
+    }
+
+    .line5 {
+        @extend %lightRing;
+    }
+
+    .line6,
+    .line7,
+    .line8,
+    .line9 {
+        @extend %sunRay;
+        top: calc(50% - #{$ray-thick * 0.5});
+        left: 50%;
+        width: $diag-ray-max;
+        height: $ray-thick;
+        transform-origin: left center;
+        animation-name: sunRayDiagonal;
+    }
+
+    .line6 {
+        --ray-rotate: -45deg;
+        transform: rotate(-45deg) translateX($ray-offset);
+        animation-delay: 0.6s;
+    }
+
+    .line7 {
+        --ray-rotate: 45deg;
+        transform: rotate(45deg) translateX($ray-offset);
+        animation-delay: 0.75s;
+    }
+
+    .line8 {
+        --ray-rotate: -135deg;
+        transform: rotate(-135deg) translateX($ray-offset);
+        animation-delay: 0.9s;
+    }
+
+    .line9 {
+        --ray-rotate: 135deg;
+        transform: rotate(135deg) translateX($ray-offset);
+        animation-delay: 1.05s;
+    }
+
+    &.active {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) translateZ(0);
+        z-index: 2;
+    }
+
+    &.inactive {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.72) rotate(45deg) translateZ(0);
+        z-index: 1;
+
+        .rays {
+            transform: scale(0);
+            opacity: 0;
+
+            [class*="line"] {
+                animation-play-state: paused;
+            }
+        }
+    }
+}
+
+.moon {
+    width: $ring-size;
+    height: $ring-size;
+
+    .line0 {
+        @extend %lightCore;
+    }
+
+    .line5 {
+        @extend %lightRing;
+    }
+
+    &.active {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) translateZ(0);
+        z-index: 2;
+    }
+
+    &.inactive {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.35) rotate(-45deg) translateZ(0);
+        z-index: 1;
+    }
+}
+
+@keyframes sunPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes sunRayCardinalY {
+    0%, 100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY($cardinal-ray-shrink);
+    }
+}
+
+@keyframes sunRayCardinalX {
+    0%, 100% {
+        transform: scaleX(1);
+    }
+    50% {
+        transform: scaleX($cardinal-ray-shrink);
+    }
+}
+
+@keyframes sunRayDiagonal {
+    0%, 100% {
+        transform: rotate(var(--ray-rotate)) translateX($ray-offset) scaleX(1);
+    }
+    50% {
+        transform: rotate(var(--ray-rotate)) translateX($ray-offset) scaleX($diag-ray-shrink);
+    }
+}
