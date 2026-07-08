@@ -1,5 +1,5 @@
 @use "../utils/cyber" as cyber;
-@import "../theme";
+@use "../theme" as *;
 
 .levelBar {
     position: relative;

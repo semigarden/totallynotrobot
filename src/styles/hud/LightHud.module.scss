@@ -1,4 +1,4 @@
-@import "../theme";
+@use "../theme" as *;
 
 $light-scale: 0.72;
 $core-size: 24px * $light-scale;
@@ -18,7 +18,10 @@ $half-core: $core-size * 0.5;
 $ray-offset: $half-core + $ray-gap;
 $sun-size: ($ray-offset + $cardinal-ray-max) * 2;
 $theme-label-gap: 6px;
-$theme-label-moon-offset: ($sun-size - $ring-size) * 0.5;
+$stage-label-stack: $theme-label-gap;
+$stage-ray-overhang: $cardinal-ray-max;
+$stage-height: $stage-ray-overhang + $sun-size + $stage-label-stack;
+$stage-icon-bottom: $stage-label-stack;
 $light-ease: cubic-bezier(0.4, 0, 0.2, 1);
 $assemble-ease: cubic-bezier(0.22, 1.2, 0.36, 1);
 $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
@@ -26,31 +29,30 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 .lightHud {
     --light-transition: 900ms;
 
+    display: contents;
+}
+
+.stage {
     position: absolute;
-    top: 0;
-    right: 16px;
+    bottom: 0;
+    right: 0;
     z-index: 20;
+    width: $sun-size;
+    height: $stage-height;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
     pointer-events: auto;
+    overflow: visible;
+    box-sizing: border-box;
+    transition:
+        width var(--light-transition) $light-ease,
+        height var(--light-transition) $light-ease;
+}
 
-    .stage {
-        position: relative;
-        width: $sun-size;
-        height: calc(#{$sun-size} + #{$theme-label-gap} + 10px);
-        padding: 0;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        pointer-events: auto;
-        overflow: visible;
-        transition:
-            width var(--light-transition) $light-ease,
-            height var(--light-transition) $light-ease;
-    }
-
-    &[data-phase="moon"] .stage {
-        width: $ring-size;
-        height: calc(#{$ring-size} + #{$theme-label-gap} + #{$theme-label-moon-offset} + 10px);
-    }
+.lightHud[data-phase="moon"] .stage {
+    width: $ring-size;
 }
 
 %lightCore {
@@ -93,9 +95,10 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 .sun,
 .moon {
     position: absolute;
-    top: 50%;
+    top: auto;
     left: 50%;
-    transform: translate(-50%, -50%) translateZ(0);
+    transform: translateX(-50%) translateZ(0);
+    transform-origin: center bottom;
     pointer-events: none;
     overflow: visible;
     transition:
@@ -105,9 +108,10 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
 .themeLabel {
     position: absolute;
+    bottom: 0;
     left: 50%;
-    top: 100%;
     transform: translateX(-50%);
+    margin: 0;
     font-family: "Orbitron", sans-serif;
     font-size: 8px;
     font-weight: 500;
@@ -121,6 +125,8 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 }
 
 .sun {
+    // bottom: $stage-icon-bottom;
+    bottom: 14px;
     width: $sun-size;
     height: $sun-size;
 
@@ -197,10 +203,6 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
         @extend %lightRing;
     }
 
-    .themeLabel {
-        margin-top: $theme-label-gap;
-    }
-
     .line6,
     .line7,
     .line8,
@@ -236,13 +238,13 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
     &.active {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1) translateZ(0);
+        transform: translateX(-50%) scale(1) translateZ(0);
         z-index: 2;
     }
 
     &.inactive {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.72) rotate(45deg) translateZ(0);
+        transform: translateX(-50%) scale(0.72) rotate(45deg) translateZ(0);
         z-index: 1;
 
         .rays {
@@ -257,6 +259,8 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 }
 
 .moon {
+    // bottom: $stage-icon-bottom;
+    bottom: 32px;
     width: $ring-size;
     height: $ring-size;
 
@@ -268,19 +272,15 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
         @extend %lightRing;
     }
 
-    .themeLabel {
-        margin-top: calc(#{$theme-label-gap} + #{$theme-label-moon-offset});
-    }
-
     &.active {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1) translateZ(0);
+        transform: translateX(-50%) scale(1) translateZ(0);
         z-index: 2;
     }
 
     &.inactive {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(1.35) rotate(-45deg) translateZ(0);
+        transform: translateX(-50%) scale(1.35) rotate(-45deg) translateZ(0);
         z-index: 1;
     }
 }
@@ -339,7 +339,7 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     }
 
     &[data-phase="sun"] .sun.active {
-        transform-origin: center center;
+        transform-origin: center bottom;
         animation: sunAssemble 0.65s $assemble-snap 0.56s both;
 
         .rays [class*="line"] {
@@ -348,7 +348,7 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     }
 
     &[data-phase="moon"] .moon.active {
-        transform-origin: center center;
+        transform-origin: center bottom;
         animation: moonAssemble 0.62s $assemble-snap 0.56s both;
     }
 }
@@ -360,12 +360,12 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 @keyframes sunAssemble {
     0% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.08) translateZ(0);
+        transform: translateX(-50%) scale(0.08) translateZ(0);
     }
 
     100% {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1) translateZ(0);
+        transform: translateX(-50%) scale(1) translateZ(0);
     }
 }
 
@@ -382,12 +382,12 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 @keyframes moonAssemble {
     0% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.08) translateZ(0);
+        transform: translateX(-50%) scale(0.08) translateZ(0);
     }
 
     100% {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1) translateZ(0);
+        transform: translateX(-50%) scale(1) translateZ(0);
     }
 }
 
@@ -400,35 +400,5 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     100% {
         opacity: 1;
         transform: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .lightHud {
-        --light-hud-scale: 0.88;
-
-        right: 10px;
-        transform: scale(var(--light-hud-scale));
-        transform-origin: top right;
-
-        .themeLabel {
-            transform: translateX(-50%) scale(calc(1 / var(--light-hud-scale)));
-            transform-origin: center top;
-        }
-    }
-}
-
-@media (max-width: 380px) {
-    .lightHud {
-        --light-hud-scale: 0.8;
-
-        right: 8px;
-        transform: scale(var(--light-hud-scale));
-        transform-origin: top right;
-
-        .themeLabel {
-            transform: translateX(-50%) scale(calc(1 / var(--light-hud-scale)));
-            transform-origin: center top;
-        }
     }
 }

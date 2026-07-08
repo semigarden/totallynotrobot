@@ -7,7 +7,6 @@ const Moon = ({ className = "", active = false }) => (
     >
         <div className={styles.line0} />
         <div className={styles.line5} />
-        <span className={styles.themeLabel}>Dark</span>
     </div>
 );
 
