@@ -26,8 +26,17 @@ $light-ease: cubic-bezier(0.4, 0, 0.2, 1);
 $assemble-ease: cubic-bezier(0.22, 1.2, 0.36, 1);
 $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
+%lightColorTransition {
+    transition:
+        background-color var(--light-transition) $light-ease,
+        border-color var(--light-transition) $light-ease,
+        color var(--light-transition) $light-ease,
+        box-shadow var(--light-transition) $light-ease,
+        text-shadow var(--light-transition) $light-ease;
+}
+
 .lightHud {
-    --light-transition: 900ms;
+    --light-transition: 1600ms;
     --lh-active-scale: 0.8;
 
     // display: contents;
@@ -85,6 +94,7 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 }
 
 %lightCore {
+    @extend %lightColorTransition;
     position: absolute;
     top: calc(50% - #{$half-core});
     left: calc(50% - #{$half-core});
@@ -106,10 +116,14 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
         background-color: var(--color-fg);
         box-shadow: 0 0 $glow-size 0 var(--color-glow);
         animation: sunPulse 3s ease-in-out infinite;
+        transition:
+            background-color var(--light-transition) $light-ease,
+            box-shadow var(--light-transition) $light-ease;
     }
 }
 
 %lightRing {
+    @extend %lightColorTransition;
     position: absolute;
     top: calc(50% - #{$ring-size * 0.5});
     left: calc(50% - #{$ring-size * 0.5});
@@ -136,6 +150,7 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 }
 
 .themeLabel {
+    @extend %lightColorTransition;
     // position: absolute;
     position: relative;
     // bottom: 17px;
@@ -174,6 +189,7 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     }
 
     %sunRay {
+        @extend %lightColorTransition;
         position: absolute;
         background-color: var(--color-fg);
         border-radius: 1px;

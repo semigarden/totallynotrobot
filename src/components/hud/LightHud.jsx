@@ -4,7 +4,7 @@ import Moon from "@/components/hud/Moon";
 import Sun from "@/components/hud/Sun";
 import styles from "@/styles/hud/LightHud.module.scss";
 
-const TRANSITION_MS = 900;
+const TRANSITION_MS = 1600;
 const ASSEMBLE_MS = 1220;
 const IDLE_SETTLE_MS = 180;
 
