@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import styles from "@/styles/ImmersiveLayout.module.scss";
 
-const FullscreenToggle = () => {
+const FullscreenToggle = ({
+    className = "",
+    toggleClassName = "",
+    iconEnterClassName = "",
+    iconExitClassName = "",
+}) => {
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     useEffect(() => {
@@ -21,27 +26,27 @@ const FullscreenToggle = () => {
                 await document.documentElement.requestFullscreen();
             }
         } catch {
-
+            // ignore unsupported or blocked fullscreen requests
         }
     }, []);
 
     return (
-        <div className={styles.fullscreenDock}>
+        <div className={`${styles.fullscreenDock} ${className}`.trim()}>
             <button
                 type="button"
-                className={styles.fullscreenToggle}
+                className={`${styles.fullscreenToggle} ${toggleClassName}`.trim()}
                 onClick={toggleFullscreen}
                 aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                 title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             >
-                <span
+                {/* <span
                     className={
                         isFullscreen
-                            ? styles.fullscreenIconExit
-                            : styles.fullscreenIconEnter
+                            ? `${styles.fullscreenIconExit} ${iconExitClassName}`.trim()
+                            : `${styles.fullscreenIconEnter} ${iconEnterClassName}`.trim()
                     }
                     aria-hidden="true"
-                />
+                /> */}
             </button>
         </div>
     );

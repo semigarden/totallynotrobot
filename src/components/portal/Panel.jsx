@@ -4,6 +4,7 @@ import AnimateText from "@/components/effect/AnimateText";
 import LightHud from "@/components/hud/LightHud";
 import LevelBar from "@/components/hud/LevelBar";
 import Name from "@/components/hud/Name";
+import FullscreenToggle from "@/components/portal/FullscreenToggle";
 import Manifesto from "@/components/portal/Manifesto";
 import Gallery from "@/components/portal/Gallery";
 import Garden from "@/components/portal/Garden";
@@ -25,6 +26,12 @@ const Panel = () => {
 
     return (
         <div className={styles.panel}>
+            <FullscreenToggle
+                className={styles.secretFullscreenDock}
+                toggleClassName={styles.secretFullscreenToggle}
+                iconEnterClassName={styles.secretFullscreenIconEnter}
+                iconExitClassName={styles.secretFullscreenIconExit}
+            />
             <div className={styles.content}>
                 <div className={styles.preface}>
                     <AnimateText text={memory.preface} className={styles.text} />
