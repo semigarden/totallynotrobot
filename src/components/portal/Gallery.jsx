@@ -66,7 +66,7 @@ const Gallery = () => {
                         <img
                             className={styles.galleryCover}
                             src={item.url}
-                            alt={item.label}
+                            // alt={item.label}
                             loading="lazy"
                         />
                         <div className={styles.name}>
