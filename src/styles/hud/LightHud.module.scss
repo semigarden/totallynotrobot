@@ -29,16 +29,36 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 .lightHud {
     --light-transition: 900ms;
 
-    display: contents;
+    // display: contents;
+    position: relative;
+    height: calc(100% - 16px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @media (min-width: 381px) {
+        height: calc(100% - 8px);
+    }
+
+    @media (min-width: 481px) {
+        height: calc(100% + 2px);
+    }
 }
 
 .stage {
-    position: absolute;
+    // position: absolute;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
     bottom: 0;
-    right: 10px;
+    // right: 10px;
     z-index: 20;
     width: $sun-size;
-    height: $stage-height;
+    // height: $stage-height;
+    height: 100%;
+    min-width: 72px;
     padding: 0;
     border: none;
     background: transparent;
@@ -46,18 +66,19 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     pointer-events: auto;
     overflow: visible;
     box-sizing: border-box;
+    // transform: scale(0.8);
     transition:
         width var(--light-transition) $light-ease,
         height var(--light-transition) $light-ease;
 }
 
 .lightHud[data-phase="sun"] .stage {
-    right: -9px;
+    // right: -9px;
 }
 
 .lightHud[data-phase="moon"] .stage {
     width: $ring-size;
-    right: 11px;
+    // right: 11px;
 }
 
 %lightCore {
@@ -112,8 +133,10 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 }
 
 .themeLabel {
-    position: absolute;
-    bottom: 17px;
+    // position: absolute;
+    position: relative;
+    // bottom: 17px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
@@ -128,19 +151,23 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     pointer-events: none;
     line-height: 1;
 
-    @media (min-width: 381px) and (max-width: 480px) {
-        bottom: 10px;
-    }
+    // @media (min-width: 381px) and (max-width: 480px) {
+    //     bottom: 10px;
+    // }
 }
 
 .sun {
     // bottom: $stage-icon-bottom;
-    top: -4px;
+    top: -11px;
     width: $sun-size;
     height: $sun-size;
 
-    @media (min-width: 381px) and (max-width: 480px) {
-        top: 2px;
+    @media (min-width: 381px) {
+        top: -4px;
+    }
+
+    @media (min-width: 481px) {
+        top: 4px;
     }
 
     %sunRay {
@@ -254,8 +281,12 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
         transform: translateX(-50%) scale(0.8) translateZ(0);
         z-index: 2;
 
-        @media (min-width: 381px) and (max-width: 480px) {
+        @media (min-width: 381px) {
             transform: translateX(-50%) scale(0.88) translateZ(0);
+        }
+
+        @media (min-width: 481px) {
+            transform: translateX(-50%) scale(1) translateZ(0);
         }
     }
 
@@ -277,12 +308,16 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
 .moon {
     // bottom: $stage-icon-bottom;
-    top: 18px;
+    top: 11px;
     width: $ring-size;
     height: $ring-size;
 
 
-    @media (min-width: 381px) and (max-width: 480px) {
+    @media (min-width: 381px) {
+        top: 16px;
+    }
+
+    @media (min-width: 481px) {
         top: 22px;
     }
 
@@ -299,8 +334,12 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
         transform: translateX(-50%) scale(0.8) translateZ(0);
         z-index: 2;
 
-        @media (min-width: 381px) and (max-width: 480px) {
+        @media (min-width: 381px) {
             transform: translateX(-50%) scale(0.88) translateZ(0);
+        }
+
+        @media (min-width: 481px) {
+            transform: translateX(-50%) scale(1) translateZ(0);
         }
     }
 

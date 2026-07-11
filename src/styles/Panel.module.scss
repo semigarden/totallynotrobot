@@ -8,7 +8,7 @@
     width: 100%;
     max-width: 100%;
     min-height: 100dvh;
-    overflow-x: clip;
+    // overflow-x: clip;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -85,7 +85,7 @@
             z-index: 1;
             // gap: 15px;
             position: relative;
-            overflow-x: clip;
+            // overflow-x: clip;
             flex-shrink: 0;
             height: max-content;
             gap: 30px;
@@ -108,10 +108,13 @@
                 gap: 10px;
                 z-index: 1;
                 // padding-left: 16px;
-                overflow-x: clip;
+                // overflow-x: clip;
             
                 .hudRow {
                     position: relative;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                     width: 100%;
                     height: 92px;
                     min-width: 0;
@@ -630,12 +633,12 @@
                     }
                 }
 
-                .lightHud {
-                    transform: scale(0.8);
-                    transform-origin: top left;
-                        margin-bottom: -18px;
-                        margin-right: -60px;
-                }
+                // .lightHud {
+                //     transform: scale(0.8);
+                //     transform-origin: top left;
+                //         margin-bottom: -18px;
+                //         margin-right: -60px;
+                // }
             }
         }
     }
@@ -649,11 +652,6 @@
                     flex-direction: row;
 
                     justify-content: flex-start;
-
-                    .hud {
-                        flex: 1;
-                        min-width: 0;
-                    }
 
                     .divider {
                         width: 4%;
