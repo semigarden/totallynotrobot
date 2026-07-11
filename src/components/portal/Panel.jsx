@@ -33,11 +33,11 @@ const Panel = () => {
                 <div className={styles.info}>
                     <div className={styles.details}>
                         <div className={styles.hudRow}>
-                            <div className={styles.hud}>
-                                <Name className={styles.nameHud} name={memory.name} />
+                        <div className={`${styles.hud} ${styles.assembling}`}>
+                            <Name className={styles.nameHud} name={memory.name} />
 
-                                <div className={styles.levelHud}>
-                                    <LevelBar className={styles.bar} exp={exp} />
+                            <div className={styles.levelHud}>
+                                <LevelBar className={styles.bar} exp={exp} />
                                     <div className={styles.status}>Online</div>
                                     <div className={styles.level}>{level}</div>
                                 </div>
