@@ -43,10 +43,10 @@ const Panel = () => {
                                 </div>
                             </div>
 
-                            <LightHud />
+                            <LightHud className={styles.lightHud} />
                         </div>
 
-                        <div className={styles.divider} />
+                        {/* <div className={styles.divider} /> */}
                     </div>
 
                     {/* <div className={styles.sectionsHud}>
@@ -113,7 +113,7 @@ const Panel = () => {
                     }`}
                 >
                     {tab === "Gallery" && <Gallery />}
-                    {tab === "Manifesto" && <Manifesto />}
+                    {/* {tab === "Manifesto" && <Manifesto />} */}
                     {tab === "Garden" && <Garden />}
                     {tab === "Toolkit" && (
                         <Drag className={styles.list} itemsData={memory.items} />

@@ -592,7 +592,7 @@
                 .details {
                     padding: 0 10px;
 
-                    .hudRow {
+                    .hud {
                         transform: scale(0.88);
                         transform-origin: top left;
                         margin-bottom: -11px;
@@ -611,24 +611,30 @@
                 .details {
                     padding: 0 8px;
 
-                    .hudRow {
+                    .hud {
                         transform: scale(0.8);
                         transform-origin: top left;
                         margin-bottom: -18px;
                         margin-right: -60px;
 
-                        .hud {
-                            .levelHud {
-                                .status {
-                                    letter-spacing: 4px;
-                                }
+             
+                        .levelHud {
+                            .status {
+                                letter-spacing: 4px;
+                            }
 
-                                .level {
-                                    font-size: 20px;
-                                }
+                            .level {
+                                font-size: 20px;
                             }
                         }
                     }
+                }
+
+                .lightHud {
+                    transform: scale(0.8);
+                    transform-origin: top left;
+                        margin-bottom: -18px;
+                        margin-right: -60px;
                 }
             }
         }
@@ -644,7 +650,7 @@
 
                     justify-content: flex-start;
 
-                    .hudRow {
+                    .hud {
                         flex: 1;
                         min-width: 0;
                     }

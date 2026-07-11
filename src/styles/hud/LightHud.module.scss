@@ -35,7 +35,7 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 .stage {
     position: absolute;
     bottom: 0;
-    right: 0;
+    right: 10px;
     z-index: 20;
     width: $sun-size;
     height: $stage-height;
@@ -51,8 +51,13 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
         height var(--light-transition) $light-ease;
 }
 
+.lightHud[data-phase="sun"] .stage {
+    right: -9px;
+}
+
 .lightHud[data-phase="moon"] .stage {
     width: $ring-size;
+    right: 11px;
 }
 
 %lightCore {
@@ -108,7 +113,7 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
 .themeLabel {
     position: absolute;
-    bottom: 0;
+    bottom: 17px;
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
@@ -122,13 +127,21 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     white-space: nowrap;
     pointer-events: none;
     line-height: 1;
+
+    @media (min-width: 381px) and (max-width: 480px) {
+        bottom: 10px;
+    }
 }
 
 .sun {
     // bottom: $stage-icon-bottom;
-    bottom: 14px;
+    top: -4px;
     width: $sun-size;
     height: $sun-size;
+
+    @media (min-width: 381px) and (max-width: 480px) {
+        top: 2px;
+    }
 
     %sunRay {
         position: absolute;
@@ -238,8 +251,12 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
     &.active {
         opacity: 1;
-        transform: translateX(-50%) scale(1) translateZ(0);
+        transform: translateX(-50%) scale(0.8) translateZ(0);
         z-index: 2;
+
+        @media (min-width: 381px) and (max-width: 480px) {
+            transform: translateX(-50%) scale(0.88) translateZ(0);
+        }
     }
 
     &.inactive {
@@ -260,9 +277,14 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
 .moon {
     // bottom: $stage-icon-bottom;
-    bottom: 32px;
+    top: 18px;
     width: $ring-size;
     height: $ring-size;
+
+
+    @media (min-width: 381px) and (max-width: 480px) {
+        top: 22px;
+    }
 
     .line0 {
         @extend %lightCore;
@@ -274,8 +296,12 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
     &.active {
         opacity: 1;
-        transform: translateX(-50%) scale(1) translateZ(0);
+        transform: translateX(-50%) scale(0.8) translateZ(0);
         z-index: 2;
+
+        @media (min-width: 381px) and (max-width: 480px) {
+            transform: translateX(-50%) scale(0.88) translateZ(0);
+        }
     }
 
     &.inactive {
