@@ -11,15 +11,21 @@ const applyTheme = (isSun) => {
     document.documentElement.dataset.theme = isSun ? "dark" : "light";
 };
 
-export const ThemeProvider = ({ children }) => {
-    const [isSun, setIsSun] = useState(() => {
-        if (typeof window === "undefined") {
-            return true;
-        }
-
-        applyTheme(true);
+const readInitialIsSun = () => {
+    if (typeof window === "undefined") {
         return true;
+    }
+
+    return document.documentElement.dataset.theme !== "light";
+};
+
+const waitForPaint = () =>
+    new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
     });
+
+export const ThemeProvider = ({ children }) => {
+    const [isSun, setIsSun] = useState(readInitialIsSun);
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
@@ -28,14 +34,30 @@ export const ThemeProvider = ({ children }) => {
         const hydrateTheme = async () => {
             const legacy = await migrateLegacyThemePreference();
             const saved = legacy ?? (await loadThemePreference());
-            if (cancelled || saved === null) {
-                if (!cancelled) setReady(true);
+
+            if (cancelled) {
+                return;
+            }
+
+            if (saved === null) {
+                setReady(true);
                 return;
             }
 
             const nextIsSun = saved === "dark";
-            setIsSun(nextIsSun);
-            applyTheme(nextIsSun);
+            const currentIsSun = document.documentElement.dataset.theme !== "light";
+
+            if (nextIsSun !== currentIsSun) {
+                await waitForPaint();
+
+                if (cancelled) {
+                    return;
+                }
+
+                setIsSun(nextIsSun);
+                applyTheme(nextIsSun);
+            }
+
             setReady(true);
         };
 
@@ -47,7 +69,9 @@ export const ThemeProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        if (!ready) return;
+        if (!ready) {
+            return;
+        }
 
         applyTheme(isSun);
         saveThemePreference(isSun);

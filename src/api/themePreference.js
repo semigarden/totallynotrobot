@@ -1,9 +1,26 @@
 import { openAppDb, SETTINGS_STORE } from "@/api/appDb";
 
 const THEME_KEY = "theme";
-const LEGACY_STORAGE_KEY = "totallynotrobot-theme";
+export const SYNC_STORAGE_KEY = "totallynotrobot-theme";
 
 const isThemeValue = (value) => value === "dark" || value === "light";
+
+export const readSyncThemePreference = () => {
+    if (typeof window === "undefined") {
+        return null;
+    }
+
+    const saved = window.localStorage.getItem(SYNC_STORAGE_KEY);
+    return isThemeValue(saved) ? saved : null;
+};
+
+export const writeSyncThemePreference = (isSun) => {
+    if (typeof window === "undefined") {
+        return;
+    }
+
+    window.localStorage.setItem(SYNC_STORAGE_KEY, isSun ? "dark" : "light");
+};
 
 export const loadThemePreference = async () => {
     try {
@@ -27,6 +44,7 @@ export const loadThemePreference = async () => {
 
 export const saveThemePreference = async (isSun) => {
     const theme = isSun ? "dark" : "light";
+    writeSyncThemePreference(isSun);
 
     try {
         const db = await openAppDb();
@@ -43,12 +61,11 @@ export const saveThemePreference = async (isSun) => {
 };
 
 export const migrateLegacyThemePreference = async () => {
-    if (typeof window === "undefined") return null;
-
-    const legacy = window.localStorage.getItem(LEGACY_STORAGE_KEY);
-    if (!isThemeValue(legacy)) return null;
+    const legacy = readSyncThemePreference();
+    if (!legacy) {
+        return null;
+    }
 
     await saveThemePreference(legacy !== "light");
-    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
     return legacy;
 };

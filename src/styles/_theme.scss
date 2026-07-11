@@ -31,6 +31,13 @@ html[data-theme="dark"] {
     color-scheme: dark;
 }
 
+html.theme-no-transition,
+html.theme-no-transition *,
+html.theme-no-transition *::before,
+html.theme-no-transition *::after {
+    transition: none !important;
+}
+
 @mixin theme-transition {
     transition:
         background-color var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),

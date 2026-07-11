@@ -13,6 +13,17 @@
     <link rel="manifest" href="/manifest.json" />
     <title>Digital Garden</title>
     <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("totallynotrobot-theme");
+          document.documentElement.dataset.theme =
+            theme === "light" || theme === "dark" ? theme : "dark";
+        } catch (e) {
+          document.documentElement.dataset.theme = "dark";
+        }
+      })();
+    </script>
+    <script>
       const params = new URLSearchParams(location.search)
       const path = params.get("p")
       if (path) {
