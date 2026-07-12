@@ -839,14 +839,6 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
                         transform-origin: top left;
                         margin-bottom: -11px;
                         margin-right: -36px;
-
-                        &.assembling {
-                            .levelHud {
-                                .level {
-                                    animation: levelNumberAssembleMobile 0.5s $assemble-snap 1.22s both;
-                                }
-                            }
-                        }
                     }
                 }
 
@@ -894,14 +886,6 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
                             .level {
                                 font-size: 20px;
-                            }
-                        }
-
-                        &.assembling {
-                            .levelHud {
-                                .level {
-                                    animation: levelNumberAssembleMobile 0.5s $assemble-snap 1.22s both;
-                                }
                             }
                         }
                     }
@@ -1028,20 +1012,6 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
         opacity: 1;
         transform: translateY(0);
         text-shadow: 0 0 8px var(--color-glow-soft);
-    }
-}
-
-@keyframes levelNumberAssembleMobile {
-    0% {
-        opacity: 0;
-        transform: translateY(4px);
-        text-shadow: none;
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-        text-shadow: 0 0 5px var(--color-glow-soft);
     }
 }
 
