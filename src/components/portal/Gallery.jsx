@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { openMemoryInNewTab } from "@/lib/openMemoryInNewTab";
 import styles from "@/styles/Panel.module.scss";
+import ListHud from "@/components/hud/ListHud";
 
 const galleryImages = import.meta.glob("@/gallery/*.png", {
     eager: true,
@@ -54,6 +55,7 @@ const Gallery = () => {
             {error ? <p className={styles.galleryError}>{error}</p> : null}
 
             <div className={styles.list}>
+                {/* <ListHud /> */}
                 {items.map((item) => (
                     <button
                         key={item.path}

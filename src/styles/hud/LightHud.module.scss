@@ -216,46 +216,50 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
     .line1 {
         @extend %sunRay;
-        top: calc(50% - #{$ray-offset + $cardinal-ray-max});
+        top: calc(50% - #{$ray-offset + $cardinal-ray-max + 4px});
         left: calc(50% - #{$ray-thick * 0.5});
         width: $ray-thick;
         height: $cardinal-ray-max;
         transform-origin: center bottom;
         animation-name: sunRayCardinalY;
         animation-delay: 0s;
+        opacity: 0.6;
     }
 
     .line2 {
         @extend %sunRay;
-        top: calc(50% + #{$ray-offset});
+        top: calc(50% + #{($ray-offset + 4px)});
         left: calc(50% - #{$ray-thick * 0.5});
         width: $ray-thick;
         height: $cardinal-ray-max;
         transform-origin: center top;
         animation-name: sunRayCardinalY;
         animation-delay: 0.15s;
+        opacity: 0.6;
     }
 
     .line3 {
         @extend %sunRay;
         top: calc(50% - #{$ray-thick * 0.5});
-        left: calc(50% + #{$ray-offset});
+        left: calc(50% + #{$ray-offset + 4px});
         width: $cardinal-ray-max;
         height: $ray-thick;
         transform-origin: left center;
         animation-name: sunRayCardinalX;
         animation-delay: 0.3s;
+        opacity: 0.6;
     }
 
     .line4 {
         @extend %sunRay;
         top: calc(50% - #{$ray-thick * 0.5});
-        right: calc(50% + #{$ray-offset});
+        right: calc(50% + #{$ray-offset + 4px});
         width: $cardinal-ray-max;
         height: $ray-thick;
         transform-origin: right center;
         animation-name: sunRayCardinalX;
         animation-delay: 0.45s;
+        opacity: 0.6;
     }
 
     .line5 {

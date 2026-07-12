@@ -26,6 +26,18 @@ const Panel = () => {
 
     return (
         <div className={styles.panel}>
+            {/* <div className={styles.outerHud}>
+                <div className={styles.corner0}>
+                    <div className={styles.line0} />
+                    <div className={styles.line1} />
+                    <div className={styles.line2} />
+                    <div className={styles.line3} />
+                    <div className={styles.line4} />
+                    <div className={styles.line5} />
+                    <div className={styles.line6} />
+                    <div className={styles.line7} />
+                </div>
+            </div> */}
             <FullscreenToggle
                 className={styles.secretFullscreenDock}
                 toggleClassName={styles.secretFullscreenToggle}
@@ -33,9 +45,9 @@ const Panel = () => {
                 iconExitClassName={styles.secretFullscreenIconExit}
             />
             <div className={styles.content}>
-                <div className={styles.preface}>
+                {/* <div className={styles.preface}>
                     <AnimateText text={memory.preface} className={styles.text} />
-                </div>
+                </div> */}
 
                 <div className={styles.info}>
                     <div className={styles.details}>

@@ -12,7 +12,7 @@ import "@/styles/App.scss";
 function App() {
     return (
         <BrowserRouter>
-            <PretextBackgroundAlt />
+            {/* <PretextBackgroundAlt /> */}
             <div className="App">
                 <Routes>
                     <Route path="/immerse" element={<ImmersiveLayout />} />
