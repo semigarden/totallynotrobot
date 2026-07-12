@@ -52,14 +52,29 @@ const Panel = () => {
                 <div className={styles.info}>
                     <div className={styles.details}>
                         <div className={styles.hudRow}>
-                        <div className={`${styles.hud} ${styles.assembling}`}>
-                            <Name className={styles.nameHud} name={memory.name} />
+                            <div className={`${styles.hud} ${styles.assembling}`}>
+                                <Name className={styles.nameHud} name={memory.name} />
 
-                            <div className={styles.levelHud}>
-                                <LevelBar className={styles.bar} exp={exp} />
+                                <div className={styles.levelHud}>
+                                    <LevelBar className={styles.bar} exp={exp} />
                                     <div className={styles.status}>Online</div>
                                     <div className={styles.level}>{level}</div>
                                 </div>
+                            </div>
+
+                            <div className={`${styles.tabs} ${styles.desktop}`}>
+                                {TABS.map((nodeName) => (
+                                        <div
+                                            key={nodeName}
+                                            className={`${styles.tab} ${tab === nodeName && styles.active}`}
+                                            onClick={() => openTab(nodeName)}
+                                        >
+                                            <div className={styles.name}>{nodeName}</div>
+                                        </div>
+                                ))}
+                                {/* <div className={styles.note}>
+                                    Gallery is a collection of an ideas I saw
+                                </div> */}
                             </div>
 
                             <LightHud className={styles.lightHud} />
@@ -113,7 +128,7 @@ const Panel = () => {
                         
                     </div> */}
 
-                    <div className={styles.tabs}>
+                    <div className={`${styles.tabs} ${styles.app}`}>
                         {TABS.map((nodeName) => (
                                 <div
                                     key={nodeName}
