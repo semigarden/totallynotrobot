@@ -12,8 +12,9 @@ import { TABS, tabFromParam } from "@/utils/tabRoute";
 import styles from "@/styles/Panel.module.scss";
 import memory, { level, exp } from "@/api/memory";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Projects from "@/components/portal/Projects";
 
 const Panel = () => {
     const { tab: tabParam } = useParams();
@@ -60,6 +61,27 @@ const Panel = () => {
                                     <div className={styles.status}>Online</div>
                                     <div className={styles.level}>{level}</div>
                                 </div>
+{/* 
+                                <div className={styles.levelHud}>
+                                    <LevelBar className={styles.bar} exp={exp} />
+                                    <div className={styles.status}>Projects</div>
+                                    <div className={styles.level}><FontAwesomeIcon icon={faCaretDown} /></div>
+
+                                    <div className={styles.listHud}>
+                                        <div className={styles.item0}>
+                                            <div className={styles.itemLevel}>1</div>
+                                            <div className={styles.itemName}>Gallery</div>
+                                        </div>
+                                        <div className={styles.line0} />
+                                        <div className={styles.line1} />
+                                        <div className={styles.line2} />
+                                        <div className={styles.line3} />
+                                        <div className={styles.line4} />
+                                        <div className={styles.line5} />
+                                        <div className={styles.line6} />
+                                        <div className={styles.line7} />
+                                    </div>
+                                </div> */}
                             </div>
 
                             <div className={`${styles.tabs} ${styles.desktop}`}>
@@ -152,6 +174,7 @@ const Panel = () => {
                     {tab === "Toolkit" && (
                         <Drag className={styles.list} itemsData={memory.items} />
                     )}
+                    {tab === "Projects" && <Projects />}
                 </div>
             </div>
         </div>
