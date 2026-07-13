@@ -9,6 +9,7 @@ const projects = [
         name: "White Lead Forest",
         description: "Interactive Memory",
         material: "Three.js // Blender // GLSL",
+        time: "2026",
         visual: whiteLeadForestVisual,
         gif: whiteLeadForest,
     },
@@ -17,6 +18,7 @@ const projects = [
         name: "Memory Extract",
         description: "Embed Experiences",
         material: "JavaScript // Encoding",
+        time: "2026",
         visual: whiteLeadForestVisual,
         gif: whiteLeadForest,
     },
@@ -25,6 +27,7 @@ const projects = [
         name: "Synthetic Markdown",
         description: "Live Editor",
         material: "TypeScript // React",
+        time: "2026",
         visual: whiteLeadForestVisual,
         gif: whiteLeadForest,
     },
@@ -33,6 +36,7 @@ const projects = [
         name: "Pixel Index",
         description: "Terminal Media Viewer",
         material: "JavaScript",
+        time: "2026",
         visual: whiteLeadForestVisual,
         gif: whiteLeadForest,
     },
@@ -54,12 +58,6 @@ const Projects = () => {
                         <div className={styles.symbol}>
                             <div className={styles.line0} />
                             <div className={styles.line1} />
-                            <div className={styles.line2} />
-                            <div className={styles.line3} />
-                            <div className={styles.line4} />
-                            <div className={styles.line5} />
-                            <div className={styles.line6} />
-                            <div className={styles.line7} />
                         </div>
                     </div>
                     <div className={styles.divider}>
@@ -75,9 +73,14 @@ const Projects = () => {
                     <div className={`${styles.section} ${styles.section1}`}>
                         <div className={styles.info}>
                             <div className={styles.title}>{project.name}</div>
-                            <div className={styles.description}>{project.description}</div>
-                            <div className={styles.material}>
-                                {project.material}
+                            <div className={styles.text}>
+                                <div className={styles.description}>{project.description}</div>
+                                <div className={styles.material}>
+                                    {project.material}
+                                </div>
+                            </div>
+                            <div className={styles.time}>
+                                {project.time}
                             </div>
                         </div>
                         <div className={styles.visual}>

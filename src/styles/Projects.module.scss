@@ -137,7 +137,7 @@
                     left: 0;
                     margin: auto;
                     width: 1px;
-                    height: calc(100% - 6px);
+                    height: calc(100% - 12px);
                     background-color: var(--color-fg);
                     opacity: 0.5;
                     transition: background-color var(--project-transition) cubic-bezier(0.4, 0, 0.2, 1);
@@ -145,7 +145,7 @@
 
                 .line1 {
                     position: absolute;
-                    top: 0;
+                    top: 5px;
                     left: -1px;
                     width: 3px;
                     height: 3px;
@@ -157,7 +157,7 @@
 
                 .line2 {
                     position: absolute;
-                    bottom: 0;
+                    bottom: 4px;
                     left: -1px;
                     width: 3px;
                     height: 3px;
@@ -169,7 +169,7 @@
 
                 .line3 {
                     position: absolute;
-                    top: 0;
+                    top: 0px;
                     bottom: 0;
                     margin: auto;
                     left: -1px;
@@ -198,8 +198,9 @@
                     font-family: "Orbitron", sans-serif;
                     align-self: stretch;
                     min-width: 40px;
-                    gap: 20px;
+                    gap: 18px;
                     justify-content: flex-start;
+                    align-items: center;
                     transition: color var(--project-transition) cubic-bezier(0.4, 0, 0.2, 1);
 
                     .index {
@@ -208,11 +209,19 @@
 
                     .symbol {
                         position: relative;
+                        width: 20px;
+                        height: 20px;
+                        display: flex;
+                        // align-self: stretch;
+                        // flex: 1;
 
                         .line0 {
                             position: absolute;
                             top: 0;
-                            left: -6px;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            margin: auto;
                             width: 14px;
                             height: 14px;
                             border: 1px solid var(--color-fg);
@@ -225,8 +234,11 @@
 
                         .line1 {
                             position: absolute;
-                            top: 4px;
-                            left: -2px;
+                            top: 0;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            margin: auto;
                             width: 6px;
                             height: 6px;
                             background-color: var(--color-fg);
@@ -270,6 +282,14 @@
                         line-height: 1;
                     }
 
+                    .text {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-start;
+                        align-items: flex-start;
+                        gap: 2px;
+                    }
+
                     .description {
                         font-size: 10px;
                         font-weight: 500;
@@ -278,6 +298,12 @@
                     .material {
                         font-size: 10px;
                         font-weight: 500;
+                    }
+
+                    .time {
+                        font-size: 10px;
+                        font-weight: 400;
+                        line-height: 1;
                     }
                 }
 
