@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Drag from "@/components/effect/Drag";
 import AnimateText from "@/components/effect/AnimateText";
@@ -16,10 +17,23 @@ import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Projects from "@/components/portal/Projects";
 
+const HUD_ASSEMBLE_MS = 2200;
+
 const Panel = () => {
     const { tab: tabParam } = useParams();
     const navigate = useNavigate();
     const tab = tabFromParam(tabParam);
+    const [hudAssembling, setHudAssembling] = useState(true);
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            setHudAssembling(false);
+        }, HUD_ASSEMBLE_MS);
+
+        return () => {
+            window.clearTimeout(timer);
+        };
+    }, []);
 
     const openTab = (nextTab) => {
         navigate(`/${nextTab.toLowerCase()}`);
@@ -53,7 +67,7 @@ const Panel = () => {
                 <div className={styles.info}>
                     <div className={styles.details}>
                         <div className={styles.hudRow}>
-                            <div className={`${styles.hud} ${styles.assembling}`}>
+                            <div className={`${styles.hud} ${hudAssembling ? styles.assembling : ""}`}>
                                 <Name className={styles.nameHud} name={memory.name} />
 
                                 <div className={styles.levelHud}>

@@ -1,8 +1,15 @@
+@use "sass:math";
 @use "../utils/cyber" as cyber;
 @use "../theme" as *;
 
-$assemble-ease: cubic-bezier(0.22, 1.2, 0.36, 1);
-$assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
+$hud-scale: 0.8;
+$assemble-ease: cubic-bezier(0.22, 1, 0.36, 1);
+$assemble-snap: cubic-bezier(0.34, 1, 0.64, 1);
+
+// Round to whole CSS pixels so 0.8x geometry stays crisp (no subpixel settle snap).
+@function hs($value) {
+    @return math.round($value * $hud-scale);
+}
 
 .name {
     position: relative;
@@ -10,14 +17,19 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     height: 100%;
     overflow: visible;
 
+    &,
+    & * {
+        @include theme-transition;
+    }
+
     .circle {
         position: absolute;
-        bottom: -5px;
-        left: 6px;
-        width: 16px;
-        height: 16px;
+        bottom: hs(-5px);
+        left: hs(6px);
+        width: hs(16px);
+        height: hs(16px);
         border-radius: 50%;
-        box-shadow: 0 0 10px 0 var(--color-glow);
+        box-shadow: 0 0 hs(10px) 0 var(--color-glow);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -25,166 +37,162 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
         z-index: 3;
 
         .circleGlow {
-            width: 6px;
-            height: 6px;
+            width: hs(6px);
+            height: hs(6px);
             border-radius: 50%;
             background-color: var(--color-fg);
-            box-shadow: 0 0 10px 0 var(--color-glow);
+            box-shadow: 0 0 hs(10px) 0 var(--color-glow);
             animation: pulsing 3s ease-in-out infinite;
         }
     }
 
     .circleLine {
         position: absolute;
-        top: 32px;
-        left: 2px;
-        width: 72px;
-        height: 39px;
-        transform: rotate(-45deg);
+        top: hs(32px);
+        left: hs(2px);
+        width: hs(72px);
+        height: hs(39px);
+        transform: rotate(-45deg) translateZ(0);
 
         .line0 {
             position: absolute;
-            width: 37px;
-            height: 29px;
-            top: 1px;
-            left: 2px;
+            width: hs(36px);
+            height: hs(29px);
+            top: hs(1px);
+            left: hs(2px);
 
-            border-bottom: 3px solid var(--color-fg);
-            border-right: 3px solid var(--color-fg);
+            border-bottom: hs(3px) solid var(--color-fg);
+            border-right: hs(3px) solid var(--color-fg);
         }
 
         .line1 {
             position: absolute;
-            width: 24px;
+            width: hs(23px);
             top: 0;
-            right: 12px;
+            right: hs(12px);
 
-            border-bottom: 3px solid var(--color-fg);
+            border-bottom: hs(3px) solid var(--color-fg);
         }
     }
 
     .square {
         position: absolute;
-        width: 34px;
-        height: 34px;
-        bottom: 37px;
-        border: 1px solid var(--color-fg);
-        left: 39px;
-        transform: rotate(-45deg);
-
-        box-shadow: 0 0 10px 0 var(--color-glow);
-
+        width: hs(34px);
+        height: hs(34px);
+        bottom: hs(37px);
+        border: hs(1px) solid var(--color-fg);
+        left: hs(39px);
+        transform: rotate(-45deg) translateZ(0);
+        box-shadow: 0 0 hs(10px) 0 var(--color-glow);
         display: flex;
         justify-content: center;
         align-items: center;
-
         z-index: 1;
 
         .squareGlow {
-            width: 12px;
-            height: 12px;
+            width: hs(12px);
+            height: hs(12px);
             background-color: var(--color-fg);
-            box-shadow: 0 0 10px 0 var(--color-glow);
+            box-shadow: 0 0 hs(10px) 0 var(--color-glow);
             animation: pulsing 3s ease-in-out infinite;
         }
     }
 
     .frame {
         position: absolute;
-        width: 233px;
-        height: 79px;
-        left: 67px;
+        width: hs(233px);
+        height: hs(79px);
+        left: hs(67px);
         top: 0;
 
         .frameTop {
             position: absolute;
             width: 100%;
-            height: 16px;
+            height: hs(16px);
             left: 0;
             top: 0;
             overflow: hidden;
 
             .frame1 {
-                width: 110px;
-                height: 12px;
+                width: hs(110px);
+                height: hs(12px);
                 left: 0;
                 position: absolute;
-                border-left: 1px solid var(--color-fg);
-                border-bottom: 1px solid var(--color-fg);
-                border-top: 1px solid var(--color-fg);
+                border-left: hs(1px) solid var(--color-fg);
+                border-bottom: hs(1px) solid var(--color-fg);
+                border-top: hs(1px) solid var(--color-fg);
                 background-color: var(--color-fg);
-                @include cyber.cyber-clip-tl-br;
+                @include cyber.cyber-clip-tl-br(hs(15px));
             }
 
             .line1 {
                 display: none;
-                width: 30px;
-                height: 12px;
-                left: 90px;
+                width: hs(30px);
+                height: hs(12px);
+                left: hs(90px);
                 position: absolute;
-                border-left: 1px solid var(--color-fg);
-                border-top: 1px solid var(--color-fg);
-                @include cyber.cyber-clip-tl;
+                border-left: hs(1px) solid var(--color-fg);
+                border-top: hs(1px) solid var(--color-fg);
+                @include cyber.cyber-clip-tl(hs(15px));
             }
 
             .line2 {
-                width: 10px;
-                height: 7px;
-                border-top: 1px solid var(--color-fg);
+                width: hs(10px);
+                height: hs(7px);
+                border-top: hs(1px) solid var(--color-fg);
                 position: absolute;
-                left: 90px;
+                left: hs(90px);
             }
 
             .frame2 {
-                width: 47px;
-                height: 7px;
-                left: 99px;
+                width: hs(47px);
+                height: hs(7px);
+                left: hs(99px);
                 position: absolute;
-                border-right: 1px solid var(--color-fg);
-                border-bottom: 1px solid var(--color-fg);
-                border-top: 1px solid var(--color-fg);
+                border-right: hs(1px) solid var(--color-fg);
+                border-bottom: hs(1px) solid var(--color-fg);
+                border-top: hs(1px) solid var(--color-fg);
                 background-color: var(--color-fg);
-                @include cyber.cyber-clip-br;
+                @include cyber.cyber-clip-br(hs(15px));
             }
 
             .frame3 {
-                width: 113px;
-                height: 7px;
-                left: 87px;
+                width: hs(113px);
+                height: hs(7px);
+                left: hs(87px);
                 position: absolute;
-                top: 11px;
+                top: hs(11px);
                 background-color: var(--color-fg);
-                @include cyber.cyber-clip-tl-tr;
+                @include cyber.cyber-clip-tl-tr(hs(15px));
             }
         }
 
         .frameMain {
             position: absolute;
             width: 100%;
-            height: 42px;
+            height: hs(42px);
             left: 0;
-            top: 17px;
-            border-top: 1px solid var(--color-fg);
-            border-bottom: 1px solid var(--color-fg);
-            border-right: 1px solid var(--color-fg);
+            top: hs(17px);
+            border-top: hs(1px) solid var(--color-fg);
+            border-bottom: hs(1px) solid var(--color-fg);
+            border-right: hs(1px) solid var(--color-fg);
             display: flex;
             justify-content: center;
             align-items: center;
 
             .text {
-                font-size: 18px;
+                font-size: hs(18px);
                 text-align: center;
                 line-height: 1;
                 z-index: 1;
-                letter-spacing: 1px;
+                letter-spacing: hs(1px);
                 font-weight: bold;
                 font-family: "Orbitron", sans-serif;
                 text-transform: uppercase;
                 font-style: italic;
                 text-wrap: nowrap;
                 color: var(--color-fg);
-                text-shadow: 0 0 10px var(--color-glow-soft);
-                animation: nameAppear 1s ease-in-out 3.6s both;
+                text-shadow: 0 0 hs(10px) var(--color-glow-soft);
             }
 
             .animation {
@@ -194,38 +202,38 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
                 right: 0;
                 bottom: 0;
                 margin: auto;
-                width: calc(100% - 10px);
-                height: calc(100% - 10px);
-                padding-right: 25px;
+                width: calc(100% - #{hs(10px)});
+                height: calc(100% - #{hs(10px)});
+                padding-right: hs(25px);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
 
                 .arrow {
                     position: relative;
-                    height: 30px;
+                    height: hs(30px);
                     animation: arrowFade 2s ease-in-out both;
 
                     .line1 {
                         position: absolute;
                         top: 0;
                         left: 0;
-                        width: 26px;
-                        height: 15px;
-                        border-left: 1px solid var(--color-fg);
+                        width: hs(26px);
+                        height: hs(15px);
+                        border-left: hs(1px) solid var(--color-fg);
                         background-color: var(--color-fg);
-                        @include cyber.cyber-clip-tr-bl;
+                        @include cyber.cyber-clip-tr-bl(hs(15px));
                     }
 
                     .line2 {
                         position: absolute;
-                        top: 15px;
+                        top: hs(15px);
                         left: 0;
-                        width: 26px;
-                        height: 15px;
-                        border-left: 1px solid var(--color-fg);
+                        width: hs(26px);
+                        height: hs(15px);
+                        border-left: hs(1px) solid var(--color-fg);
                         background-color: var(--color-fg);
-                        @include cyber.cyber-clip-tl-br;
+                        @include cyber.cyber-clip-tl-br(hs(15px));
                     }
                 }
             }
@@ -233,119 +241,85 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
         .frameBottom {
             position: absolute;
-            width: 188px;
-            height: 18px;
-            left: -21px;
-            bottom: -3px;
+            width: hs(188px);
+            height: hs(18px);
+            left: hs(-21px);
+            bottom: hs(-3px);
 
             .frame1 {
-                width: 58px;
-                height: 18px;
-                left: 1px;
+                width: hs(58px);
+                height: hs(18px);
+                left: hs(1px);
                 position: absolute;
                 bottom: 0;
                 background-color: var(--color-fg);
                 z-index: 1;
-                @include cyber.cyber-clip-tl-br;
+                @include cyber.cyber-clip-tl-br(hs(15px));
             }
 
             .frame2 {
-                width: 41px;
-                height: 9px;
-                left: 42px;
+                width: hs(41px);
+                height: hs(9px);
+                left: hs(42px);
                 position: absolute;
                 top: 0;
                 background-color: var(--color-fg);
                 z-index: 1;
-                @include cyber.cyber-clip-br;
+                @include cyber.cyber-clip-br(hs(15px));
             }
 
             .frame3 {
-                width: 28px;
-                height: 5px;
-                left: 50px;
+                width: hs(28px);
+                height: hs(5px);
+                left: hs(50px);
                 position: absolute;
                 bottom: 0;
                 background-color: var(--color-fg);
                 z-index: 1;
-                @include cyber.cyber-clip-tl-br(5px);
+                @include cyber.cyber-clip-tl-br(hs(5px));
             }
 
             .frame4 {
-                width: 21px;
-                height: 18px;
-                left: 68px;
+                width: hs(21px);
+                height: hs(18px);
+                left: hs(68px);
                 position: absolute;
                 bottom: 0;
                 background-color: var(--color-fg);
                 z-index: 2;
-                @include cyber.cyber-clip-tl-br;
+                @include cyber.cyber-clip-tl-br(hs(15px));
             }
 
             .frame5 {
-                width: 111px;
-                height: 5px;
-                left: 86px;
+                width: hs(111px);
+                height: hs(5px);
+                left: hs(86px);
                 position: absolute;
                 top: 0;
                 background-color: var(--color-fg);
                 z-index: 1;
-                @include cyber.cyber-clip-br(5px);
+                @include cyber.cyber-clip-br(hs(5px));
             }
         }
     }
 
-    &.assembling {
+    &.introLive {
         .circle {
-            animation: circleAssemble 0.45s $assemble-snap 0s both;
-
             .circleGlow {
                 animation: glowIgnite 0.35s ease-out 0.15s both,
-                    pulsing 3s ease-in-out 1.5s infinite;
-            }
-        }
-
-        .circleLine {
-            animation: circleLineAssemble 0.5s $assemble-ease 0.12s both;
-
-            .line0 {
-                transform-origin: left bottom;
-                animation: lineGrow 0.35s $assemble-ease 0.25s both;
-            }
-
-            .line1 {
-                transform-origin: left center;
-                animation: lineGrow 0.3s $assemble-ease 0.38s both;
+                    pulsing 3s ease-in-out infinite;
             }
         }
 
         .square {
-            transform-origin: center center;
-            animation: squareAssemble 0.55s $assemble-snap 0.28s both;
-
             .squareGlow {
                 animation: glowIgnite 0.35s ease-out 0.55s both,
-                    pulsing 3s ease-in-out 1.5s infinite;
+                    pulsing 3s ease-in-out infinite;
             }
         }
 
         .frame {
-            animation: frameAssemble 0.6s $assemble-ease 0.42s both;
-
-            .frameTop > * {
-                animation: framePieceFromTop 0.4s $assemble-ease both;
-            }
-
-            @for $i from 1 through 5 {
-                .frameTop > *:nth-child(#{$i}) {
-                    animation-delay: #{0.52 + $i * 0.07}s;
-                }
-            }
-
             .frameMain {
-                transform-origin: left center;
-                animation: frameMainAssemble 0.45s $assemble-ease 0.58s both;
-
                 .text {
                     animation: nameAppear 0.8s $assemble-ease 4.5s both;
                 }
@@ -379,21 +353,63 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
             }
         }
     }
+
+    &.assembling {
+        .circle {
+            animation: circleAssemble 0.45s $assemble-snap 0s both;
+        }
+
+        .circleLine {
+            animation: circleLineAssemble 0.5s $assemble-ease 0.12s both;
+
+            .line0 {
+                transform-origin: left bottom;
+                animation: lineGrow 0.35s $assemble-ease 0.25s both;
+            }
+
+            .line1 {
+                transform-origin: left center;
+                animation: lineGrow 0.3s $assemble-ease 0.38s both;
+            }
+        }
+
+        .square {
+            transform-origin: center center;
+            animation: squareAssemble 0.55s $assemble-snap 0.28s both;
+        }
+
+        .frame {
+            animation: frameAssemble 0.6s $assemble-ease 0.42s both;
+
+            .frameTop > * {
+                animation: framePieceFromTop 0.4s $assemble-ease both;
+            }
+
+            @for $i from 1 through 5 {
+                .frameTop > *:nth-child(#{$i}) {
+                    animation-delay: #{0.52 + $i * 0.07}s;
+                }
+            }
+
+            .frameMain {
+                transform-origin: left center;
+                animation: frameMainAssemble 0.45s $assemble-ease 0.58s both;
+            }
+        }
+    }
+
 }
 
 @keyframes circleAssemble {
     0% {
         opacity: 0;
-        transform: translateZ(0) scale(0) translateX(-12px);
+        transform: translateZ(0) scale(0.2) translateX(hs(-12px));
         box-shadow: 0 0 0 0 transparent;
-    }
-    60% {
-        box-shadow: 0 0 18px 2px var(--color-glow);
     }
     100% {
         opacity: 1;
-        transform: translateZ(0) scale(1) translateX(0);
-        box-shadow: 0 0 10px 0 var(--color-glow);
+        transform: translateZ(0);
+        box-shadow: 0 0 hs(10px) 0 var(--color-glow);
     }
 }
 
@@ -413,36 +429,31 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     }
     100% {
         opacity: 1;
-        transform: scaleX(1);
+        transform: none;
     }
 }
 
 @keyframes squareAssemble {
     0% {
         opacity: 0;
-        transform: rotate(-45deg) scale(0) translate(-8px, 8px);
+        transform: rotate(-45deg) scale(0.2) translate(hs(-8px), hs(8px));
         box-shadow: 0 0 0 0 transparent;
-    }
-    70% {
-        box-shadow: 0 0 16px 2px var(--color-glow);
     }
     100% {
         opacity: 1;
-        transform: rotate(-45deg) scale(1) translate(0, 0);
-        box-shadow: 0 0 10px 0 var(--color-glow);
+        transform: rotate(-45deg) translateZ(0);
+        box-shadow: 0 0 hs(10px) 0 var(--color-glow);
     }
 }
 
 @keyframes frameAssemble {
     0% {
         opacity: 0;
-        transform: translateX(48px) skewX(-6deg);
-        filter: brightness(2);
+        transform: translateX(hs(48px));
     }
     100% {
         opacity: 1;
-        transform: translateX(0) skewX(0);
-        filter: brightness(1);
+        transform: none;
     }
 }
 
@@ -454,7 +465,7 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
     }
     100% {
         opacity: 1;
-        transform: scaleX(1);
+        transform: none;
         clip-path: inset(0 0 0 0);
     }
 }
@@ -462,58 +473,58 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 @keyframes framePieceFromTop {
     0% {
         opacity: 0;
-        transform: translateY(-14px) scaleX(0.4);
+        transform: translateY(hs(-14px)) scaleX(0.4);
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scaleX(1);
+        transform: none;
     }
 }
 
 @keyframes frameBottomPillar {
     0% {
         opacity: 0;
-        transform: translateY(10px) scaleY(0.15);
+        transform: translateY(hs(10px)) scaleY(0.15);
     }
 
     100% {
         opacity: 1;
-        transform: translateY(0) scaleY(1);
+        transform: none;
     }
 }
 
 @keyframes frameBottomRail {
     0% {
         opacity: 0;
-        transform: translateY(8px) scaleX(0.2);
+        transform: translateY(hs(8px)) scaleX(0.2);
     }
 
     100% {
         opacity: 1;
-        transform: translateY(0) scaleX(1);
+        transform: none;
     }
 }
 
 @keyframes frameBottomAccent {
     0% {
         opacity: 0;
-        transform: translateY(-8px) scaleX(0.2);
+        transform: translateY(hs(-8px)) scaleX(0.2);
     }
 
     100% {
         opacity: 1;
-        transform: translateY(0) scaleX(1);
+        transform: none;
     }
 }
 
 @keyframes glowIgnite {
     0% {
         opacity: 0;
-        transform: scale(0);
+        transform: scale(0.2);
     }
     100% {
         opacity: 1;
-        transform: scale(1);
+        transform: none;
     }
 }
 
@@ -532,15 +543,15 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 @keyframes nameAppear {
     0% {
         opacity: 0;
-        transform: scale(0.9);
-        letter-spacing: 8px;
-        filter: blur(4px);
+        transform: scale(0.94);
+        letter-spacing: hs(8px);
+        filter: blur(hs(4px));
     }
     100% {
         opacity: 1;
-        transform: scale(1);
-        letter-spacing: 1px;
-        filter: blur(0);
+        transform: none;
+        letter-spacing: hs(1px);
+        filter: none;
     }
 }
 

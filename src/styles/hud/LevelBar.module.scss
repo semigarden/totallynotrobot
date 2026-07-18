@@ -1,8 +1,14 @@
+@use "sass:math";
 @use "../utils/cyber" as cyber;
 @use "../theme" as *;
 
-$assemble-ease: cubic-bezier(0.22, 1.2, 0.36, 1);
+$hud-scale: 0.8;
+$assemble-ease: cubic-bezier(0.22, 1, 0.36, 1);
 $fill-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+@function hs($value) {
+    @return math.round($value * $hud-scale);
+}
 
 .levelBar {
     position: relative;
@@ -12,33 +18,34 @@ $fill-ease: cubic-bezier(0.4, 0, 0.2, 1);
     box-sizing: border-box;
     color: var(--color-fg);
     font-family: "Orbitron", sans-serif;
-    font-size: 11px;
+    font-size: hs(11px);
     text-transform: uppercase;
     font-weight: bolder;
     text-align: center;
-    letter-spacing: 6px;
+    letter-spacing: hs(6px);
     font-style: italic;
     display: flex;
     justify-content: space-between;
-    gap: 2px;
+    gap: hs(2px);
     @include theme-transition;
 
     .exp {
         flex: 1 1 0;
         min-width: 0;
-        max-width: 15px;
-        height: 5px;
+        max-width: hs(15px);
+        height: hs(5px);
         background-color: var(--color-fg);
-        box-shadow: 0 0 4px 0 var(--color-glow-soft);
+        box-shadow: 0 0 hs(4px) 0 var(--color-glow-soft);
         opacity: 0.28;
         transform: scaleY(1);
         transform-origin: center center;
         transition:
             opacity 0.72s $fill-ease,
-            box-shadow 0.72s $fill-ease,
+            background-color var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
+            box-shadow var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
             transform 0.72s $fill-ease,
             filter 0.72s $fill-ease;
-        @include cyber.cyber-segment(2px);
+        @include cyber.cyber-segment(hs(2px));
     }
 
     &.assembling {
@@ -55,7 +62,7 @@ $fill-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
 .exp.lit {
     opacity: 1;
-    box-shadow: 0 0 7px 0 var(--color-glow-soft);
+    box-shadow: 0 0 hs(7px) 0 var(--color-glow-soft);
 }
 
 @keyframes levelExpAssemble {
@@ -65,13 +72,9 @@ $fill-ease: cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 0 0 0 transparent;
     }
 
-    70% {
-        box-shadow: 0 0 12px 1px var(--color-glow-soft);
-    }
-
     100% {
         opacity: 0.28;
-        transform: scaleX(1);
-        box-shadow: 0 0 4px 0 var(--color-glow-soft);
+        transform: none;
+        box-shadow: 0 0 hs(4px) 0 var(--color-glow-soft);
     }
 }

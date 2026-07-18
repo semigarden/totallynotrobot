@@ -45,6 +45,7 @@ html.theme-no-transition *::after {
         color var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
         border-color var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
         box-shadow var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
+        text-shadow var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
         fill var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1),
         stroke var(--theme-transition) cubic-bezier(0.4, 0, 0.2, 1);
 }
