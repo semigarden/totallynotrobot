@@ -40,7 +40,7 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        gap: 10px;
+        gap: 3px;
 
         .item:first-child {
             clip-path: polygon(
@@ -198,7 +198,7 @@
                     font-family: "Orbitron", sans-serif;
                     align-self: stretch;
                     min-width: 40px;
-                    gap: 18px;
+                    // gap: 18px;
                     justify-content: flex-start;
                     align-items: center;
                     transition: color var(--project-transition) cubic-bezier(0.4, 0, 0.2, 1);
@@ -270,15 +270,13 @@
                     flex-direction: column;
                     justify-content: space-between;
                     align-items: flex-start;
-                    gap: 6px;
+                    // gap: 6px;
                     align-self: stretch;
                     flex: 1;
 
                     .title {
-                        font-size: 12px;
-                        font-weight: 600;
-                        margin-bottom: 4px;
-                        flex: 1;
+                        font-size: 10px;
+                        font-weight: 700;
                         line-height: 1;
                     }
 
@@ -287,12 +285,14 @@
                         flex-direction: column;
                         justify-content: flex-start;
                         align-items: flex-start;
-                        gap: 2px;
+                        line-height: 1;
+                        // gap: 2px;
                     }
 
                     .description {
                         font-size: 10px;
                         font-weight: 500;
+                        line-height: 1;
                     }
 
                     .material {
@@ -315,10 +315,10 @@
                     // gap: 10px;
                     // height: 100%;
                     // flex: 1;
-                    // align-self: stretch;
+                    align-self: stretch;
 
                     img {
-                        max-width: 80px;
+                        max-width: 50px; // 80px
                         width: 100%;
                         height: 100%;
                         object-fit: cover;
