@@ -52,9 +52,9 @@ const LightHud = ({ className = "", animate = true }) => {
             >
                 <Sun active={isSun} />
                 <Moon active={!isSun} />
-                <span className={styles.themeLabel} aria-hidden="true">
+                {/* <span className={styles.themeLabel} aria-hidden="true">
                     {isSun ? "Light" : "Dark"}
-                </span>
+                </span> */}
             </button>
         </div>
     );

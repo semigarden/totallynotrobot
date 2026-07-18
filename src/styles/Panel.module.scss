@@ -330,6 +330,8 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
                 z-index: 1;
                 // padding-left: 16px;
                 // overflow-x: clip;
+
+                padding: 0 16px;
             
                 .hudRow {
                     position: relative;
@@ -353,6 +355,21 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
                     align-items: center;
                     justify-content: center;
                     overflow: visible;
+
+                    transform: scale(0.8);
+                    transform-origin: top left;
+                    margin-bottom: -18px;
+                    margin-right: -60px;
+
+                    .levelHud {
+                        .status {
+                            letter-spacing: 4px;
+                        }
+
+                        .level {
+                            font-size: 20px;
+                        }
+                    }
 
                     &.assembling {
                         .levelHud {
@@ -405,9 +422,9 @@ $assemble-snap: cubic-bezier(0.34, 1.45, 0.64, 1);
 
                         .status {
                             position: absolute;
-                            width: 95px;
+                            width: 104px;
                             top: 13px;
-                            left: 133px;
+                            left: 134px;
                             color: var(--color-fg);
                             font-family: "Orbitron", sans-serif;
                             font-size: 10px;
