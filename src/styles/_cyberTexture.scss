@@ -1,0 +1,140 @@
+@use "./theme" as *;
+
+// Fine film grain
+$cyber-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+
+// Sparse tech speckles
+$cyber-static: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.65' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.45 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+
+html {
+    --cyber-grain: 0.055;
+    --cyber-scan: color-mix(in srgb, var(--color-fg) 4.5%, transparent);
+    --cyber-scan-strong: color-mix(in srgb, var(--color-fg) 7%, transparent);
+    --cyber-grid: color-mix(in srgb, var(--color-fg) 3.2%, transparent);
+    --cyber-vignette: color-mix(in srgb, var(--color-bg) 62%, transparent);
+    --cyber-edge: color-mix(in srgb, var(--color-fg) 6%, transparent);
+    --cyber-mix: soft-light;
+
+    &[data-theme="light"] {
+        --cyber-grain: 0.04;
+        --cyber-scan: color-mix(in srgb, var(--color-fg) 3.5%, transparent);
+        --cyber-scan-strong: color-mix(in srgb, var(--color-fg) 5.5%, transparent);
+        --cyber-grid: color-mix(in srgb, var(--color-fg) 2.4%, transparent);
+        --cyber-vignette: color-mix(in srgb, var(--color-bg) 48%, transparent);
+        --cyber-edge: color-mix(in srgb, var(--color-fg) 4.5%, transparent);
+        --cyber-mix: multiply;
+    }
+}
+
+#root {
+    position: relative;
+    z-index: 1;
+}
+
+// Full-page texture stack — sits above UI, never captures input
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    mix-blend-mode: var(--cyber-mix);
+    opacity: 1;
+    background:
+        // CRT-ish horizontal scanlines
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 2px,
+            var(--cyber-scan) 2px,
+            var(--cyber-scan) 3px
+        ),
+        // Sparse coarser scan band
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 11px,
+            var(--cyber-scan-strong) 11px,
+            var(--cyber-scan-strong) 12px
+        ),
+        // Micro tech grid
+        linear-gradient(to right, var(--cyber-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--cyber-grid) 1px, transparent 1px),
+        // Soft vignette + edge fade
+        radial-gradient(
+            ellipse 120% 95% at 50% 45%,
+            transparent 48%,
+            var(--cyber-vignette) 100%
+        ),
+        // Corner signal bleed
+        linear-gradient(
+            125deg,
+            var(--cyber-edge) 0%,
+            transparent 18%,
+            transparent 82%,
+            var(--cyber-edge) 100%
+        );
+    background-size:
+        auto,
+        auto,
+        48px 48px,
+        48px 48px,
+        auto,
+        auto;
+    @include theme-transition;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: var(--cyber-grain);
+    background-image: $cyber-noise, $cyber-static;
+    background-size: 160px 160px, 280px 280px;
+    background-position: 0 0, 40px 20px;
+    mix-blend-mode: overlay;
+    @include theme-transition;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    body::before {
+        animation: cyberGrainShift 9s steps(2) infinite;
+    }
+
+    body::after {
+        animation: cyberScanDrift 6s linear infinite;
+    }
+}
+
+@keyframes cyberGrainShift {
+    0%,
+    100% {
+        background-position: 0 0, 40px 20px;
+    }
+    50% {
+        background-position: 12px -8px, 28px 36px;
+    }
+}
+
+@keyframes cyberScanDrift {
+    from {
+        background-position:
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0;
+    }
+    to {
+        background-position:
+            0 3px,
+            0 12px,
+            0 0,
+            0 0,
+            0 0,
+            0 0;
+    }
+}
